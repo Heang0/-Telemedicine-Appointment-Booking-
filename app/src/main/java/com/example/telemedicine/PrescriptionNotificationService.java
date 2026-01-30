@@ -75,7 +75,7 @@ public class PrescriptionNotificationService {
         }
 
         prescriptionListener = db.collection("prescriptions")
-                .whereEqualTo("patientId", patientId)
+                .whereArrayContains("patientIds", patientId)
                 .addSnapshotListener((querySnapshot, error) -> {
                     if (error != null) {
                         Log.w(TAG, "Listen failed.", error);

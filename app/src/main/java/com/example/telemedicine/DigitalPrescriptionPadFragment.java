@@ -39,6 +39,9 @@ public class DigitalPrescriptionPadFragment extends Fragment {
     private List<Prescription.Medication> medicationsList;
     private List<String> patientIds;
     private List<String> patientNames;
+    private String editingPrescriptionId;
+    private boolean isEditMode = false;
+    private String editPatientIdToSelect;
 
     @Nullable
     @Override
@@ -52,8 +55,25 @@ public class DigitalPrescriptionPadFragment extends Fragment {
         setupMedicationsSpinner();
         loadPatients();
 
+        // Check for edit mode
+        Bundle args = getArguments();
+        if (args != null) {
+            editingPrescriptionId = args.getString("prescription_id");
+            if (editingPrescriptionId != null && !editingPrescriptionId.isEmpty()) {
+                isEditMode = true;
+                btnCreatePrescription.setText("Update Prescription");
+                loadPrescriptionForEdit(editingPrescriptionId);
+            }
+        }
+
         btnAddMedication.setOnClickListener(v -> addMedicationToList());
-        btnCreatePrescription.setOnClickListener(v -> createPrescription());
+        btnCreatePrescription.setOnClickListener(v -> {
+            if (isEditMode) {
+                updatePrescription();
+            } else {
+                createPrescription();
+            }
+        });
 
         return view;
     }
@@ -154,6 +174,17 @@ public class DigitalPrescriptionPadFragment extends Fragment {
                                                 patientAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                                                 spinnerPatient.setAdapter(patientAdapter);
                                             }
+
+                                            if (editPatientIdToSelect != null && !patientIds.isEmpty()) {
+                                                int index = patientIds.indexOf(editPatientIdToSelect);
+                                                if (index >= 0) {
+                                                    spinnerPatient.setSelection(index);
+                                                }
+                                            }
+
+                                            if (isEditMode && editingPrescriptionId != null) {
+                                                spinnerPatient.setEnabled(false);
+                                            }
                                         } else {
                                             spinnerPatient.setEnabled(true);
                                             Toast.makeText(getContext(), "Error loading patients: " +
@@ -174,6 +205,51 @@ public class DigitalPrescriptionPadFragment extends Fragment {
                                 (task.getException() != null ? task.getException().getMessage() : "Unknown error"),
                                 Toast.LENGTH_LONG).show();
                     }
+        });
+    }
+
+    private void loadPrescriptionForEdit(String prescriptionId) {
+        db.collection("prescriptions")
+                .document(prescriptionId)
+                .get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    if (!documentSnapshot.exists()) {
+                        Toast.makeText(getContext(), "Prescription not found", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+
+                    Prescription prescription = documentSnapshot.toObject(Prescription.class);
+                    if (prescription == null) {
+                        Toast.makeText(getContext(), "Failed to load prescription", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+
+                    // Populate instructions/notes
+                    if (prescription.getInstructions() != null) {
+                        editInstructions.setText(prescription.getInstructions());
+                    }
+                    if (prescription.getNotes() != null) {
+                        editNotes.setText(prescription.getNotes());
+                    }
+
+                    // Populate medications list
+                    medicationsList.clear();
+                    if (prescription.getMedications() != null) {
+                        medicationsList.addAll(prescription.getMedications());
+                    }
+
+                    // Try to select patient in spinner if available
+                    String patientId = prescription.getPatientId();
+                    editPatientIdToSelect = patientId;
+                    if (patientId != null && patientIds != null && !patientIds.isEmpty()) {
+                        int index = patientIds.indexOf(patientId);
+                        if (index >= 0) {
+                            spinnerPatient.setSelection(index);
+                        }
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(getContext(), "Failed to load prescription: " + e.getMessage(), Toast.LENGTH_LONG).show();
                 });
     }
 
@@ -269,8 +345,9 @@ public class DigitalPrescriptionPadFragment extends Fragment {
         prescriptionData.put("instructions", instructions);
         prescriptionData.put("notes", notes);
         prescriptionData.put("status", "active");
-        prescriptionData.put("createdAt", Timestamp.now());
-        prescriptionData.put("updatedAt", Timestamp.now());
+        prescriptionData.put("createdAt", System.currentTimeMillis());
+        prescriptionData.put("updatedAt", System.currentTimeMillis());
+        prescriptionData.put("prescribedDate", new Timestamp(new Date()));
         prescriptionData.put("expiryDate", expiryTimestamp);
         prescriptionData.put("appointmentId", null);
 
@@ -296,21 +373,80 @@ public class DigitalPrescriptionPadFragment extends Fragment {
                 });
     }
 
+    private void updatePrescription() {
+        if (editingPrescriptionId == null) {
+            Toast.makeText(getContext(), "Prescription ID is missing", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if (medicationsList.isEmpty()) {
+            Toast.makeText(getContext(), "Please add at least one medication", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        String instructions = editInstructions.getText().toString().trim();
+        String notes = editNotes.getText().toString().trim();
+
+        List<Map<String, Object>> medsMap = new ArrayList<>();
+        for (Prescription.Medication med : medicationsList) {
+            Map<String, Object> medMap = new HashMap<>();
+            medMap.put("name", med.getName());
+            medMap.put("dosage", med.getDosage());
+            medMap.put("frequency", med.getFrequency());
+            medMap.put("duration", med.getDuration());
+            medMap.put("quantity", med.getQuantity());
+            medsMap.add(medMap);
+        }
+
+        Map<String, Object> updates = new HashMap<>();
+        updates.put("medications", medsMap);
+        updates.put("instructions", instructions);
+        updates.put("notes", notes);
+        updates.put("updatedAt", System.currentTimeMillis());
+
+        db.collection("prescriptions")
+                .document(editingPrescriptionId)
+                .update(updates)
+                .addOnSuccessListener(aVoid -> {
+                    Toast.makeText(getContext(), "Prescription updated!", Toast.LENGTH_SHORT).show();
+                    if (getActivity() != null) {
+                        getActivity().getSupportFragmentManager().popBackStack();
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(getContext(), "Failed to update prescription: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                });
+    }
+
     private void updateAppointmentWithPrescription(String patientId, String prescriptionId) {
         // Find the most recent appointment with this patient to update with prescription reference
+        if (mAuth.getCurrentUser() == null) {
+            return;
+        }
         String doctorId = mAuth.getCurrentUser().getUid();
 
         db.collection("appointments")
                 .whereEqualTo("doctorId", doctorId)
                 .whereEqualTo("patientId", patientId)
-                .orderBy("scheduledTime", com.google.firebase.firestore.Query.Direction.DESCENDING) // Most recent first
-                .limit(1)
                 .get()
                 .addOnSuccessListener(querySnapshot -> {
                     if (!querySnapshot.isEmpty()) {
-                        // Get the most recent appointment
-                        com.google.firebase.firestore.DocumentSnapshot doc = querySnapshot.getDocuments().get(0);
-                        String appointmentId = doc.getId();
+                        // Pick the most recent appointment by appointmentDate
+                        com.google.firebase.firestore.DocumentSnapshot latestDoc = null;
+                        long latestTime = -1;
+                        for (com.google.firebase.firestore.DocumentSnapshot doc : querySnapshot.getDocuments()) {
+                            java.util.Date apptDate = doc.getDate("appointmentDate");
+                            long time = apptDate != null ? apptDate.getTime() : -1;
+                            if (time > latestTime) {
+                                latestTime = time;
+                                latestDoc = doc;
+                            }
+                        }
+
+                        if (latestDoc == null) {
+                            return;
+                        }
+                        String appointmentId = latestDoc.getId();
 
                         // Update the appointment with prescription reference
                         db.collection("appointments").document(appointmentId)

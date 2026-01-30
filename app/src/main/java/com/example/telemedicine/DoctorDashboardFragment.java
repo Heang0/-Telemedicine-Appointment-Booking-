@@ -184,7 +184,7 @@ public class DoctorDashboardFragment extends Fragment {
             textPendingPrescriptionsValue.setText(String.valueOf(count));
         });
 
-        // Today's patients: count appointments for today (simplified)
+        // Today's patients: count appointments for today (client-side filter to avoid composite index)
         if (mAuth.getCurrentUser() == null) {
             if (getContext() != null) {
                 android.widget.Toast.makeText(getContext(), "User not authenticated", android.widget.Toast.LENGTH_SHORT).show();
@@ -193,13 +193,23 @@ public class DoctorDashboardFragment extends Fragment {
         }
         String doctorId = mAuth.getCurrentUser().getUid();
         long todayStart = System.currentTimeMillis() - (System.currentTimeMillis() % (24 * 60 * 60 * 1000));
+        long todayEnd = todayStart + (24 * 60 * 60 * 1000);
         db.collection("appointments")
                 .whereEqualTo("doctorId", doctorId)
-                .whereGreaterThanOrEqualTo("appointmentDate", new java.util.Date(todayStart))
-                .whereLessThan("appointmentDate", new java.util.Date(todayStart + 24 * 60 * 60 * 1000))
                 .get()
                 .addOnSuccessListener(querySnapshot -> {
-                    textTodayPatientsValue.setText(String.valueOf(querySnapshot.size()));
+                    int count = 0;
+                    for (QueryDocumentSnapshot document : querySnapshot) {
+                        Appointment appointment = document.toObject(Appointment.class);
+                        java.util.Date apptDate = appointment.getAppointmentDate();
+                        if (apptDate != null) {
+                            long time = apptDate.getTime();
+                            if (time >= todayStart && time < todayEnd) {
+                                count++;
+                            }
+                        }
+                    }
+                    textTodayPatientsValue.setText(String.valueOf(count));
                 })
                 .addOnFailureListener(e -> {
                     textTodayPatientsValue.setText("0");

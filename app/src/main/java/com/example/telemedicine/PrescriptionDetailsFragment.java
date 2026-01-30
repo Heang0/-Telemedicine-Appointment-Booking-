@@ -12,6 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.text.SimpleDateFormat;
@@ -21,10 +22,12 @@ import java.util.Locale;
 public class PrescriptionDetailsFragment extends Fragment {
 
     private TextView textPatientName, textDoctorName, textDate, textStatus, textMedications, textInstructions, textNotes;
-    private Button btnBack;
+    private Button btnBack, btnEdit, btnDelete, btnMarkFilled;
 
     private String prescriptionId;
     private FirebaseFirestore db;
+    private FirebaseAuth mAuth;
+    private Prescription loadedPrescription;
 
     @Nullable
     @Override
@@ -32,6 +35,7 @@ public class PrescriptionDetailsFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_prescription_details, container, false);
 
         db = FirebaseFirestore.getInstance();
+        mAuth = FirebaseAuth.getInstance();
 
         // Get arguments
         Bundle args = getArguments();
@@ -54,12 +58,19 @@ public class PrescriptionDetailsFragment extends Fragment {
         textInstructions = view.findViewById(R.id.text_instructions);
         textNotes = view.findViewById(R.id.text_notes);
         btnBack = view.findViewById(R.id.btn_back);
+        btnEdit = view.findViewById(R.id.btn_edit);
+        btnDelete = view.findViewById(R.id.btn_delete);
+        btnMarkFilled = view.findViewById(R.id.btn_mark_filled);
 
         btnBack.setOnClickListener(v -> {
             if (getActivity() != null) {
                 getActivity().getSupportFragmentManager().popBackStack();
             }
         });
+
+        btnEdit.setOnClickListener(v -> openEditPrescription());
+        btnDelete.setOnClickListener(v -> deletePrescription());
+        btnMarkFilled.setOnClickListener(v -> markAsFilled());
     }
 
     private void loadPrescriptionDetails() {
@@ -74,6 +85,7 @@ public class PrescriptionDetailsFragment extends Fragment {
                 .addOnSuccessListener(documentSnapshot -> {
                     if (documentSnapshot.exists()) {
                         Prescription prescription = documentSnapshot.toObject(Prescription.class);
+                        loadedPrescription = prescription;
 
                         // Populate the UI with prescription data
                         if (textPatientName != null && prescription.getPatientName() != null) {
@@ -88,9 +100,13 @@ public class PrescriptionDetailsFragment extends Fragment {
                             textDoctorName.setText(doctorInfo);
                         }
 
-                        if (textDate != null && prescription.getPrescribedDate() != null) {
+                        if (textDate != null) {
                             SimpleDateFormat dateFormat = new SimpleDateFormat("MMM dd, yyyy", Locale.getDefault());
-                            textDate.setText(dateFormat.format(prescription.getPrescribedDate()));
+                            if (prescription.getPrescribedDate() != null) {
+                                textDate.setText(dateFormat.format(prescription.getPrescribedDate()));
+                            } else if (prescription.getCreatedAt() > 0) {
+                                textDate.setText(dateFormat.format(new Date(prescription.getCreatedAt())));
+                            }
                         }
 
                         if (textStatus != null && prescription.getStatus() != null) {
@@ -126,6 +142,8 @@ public class PrescriptionDetailsFragment extends Fragment {
                         if (textNotes != null && prescription.getNotes() != null) {
                             textNotes.setText(prescription.getNotes());
                         }
+
+                        updateActionButtons(prescription);
                     } else {
                         Toast.makeText(getContext(), "Prescription not found", Toast.LENGTH_SHORT).show();
                     }
@@ -133,6 +151,77 @@ public class PrescriptionDetailsFragment extends Fragment {
                 .addOnFailureListener(e -> {
                     Toast.makeText(getContext(), "Failed to load prescription: " + e.getMessage(), 
                             Toast.LENGTH_SHORT).show();
+                });
+    }
+
+    private void updateActionButtons(Prescription prescription) {
+        if (mAuth.getCurrentUser() == null || prescription == null) {
+            return;
+        }
+        String currentUserId = mAuth.getCurrentUser().getUid();
+        boolean isDoctor = currentUserId.equals(prescription.getDoctorId());
+        boolean isPatient = currentUserId.equals(prescription.getPatientId());
+
+        if (btnEdit != null) {
+            btnEdit.setVisibility(isDoctor ? View.VISIBLE : View.GONE);
+        }
+        if (btnDelete != null) {
+            btnDelete.setVisibility(isDoctor ? View.VISIBLE : View.GONE);
+        }
+        if (btnMarkFilled != null) {
+            btnMarkFilled.setVisibility(isPatient ? View.VISIBLE : View.GONE);
+        }
+    }
+
+    private void openEditPrescription() {
+        if (getActivity() == null || prescriptionId == null) {
+            return;
+        }
+        DigitalPrescriptionPadFragment editFragment = new DigitalPrescriptionPadFragment();
+        Bundle bundle = new Bundle();
+        bundle.putString("prescription_id", prescriptionId);
+        editFragment.setArguments(bundle);
+
+        getActivity().getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.fragment_container, editFragment)
+                .addToBackStack(null)
+                .commit();
+    }
+
+    private void deletePrescription() {
+        if (prescriptionId == null) {
+            Toast.makeText(getContext(), "Prescription ID is missing", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        db.collection("prescriptions")
+                .document(prescriptionId)
+                .delete()
+                .addOnSuccessListener(aVoid -> {
+                    Toast.makeText(getContext(), "Prescription deleted", Toast.LENGTH_SHORT).show();
+                    if (getActivity() != null) {
+                        getActivity().getSupportFragmentManager().popBackStack();
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(getContext(), "Failed to delete: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                });
+    }
+
+    private void markAsFilled() {
+        if (prescriptionId == null) {
+            Toast.makeText(getContext(), "Prescription ID is missing", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        db.collection("prescriptions")
+                .document(prescriptionId)
+                .update("status", "fulfilled", "updatedAt", System.currentTimeMillis())
+                .addOnSuccessListener(aVoid -> {
+                    Toast.makeText(getContext(), "Marked as filled", Toast.LENGTH_SHORT).show();
+                    loadPrescriptionDetails();
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(getContext(), "Failed to update status: " + e.getMessage(), Toast.LENGTH_LONG).show();
                 });
     }
 

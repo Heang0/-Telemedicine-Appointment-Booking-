@@ -70,6 +70,10 @@ public class PrescriptionManagerFragment extends Fragment implements Prescriptio
     }
 
     private void loadPrescriptions() {
+        if (mAuth.getCurrentUser() == null) {
+            Toast.makeText(getContext(), "User not authenticated", Toast.LENGTH_SHORT).show();
+            return;
+        }
         String doctorId = mAuth.getCurrentUser().getUid();
 
         // Remove previous listener if exists
@@ -79,7 +83,6 @@ public class PrescriptionManagerFragment extends Fragment implements Prescriptio
 
         prescriptionsListenerRegistration = db.collection("prescriptions")
                 .whereEqualTo("doctorId", doctorId)
-                .orderBy("createdAt", com.google.firebase.firestore.Query.Direction.DESCENDING)
                 .addSnapshotListener((querySnapshot, error) -> {
                     if (error != null) {
                         android.util.Log.e("PrescriptionManager", "Error loading prescriptions", error);
@@ -98,6 +101,7 @@ public class PrescriptionManagerFragment extends Fragment implements Prescriptio
                             prescriptions.add(prescription);
                         }
 
+                        prescriptions.sort((a, b) -> Long.compare(b.getCreatedAt(), a.getCreatedAt()));
                         adapter.updatePrescriptions(prescriptions);
                     }
                 });

@@ -75,26 +75,38 @@ public class DashboardViewModel extends AndroidViewModel {
                     }
                 });
 
-        // Load unread messages (simplified: count messages where read=false and recipient=userId)
+        // Load unread messages (client-side filter to avoid composite index)
         db.collection("messages")
                 .whereEqualTo("recipientId", userId)
-                .whereEqualTo("read", false)
                 .get()
                 .addOnSuccessListener(querySnapshot -> {
-                    unreadMessages.postValue(querySnapshot.size());
+                    int count = 0;
+                    for (QueryDocumentSnapshot doc : querySnapshot) {
+                        Boolean read = doc.getBoolean("read");
+                        if (read == null || !read) {
+                            count++;
+                        }
+                    }
+                    unreadMessages.postValue(count);
                 })
                 .addOnFailureListener(e -> {
                     Log.e(TAG, "Error loading unread messages", e);
                     unreadMessages.postValue(0);
                 });
 
-        // Load prescriptions due (simplified: count prescriptions with status="pending" and patientId=userId)
+        // Load prescriptions due (client-side filter to avoid composite index)
         db.collection("prescriptions")
                 .whereEqualTo("patientId", userId)
-                .whereEqualTo("status", "pending")
                 .get()
                 .addOnSuccessListener(querySnapshot -> {
-                    prescriptionsDue.postValue(querySnapshot.size());
+                    int count = 0;
+                    for (QueryDocumentSnapshot doc : querySnapshot) {
+                        String status = doc.getString("status");
+                        if ("pending".equalsIgnoreCase(status)) {
+                            count++;
+                        }
+                    }
+                    prescriptionsDue.postValue(count);
                 })
                 .addOnFailureListener(e -> {
                     Log.e(TAG, "Error loading prescriptions", e);
@@ -135,26 +147,38 @@ public class DashboardViewModel extends AndroidViewModel {
                     }
                 });
 
-        // Unread messages: same as patient (if doctor is recipient)
+        // Unread messages: client-side filter to avoid composite index
         db.collection("messages")
                 .whereEqualTo("recipientId", userId)
-                .whereEqualTo("read", false)
                 .get()
                 .addOnSuccessListener(querySnapshot -> {
-                    unreadMessages.postValue(querySnapshot.size());
+                    int count = 0;
+                    for (QueryDocumentSnapshot doc : querySnapshot) {
+                        Boolean read = doc.getBoolean("read");
+                        if (read == null || !read) {
+                            count++;
+                        }
+                    }
+                    unreadMessages.postValue(count);
                 })
                 .addOnFailureListener(e -> {
                     Log.e(TAG, "Error loading doctor unread messages", e);
                     unreadMessages.postValue(0);
                 });
 
-        // Prescriptions due: doctor may have prescriptions to approve
+        // Prescriptions due: client-side filter to avoid composite index
         db.collection("prescriptions")
                 .whereEqualTo("doctorId", userId)
-                .whereEqualTo("status", "pending")
                 .get()
                 .addOnSuccessListener(querySnapshot -> {
-                    prescriptionsDue.postValue(querySnapshot.size());
+                    int count = 0;
+                    for (QueryDocumentSnapshot doc : querySnapshot) {
+                        String status = doc.getString("status");
+                        if ("pending".equalsIgnoreCase(status)) {
+                            count++;
+                        }
+                    }
+                    prescriptionsDue.postValue(count);
                 })
                 .addOnFailureListener(e -> {
                     Log.e(TAG, "Error loading doctor prescriptions", e);

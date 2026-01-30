@@ -56,6 +56,10 @@ public class PatientPrescriptionsFragment extends Fragment implements Prescripti
     }
 
     private void loadPrescriptions() {
+        if (mAuth.getCurrentUser() == null) {
+            Toast.makeText(getContext(), "User not authenticated", Toast.LENGTH_SHORT).show();
+            return;
+        }
         String patientId = mAuth.getCurrentUser().getUid();
 
         // Remove previous listener if exists
@@ -64,8 +68,7 @@ public class PatientPrescriptionsFragment extends Fragment implements Prescripti
         }
 
         prescriptionsListenerRegistration = db.collection("prescriptions")
-                .whereEqualTo("patientId", patientId)
-                .orderBy("createdAt", com.google.firebase.firestore.Query.Direction.DESCENDING)
+                .whereArrayContains("patientIds", patientId)
                 .addSnapshotListener((querySnapshot, error) -> {
                     if (error != null) {
                         android.util.Log.e("PatientPrescriptions", "Error loading prescriptions", error);
@@ -82,6 +85,7 @@ public class PatientPrescriptionsFragment extends Fragment implements Prescripti
                             prescriptions.add(prescription);
                         }
 
+                        prescriptions.sort((a, b) -> Long.compare(b.getCreatedAt(), a.getCreatedAt()));
                         adapter.updatePrescriptions(prescriptions);
                     }
                 });
