@@ -59,53 +59,52 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <com.google.android.material.chip.ChipGroup
+            <LinearLayout
                 android:id="@+id/chip_group_actions"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
+                android:orientation="horizontal"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/text_quick_actions_title"
-                app:singleSelection="true">
+                app:layout_constraintTop_toBottomOf="@id/text_quick_actions_title">
 
-                <com.google.android.material.chip.Chip
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/chip_book_appointment"
-                    style="@style/Widget.Material3.Chip.Suggestion.Elevated"
+                    style="@style/Widget.Material3.Button.ElevatedButton"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_weight="1"
                     android:text="Book Appointment"
-                    android:drawableStart="@drawable/ic_calendar_today_24"
-                    app:chipIconSize="20dp"
-                    app:layout_constraintWidth_min="120dp"
-                    app:layout_constraintWidth_max="160dp"
-                    app:layout_constraintHorizontal_weight="1" />
+                    app:icon="@drawable/ic_calendar_today_24"
+                    app:iconGravity="textStart"
+                    app:iconPadding="8dp" />
 
-                <com.google.android.material.chip.Chip
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/chip_messages"
-                    style="@style/Widget.Material3.Chip.Suggestion.Elevated"
+                    style="@style/Widget.Material3.Button.ElevatedButton"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="8dp"
                     android:text="Messages"
-                    android:drawableStart="@drawable/ic_chat_bubble_24"
-                    app:chipIconSize="20dp"
-                    app:layout_constraintWidth_min="120dp"
-                    app:layout_constraintWidth_max="160dp"
-                    app:layout_constraintHorizontal_weight="1" />
+                    app:icon="@drawable/ic_chat_bubble_24"
+                    app:iconGravity="textStart"
+                    app:iconPadding="8dp" />
 
-                <com.google.android.material.chip.Chip
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/chip_medical_records"
-                    style="@style/Widget.Material3.Chip.Suggestion.Elevated"
+                    style="@style/Widget.Material3.Button.ElevatedButton"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="8dp"
                     android:text="Records"
-                    android:drawableStart="@drawable/ic_health_records_24"
-                    app:chipIconSize="20dp"
-                    app:layout_constraintWidth_min="120dp"
-                    app:layout_constraintWidth_max="160dp"
-                    app:layout_constraintHorizontal_weight="1" />
+                    app:icon="@drawable/ic_health_records_24"
+                    app:iconGravity="textStart"
+                    app:iconPadding="8dp" />
 
-            </com.google.android.material.chip.ChipGroup>
+            </LinearLayout>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

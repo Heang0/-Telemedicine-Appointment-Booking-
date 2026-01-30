@@ -44,6 +44,13 @@ public class DashboardViewModel extends AndroidViewModel {
     }
 
     public void loadPatientStats() {
+        if (mAuth.getCurrentUser() == null) {
+            Log.e(TAG, "No authenticated user for patient stats");
+            upcomingAppointments.postValue(new ArrayList<>());
+            unreadMessages.postValue(0);
+            prescriptionsDue.postValue(0);
+            return;
+        }
         String userId = mAuth.getCurrentUser().getUid();
 
         // Load upcoming appointments
@@ -97,6 +104,13 @@ public class DashboardViewModel extends AndroidViewModel {
 
     // For doctor: could override or add separate method
     public void loadDoctorStats() {
+        if (mAuth.getCurrentUser() == null) {
+            Log.e(TAG, "No authenticated user for doctor stats");
+            upcomingAppointments.postValue(new ArrayList<>());
+            unreadMessages.postValue(0);
+            prescriptionsDue.postValue(0);
+            return;
+        }
         String userId = mAuth.getCurrentUser().getUid();
 
         // Upcoming appointments for doctor

@@ -83,10 +83,15 @@ public class AppointmentAdapter extends RecyclerView.Adapter<AppointmentAdapter.
             textPatientName.setText(appointment.getPatientName());
 
             SimpleDateFormat dateFormat = new SimpleDateFormat("MMM dd, yyyy 'at' hh:mm a", Locale.getDefault());
-            textDate.setText(dateFormat.format(appointment.getAppointmentDate()));
+            if (appointment.getAppointmentDate() != null) {
+                textDate.setText(dateFormat.format(appointment.getAppointmentDate()));
+            } else {
+                textDate.setText("TBD");
+            }
 
             textStatus.setText(capitalizeFirstLetter(appointment.getStatus()));
-            textReason.setText("Reason: " + appointment.getReason());
+            String reason = appointment.getReason();
+            textReason.setText("Reason: " + (reason == null ? "N/A" : reason));
 
             // Set status color based on status
             if ("completed".equalsIgnoreCase(appointment.getStatus())) {

@@ -13,7 +13,6 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.material.chip.Chip;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -31,7 +30,7 @@ public class DoctorDashboardFragment extends Fragment {
     private TextView textDoctorName;
     private TextView textTodayPatientsValue, textPendingPrescriptionsValue, textUnreadMessagesValue, textAvailabilityValue;
     // Chips
-    private Chip chipNewConsult, chipMessages, chipPrescriptions;
+    private View chipNewConsult, chipMessages, chipPrescriptions;
 
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
@@ -73,6 +72,12 @@ public class DoctorDashboardFragment extends Fragment {
     }
 
     private void loadUserProfile() {
+        if (mAuth.getCurrentUser() == null) {
+            if (getContext() != null) {
+                android.widget.Toast.makeText(getContext(), "User not authenticated", android.widget.Toast.LENGTH_SHORT).show();
+            }
+            return;
+        }
         String userId = mAuth.getCurrentUser().getUid();
 
         db.collection("users")
@@ -113,6 +118,12 @@ public class DoctorDashboardFragment extends Fragment {
     }
 
     private void loadAppointments() {
+        if (mAuth.getCurrentUser() == null) {
+            if (getContext() != null) {
+                android.widget.Toast.makeText(getContext(), "User not authenticated", android.widget.Toast.LENGTH_SHORT).show();
+            }
+            return;
+        }
         String doctorId = mAuth.getCurrentUser().getUid();
 
         if (appointmentsListenerRegistration != null) {
@@ -141,8 +152,14 @@ public class DoctorDashboardFragment extends Fragment {
                         }
 
                         appointments.sort((a, b) -> {
-                            if (a.getAppointmentDate() == null || b.getAppointmentDate() == null) {
+                            if (a.getAppointmentDate() == null && b.getAppointmentDate() == null) {
                                 return 0;
+                            }
+                            if (a.getAppointmentDate() == null) {
+                                return 1;
+                            }
+                            if (b.getAppointmentDate() == null) {
+                                return -1;
                             }
                             return a.getAppointmentDate().compareTo(b.getAppointmentDate());
                         });
@@ -168,6 +185,12 @@ public class DoctorDashboardFragment extends Fragment {
         });
 
         // Today's patients: count appointments for today (simplified)
+        if (mAuth.getCurrentUser() == null) {
+            if (getContext() != null) {
+                android.widget.Toast.makeText(getContext(), "User not authenticated", android.widget.Toast.LENGTH_SHORT).show();
+            }
+            return;
+        }
         String doctorId = mAuth.getCurrentUser().getUid();
         long todayStart = System.currentTimeMillis() - (System.currentTimeMillis() % (24 * 60 * 60 * 1000));
         db.collection("appointments")

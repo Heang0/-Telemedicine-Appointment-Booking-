@@ -13,7 +13,6 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.material.chip.Chip;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -31,7 +30,7 @@ public class PatientDashboardFragment extends Fragment {
     // New health stats views
     private TextView textLastVisitValue, textNextAppointmentValue, textMedicationsValue, textAllergiesValue;
     // New chips
-    private Chip chipBookAppointment, chipMessages, chipMedicalRecords;
+    private View chipBookAppointment, chipMessages, chipMedicalRecords;
 
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
@@ -79,6 +78,12 @@ public class PatientDashboardFragment extends Fragment {
     }
 
     private void loadUserProfile() {
+        if (mAuth.getCurrentUser() == null) {
+            if (getContext() != null) {
+                android.widget.Toast.makeText(getContext(), "User not authenticated", android.widget.Toast.LENGTH_SHORT).show();
+            }
+            return;
+        }
         String userId = mAuth.getCurrentUser().getUid();
 
         db.collection("users")
@@ -104,6 +109,12 @@ public class PatientDashboardFragment extends Fragment {
     }
 
     private void loadUpcomingAppointments() {
+        if (mAuth.getCurrentUser() == null) {
+            if (getContext() != null) {
+                android.widget.Toast.makeText(getContext(), "User not authenticated", android.widget.Toast.LENGTH_SHORT).show();
+            }
+            return;
+        }
         String userId = mAuth.getCurrentUser().getUid();
 
         // Remove previous listener if exists
@@ -132,7 +143,18 @@ public class PatientDashboardFragment extends Fragment {
                         }
 
                         // Sort by date (closest first)
-                        upcomingAppointments.sort((a, b) -> a.getAppointmentDate().compareTo(b.getAppointmentDate()));
+                        upcomingAppointments.sort((a, b) -> {
+                            if (a.getAppointmentDate() == null && b.getAppointmentDate() == null) {
+                                return 0;
+                            }
+                            if (a.getAppointmentDate() == null) {
+                                return 1;
+                            }
+                            if (b.getAppointmentDate() == null) {
+                                return -1;
+                            }
+                            return a.getAppointmentDate().compareTo(b.getAppointmentDate());
+                        });
 
                         // Limit to 3 upcoming appointments
                         if (upcomingAppointments.size() > 3) {
@@ -145,6 +167,12 @@ public class PatientDashboardFragment extends Fragment {
     }
 
     private void loadHealthStats() {
+        if (mAuth.getCurrentUser() == null) {
+            if (getContext() != null) {
+                android.widget.Toast.makeText(getContext(), "User not authenticated", android.widget.Toast.LENGTH_SHORT).show();
+            }
+            return;
+        }
         String userId = mAuth.getCurrentUser().getUid();
 
         db.collection("users")
