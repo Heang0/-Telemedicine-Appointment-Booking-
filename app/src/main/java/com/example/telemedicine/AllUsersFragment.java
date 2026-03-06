@@ -22,7 +22,7 @@ public class AllUsersFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_users_list, container, false);
 
-        recyclerView = view.findViewById(R.id.recycler_view);
+        recyclerView = view.findViewById(R.id.recycler_users);
         userList = new java.util.ArrayList<>();
         userAdapter = new UserAdapter(userList);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));

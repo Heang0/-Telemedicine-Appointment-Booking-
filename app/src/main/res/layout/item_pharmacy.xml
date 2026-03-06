@@ -1,100 +1,115 @@
-<?xml version="1.0" encoding="utf-8"?>
-<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+﻿<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="8dp"
-    app:cardCornerRadius="12dp"
-    app:cardElevation="4dp">
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <TextView
+        android:id="@+id/textViewPharmacyName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Pharmacy Name"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:textColor="@color/blue_800" />
+
+    <TextView
+        android:id="@+id/textViewPharmacyAddress"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Address"
+        android:textSize="14sp"
+        android:textColor="@color/gray_600"
+        android:layout_marginTop="4dp" />
+
+    <TextView
+        android:id="@+id/textViewPharmacyPhone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Phone: (555) 123-4567"
+        android:textSize="14sp"
+        android:textColor="@color/gray_600"
+        android:layout_marginTop="4dp" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="16dp">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginBottom="8dp">
-
-            <TextView
-                android:id="@+id/pharmacy_name"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="CVS Pharmacy"
-                android:textSize="16sp"
-                android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/pharmacy_distance"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="0.5 mi"
-                android:textSize="14sp"
-                android:textColor="@color/design_default_color_primary" />
-
-        </LinearLayout>
+        android:orientation="horizontal"
+        android:layout_marginTop="8dp">
 
         <TextView
-            android:id="@+id/pharmacy_address"
-            android:layout_width="match_parent"
+            android:id="@+id/textViewPharmacyDistance"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="123 Main St, New York, NY 10001"
-            android:textSize="14sp"
-            android:layout_marginBottom="4dp" />
-
-        <TextView
-            android:id="@+id/pharmacy_hours"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Open until 10:00 PM"
-            android:textSize="14sp"
-            android:layout_marginBottom="4dp" />
-
-        <TextView
-            android:id="@+id/pharmacy_phone"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="(555) 123-4567"
-            android:textSize="14sp"
-            android:layout_marginBottom="8dp" />
-
-        <TextView
-            android:id="@+id/pharmacy_status"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="OPEN NOW"
+            android:layout_weight="1"
+            android:text="0.5 mi"
             android:textSize="12sp"
-            android:textStyle="bold"
-            android:layout_marginBottom="12dp" />
+            android:textColor="@color/gray_600" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
+        <TextView
+            android:id="@+id/textViewPharmacyHours"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <Button
-                android:id="@+id/btn_directions"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Directions"
-                android:layout_marginEnd="8dp"
-                style="@style/Widget.Material3.Button.OutlinedButton" />
-
-            <Button
-                android:id="@+id/btn_call"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Call"
-                android:layout_marginStart="8dp" />
-
-        </LinearLayout>
+            android:layout_weight="1"
+            android:text="9AM–9PM"
+            android:textSize="12sp"
+            android:textColor="@color/gray_600"
+            android:gravity="end" />
 
     </LinearLayout>
 
-</com.google.android.material.card.MaterialCardView>
+    <TextView
+        android:id="@+id/textViewPharmacyStatus"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="OPEN NOW"
+        android:textSize="12sp"
+        android:textStyle="bold"
+        android:textColor="@color/holo_green_dark"
+        android:layout_marginTop="4dp" />
+
+    <TextView
+        android:id="@+id/textViewPharmacyRating"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="★ 4.5 (120 reviews)"
+        android:textSize="12sp"
+        android:textColor="@color/blue_600"
+        android:layout_marginTop="4dp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="12dp"
+        android:gravity="center_vertical">
+
+        <Button
+            android:id="@+id/btnDirections"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Directions"
+            android:textSize="12sp"
+            android:backgroundTint="@color/blue_500"
+            android:textColor="@color/white"
+            android:insetTop="0dp"
+            android:insetBottom="0dp" />
+
+        <Button
+            android:id="@+id/btnCall"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Call"
+            android:textSize="12sp"
+            android:backgroundTint="@color/gray_300"
+            android:textColor="@color/black"
+            android:insetTop="0dp"
+            android:insetBottom="0dp"
+            android:layout_marginStart="8dp" />
+
+    </LinearLayout>
+
+</LinearLayout>

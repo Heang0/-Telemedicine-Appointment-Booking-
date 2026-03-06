@@ -1,103 +1,202 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!-- iOS-Style Patient Registration Screen -->
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp">
+    android:background="@color/ios_background"
+    android:fillViewport="true">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:paddingHorizontal="20dp"
+        android:paddingTop="56dp"
+        android:paddingBottom="40dp">
+
+        <!-- Header -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Patient Profile"
+            android:textSize="30sp"
+            android:textStyle="bold"
+            android:textColor="@color/ios_text_primary"
+            android:letterSpacing="-0.02"
+            android:layout_marginBottom="6dp"/>
 
         <TextView
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Patient Registration"
-            android:textSize="24sp"
-            android:textStyle="bold"
-            android:layout_marginBottom="24dp"
-            android:gravity="center" />
+            android:text="Complete your health profile"
+            android:textSize="15sp"
+            android:textColor="@color/ios_text_secondary"
+            android:layout_marginBottom="28dp"/>
 
+        <!-- Personal Information Card -->
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:cardCornerRadius="12dp"
-            app:cardElevation="4dp"
+            app:cardBackgroundColor="@color/ios_card_background"
+            app:cardCornerRadius="20dp"
+            app:cardElevation="0dp"
+            app:strokeColor="@color/ios_divider"
+            app:strokeWidth="0dp"
             android:layout_marginBottom="16dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="16dp">
+                android:padding="20dp">
 
                 <TextView
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Personal Information"
-                    android:textSize="18sp"
+                    android:text="PERSONAL INFORMATION"
+                    android:textSize="12sp"
                     android:textStyle="bold"
-                    android:layout_marginBottom="16dp" />
+                    android:textColor="@color/ios_text_secondary"
+                    android:letterSpacing="0.06"
+                    android:layout_marginBottom="16dp"/>
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="16dp">
+                    android:hint="First Name"
+                    app:boxBackgroundMode="outline"
+                    app:boxStrokeColor="@color/ios_blue"
+                    app:boxStrokeWidth="1dp"
+                    app:boxStrokeWidthFocused="2dp"
+                    app:boxCornerRadiusTopStart="12dp"
+                    app:boxCornerRadiusTopEnd="12dp"
+                    app:boxCornerRadiusBottomStart="12dp"
+                    app:boxCornerRadiusBottomEnd="12dp"
+                    app:startIconDrawable="@drawable/ic_person_24"
+                    app:startIconTint="@color/ios_text_secondary"
+                    android:layout_marginBottom="14dp">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/edit_first_name"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="First Name" />
-
+                        android:inputType="textPersonName"
+                        android:textSize="16sp"
+                        android:textColor="@color/ios_text_primary"/>
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="16dp">
+                    android:hint="Last Name"
+                    app:boxBackgroundMode="outline"
+                    app:boxStrokeColor="@color/ios_blue"
+                    app:boxStrokeWidth="1dp"
+                    app:boxStrokeWidthFocused="2dp"
+                    app:boxCornerRadiusTopStart="12dp"
+                    app:boxCornerRadiusTopEnd="12dp"
+                    app:boxCornerRadiusBottomStart="12dp"
+                    app:boxCornerRadiusBottomEnd="12dp"
+                    app:startIconDrawable="@drawable/ic_person_24"
+                    app:startIconTint="@color/ios_text_secondary"
+                    android:layout_marginBottom="14dp">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/edit_last_name"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="Last Name" />
-
+                        android:inputType="textPersonName"
+                        android:textSize="16sp"
+                        android:textColor="@color/ios_text_primary"/>
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="16dp">
+                    android:hint="Email Address"
+                    app:boxBackgroundMode="outline"
+                    app:boxStrokeColor="@color/ios_blue"
+                    app:boxStrokeWidth="1dp"
+                    app:boxStrokeWidthFocused="2dp"
+                    app:boxCornerRadiusTopStart="12dp"
+                    app:boxCornerRadiusTopEnd="12dp"
+                    app:boxCornerRadiusBottomStart="12dp"
+                    app:boxCornerRadiusBottomEnd="12dp"
+                    app:startIconDrawable="@drawable/ic_baseline_email_24"
+                    app:startIconTint="@color/ios_text_secondary"
+                    android:layout_marginBottom="14dp">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/edit_email"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="Email Address" />
-
+                        android:inputType="textEmailAddress"
+                        android:textSize="16sp"
+                        android:textColor="@color/ios_text_primary"/>
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="16dp">
+                    android:hint="Phone Number"
+                    app:boxBackgroundMode="outline"
+                    app:boxStrokeColor="@color/ios_blue"
+                    app:boxStrokeWidth="1dp"
+                    app:boxStrokeWidthFocused="2dp"
+                    app:boxCornerRadiusTopStart="12dp"
+                    app:boxCornerRadiusTopEnd="12dp"
+                    app:boxCornerRadiusBottomStart="12dp"
+                    app:boxCornerRadiusBottomEnd="12dp"
+                    app:startIconDrawable="@drawable/ic_phone_24"
+                    app:startIconTint="@color/ios_text_secondary">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/edit_phone"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="Phone Number" />
-
+                        android:inputType="phone"
+                        android:textSize="16sp"
+                        android:textColor="@color/ios_text_primary"/>
                 </com.google.android.material.textfield.TextInputLayout>
+
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Date of Birth Card -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardBackgroundColor="@color/ios_card_background"
+            app:cardCornerRadius="20dp"
+            app:cardElevation="0dp"
+            app:strokeColor="@color/ios_divider"
+            app:strokeWidth="0dp"
+            android:layout_marginBottom="16dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="20dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="DATE OF BIRTH &amp; GENDER"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/ios_text_secondary"
+                    android:letterSpacing="0.06"
+                    android:layout_marginBottom="16dp"/>
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Date of Birth"
-                    android:textSize="16sp"
-                    android:layout_marginBottom="8dp" />
+                    android:textSize="14sp"
+                    android:textColor="@color/ios_text_secondary"
+                    android:layout_marginBottom="8dp"/>
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -108,175 +207,250 @@
                     <Spinner
                         android:id="@+id/spinner_month"
                         android:layout_width="0dp"
-                        android:layout_height="wrap_content"
+                        android:layout_height="48dp"
                         android:layout_weight="1"
-                        android:layout_marginEnd="8dp" />
+                        android:layout_marginEnd="6dp"
+                        android:background="@drawable/input_field_background_modern"
+                        android:padding="12dp"/>
 
                     <Spinner
                         android:id="@+id/spinner_day"
                         android:layout_width="0dp"
-                        android:layout_height="wrap_content"
+                        android:layout_height="48dp"
                         android:layout_weight="1"
-                        android:layout_marginHorizontal="4dp" />
+                        android:layout_marginHorizontal="6dp"
+                        android:background="@drawable/input_field_background_modern"
+                        android:padding="12dp"/>
 
                     <Spinner
                         android:id="@+id/spinner_year"
                         android:layout_width="0dp"
-                        android:layout_height="wrap_content"
+                        android:layout_height="48dp"
                         android:layout_weight="1"
-                        android:layout_marginStart="8dp" />
-
+                        android:layout_marginStart="6dp"
+                        android:background="@drawable/input_field_background_modern"
+                        android:padding="12dp"/>
                 </LinearLayout>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Gender"
+                    android:textSize="14sp"
+                    android:textColor="@color/ios_text_secondary"
+                    android:layout_marginBottom="8dp"/>
 
                 <RadioGroup
                     android:id="@+id/radio_group_gender"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginBottom="16dp">
+                    android:orientation="horizontal">
 
                     <RadioButton
                         android:id="@+id/radio_male"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Male"
-                        android:layout_marginEnd="16dp" />
+                        android:textSize="15sp"
+                        android:textColor="@color/ios_text_primary"
+                        android:buttonTint="@color/ios_blue"
+                        android:layout_marginEnd="24dp"/>
 
                     <RadioButton
                         android:id="@+id/radio_female"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Female" />
-
+                        android:text="Female"
+                        android:textSize="15sp"
+                        android:textColor="@color/ios_text_primary"
+                        android:buttonTint="@color/ios_blue"/>
                 </RadioGroup>
 
             </LinearLayout>
-
         </com.google.android.material.card.MaterialCardView>
 
+        <!-- Medical History Card -->
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:cardCornerRadius="12dp"
-            app:cardElevation="4dp"
+            app:cardBackgroundColor="@color/ios_card_background"
+            app:cardCornerRadius="20dp"
+            app:cardElevation="0dp"
+            app:strokeColor="@color/ios_divider"
+            app:strokeWidth="0dp"
             android:layout_marginBottom="16dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="16dp">
+                android:padding="20dp">
 
                 <TextView
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Medical History"
-                    android:textSize="18sp"
+                    android:text="MEDICAL HISTORY"
+                    android:textSize="12sp"
                     android:textStyle="bold"
-                    android:layout_marginBottom="16dp" />
+                    android:textColor="@color/ios_text_secondary"
+                    android:letterSpacing="0.06"
+                    android:layout_marginBottom="16dp"/>
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="16dp">
+                    android:hint="Current Medical Conditions"
+                    app:boxBackgroundMode="outline"
+                    app:boxStrokeColor="@color/ios_blue"
+                    app:boxStrokeWidth="1dp"
+                    app:boxStrokeWidthFocused="2dp"
+                    app:boxCornerRadiusTopStart="12dp"
+                    app:boxCornerRadiusTopEnd="12dp"
+                    app:boxCornerRadiusBottomStart="12dp"
+                    app:boxCornerRadiusBottomEnd="12dp"
+                    android:layout_marginBottom="14dp">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/edit_medical_conditions"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="Current Medical Conditions" />
-
+                        android:inputType="textMultiLine"
+                        android:minLines="2"
+                        android:textSize="16sp"
+                        android:textColor="@color/ios_text_primary"/>
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="16dp">
+                    android:hint="Allergies"
+                    app:boxBackgroundMode="outline"
+                    app:boxStrokeColor="@color/ios_blue"
+                    app:boxStrokeWidth="1dp"
+                    app:boxStrokeWidthFocused="2dp"
+                    app:boxCornerRadiusTopStart="12dp"
+                    app:boxCornerRadiusTopEnd="12dp"
+                    app:boxCornerRadiusBottomStart="12dp"
+                    app:boxCornerRadiusBottomEnd="12dp"
+                    android:layout_marginBottom="14dp">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/edit_allergies"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="Allergies" />
-
+                        android:textSize="16sp"
+                        android:textColor="@color/ios_text_primary"/>
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="16dp">
+                    android:hint="Current Medications"
+                    app:boxBackgroundMode="outline"
+                    app:boxStrokeColor="@color/ios_blue"
+                    app:boxStrokeWidth="1dp"
+                    app:boxStrokeWidthFocused="2dp"
+                    app:boxCornerRadiusTopStart="12dp"
+                    app:boxCornerRadiusTopEnd="12dp"
+                    app:boxCornerRadiusBottomStart="12dp"
+                    app:boxCornerRadiusBottomEnd="12dp">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/edit_current_medications"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="Current Medications" />
-
+                        android:textSize="16sp"
+                        android:textColor="@color/ios_text_primary"/>
                 </com.google.android.material.textfield.TextInputLayout>
 
             </LinearLayout>
-
         </com.google.android.material.card.MaterialCardView>
 
+        <!-- Insurance Card -->
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:cardCornerRadius="12dp"
-            app:cardElevation="4dp"
-            android:layout_marginBottom="16dp">
+            app:cardBackgroundColor="@color/ios_card_background"
+            app:cardCornerRadius="20dp"
+            app:cardElevation="0dp"
+            app:strokeColor="@color/ios_divider"
+            app:strokeWidth="0dp"
+            android:layout_marginBottom="24dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="16dp">
+                android:padding="20dp">
 
                 <TextView
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Insurance Information"
-                    android:textSize="18sp"
+                    android:text="INSURANCE INFORMATION"
+                    android:textSize="12sp"
                     android:textStyle="bold"
-                    android:layout_marginBottom="16dp" />
+                    android:textColor="@color/ios_text_secondary"
+                    android:letterSpacing="0.06"
+                    android:layout_marginBottom="16dp"/>
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="16dp">
+                    android:hint="Insurance Provider"
+                    app:boxBackgroundMode="outline"
+                    app:boxStrokeColor="@color/ios_blue"
+                    app:boxStrokeWidth="1dp"
+                    app:boxStrokeWidthFocused="2dp"
+                    app:boxCornerRadiusTopStart="12dp"
+                    app:boxCornerRadiusTopEnd="12dp"
+                    app:boxCornerRadiusBottomStart="12dp"
+                    app:boxCornerRadiusBottomEnd="12dp"
+                    android:layout_marginBottom="14dp">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/edit_insurance_provider"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="Insurance Provider" />
-
+                        android:textSize="16sp"
+                        android:textColor="@color/ios_text_primary"/>
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="16dp">
+                    android:hint="Policy Number"
+                    app:boxBackgroundMode="outline"
+                    app:boxStrokeColor="@color/ios_blue"
+                    app:boxStrokeWidth="1dp"
+                    app:boxStrokeWidthFocused="2dp"
+                    app:boxCornerRadiusTopStart="12dp"
+                    app:boxCornerRadiusTopEnd="12dp"
+                    app:boxCornerRadiusBottomStart="12dp"
+                    app:boxCornerRadiusBottomEnd="12dp">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/edit_policy_number"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="Policy Number" />
-
+                        android:textSize="16sp"
+                        android:textColor="@color/ios_text_primary"/>
                 </com.google.android.material.textfield.TextInputLayout>
 
             </LinearLayout>
-
         </com.google.android.material.card.MaterialCardView>
 
-        <Button
+        <!-- Submit Button -->
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_register"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="56dp"
             android:text="Complete Registration"
-            android:textSize="16sp"
-            android:padding="12dp" />
+            android:textSize="17sp"
+            android:textStyle="bold"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            app:backgroundTint="@color/ios_blue"
+            app:cornerRadius="14dp"/>
 
     </LinearLayout>
-
 </ScrollView>

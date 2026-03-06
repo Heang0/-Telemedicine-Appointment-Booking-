@@ -72,7 +72,8 @@ public class RecordCategoryAdapter extends RecyclerView.Adapter<RecordCategoryAd
         public void bind(RecordCategory category) {
             titleText.setText(category.getTitle());
             descriptionText.setText(category.getDescription());
-            countText.setText(String.valueOf(category.getRecordCount()));
+            int count = category.getRecordCount();
+            countText.setText(count == 1 ? "1 record" : count + " records");
             iconImage.setImageResource(category.getIconResId());
         }
     }

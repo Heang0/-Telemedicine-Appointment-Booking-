@@ -1,144 +1,233 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!-- iOS-Style Registration Screen -->
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="24dp">
+    android:background="@color/ios_background"
+    android:fillViewport="true">
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:paddingHorizontal="@dimen/ios_page_horizontal_padding"
+        android:paddingTop="@dimen/ios_header_top_padding"
+        android:paddingBottom="40dp">
 
+        <!-- Logo -->
+        <ImageView
+            android:id="@+id/image_logo"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:src="@drawable/ic_medical_records"
+            android:contentDescription="App Logo"
+            app:tint="@color/ios_blue"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+        <!-- Title -->
         <TextView
-            android:layout_width="match_parent"
+            android:id="@+id/text_title"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Create Account"
-            android:textSize="28sp"
+            android:textSize="@dimen/ios_header_title_size"
             android:textStyle="bold"
-            android:gravity="center"
-            android:layout_marginBottom="8dp" />
+            android:textColor="@color/ios_text_primary"
+            android:letterSpacing="-0.02"
+            android:layout_marginTop="16dp"
+            android:maxLines="1"
+            android:ellipsize="end"
+            app:layout_constraintTop_toBottomOf="@id/image_logo"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
 
+        <!-- Subtitle -->
         <TextView
-            android:layout_width="match_parent"
+            android:id="@+id/text_subtitle"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Select your account type"
-            android:textSize="16sp"
-            android:gravity="center"
-            android:layout_marginBottom="32dp"
-            android:textColor="@color/material_on_surface_emphasis_medium" />
+            android:text="Create your patient account to get started"
+            android:textSize="15sp"
+            android:textColor="@color/ios_text_secondary"
+            android:layout_marginTop="8dp"
+            app:layout_constraintTop_toBottomOf="@id/text_title"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
 
+        <!-- Personal Info Card -->
         <com.google.android.material.card.MaterialCardView
-            android:layout_width="match_parent"
+            android:id="@+id/card_personal_info"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            app:cardCornerRadius="12dp"
-            app:cardElevation="4dp"
-            android:layout_marginBottom="16dp">
+            app:cardBackgroundColor="@color/ios_card_background"
+            app:cardCornerRadius="20dp"
+            app:cardElevation="0dp"
+            app:strokeColor="@color/ios_divider"
+            app:strokeWidth="0dp"
+            android:layout_marginTop="32dp"
+            app:layout_constraintTop_toBottomOf="@id/text_subtitle"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="16dp">
+                android:padding="20dp">
 
                 <TextView
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Personal Information"
-                    android:textSize="18sp"
+                    android:text="PERSONAL INFORMATION"
+                    android:textSize="12sp"
                     android:textStyle="bold"
-                    android:layout_marginBottom="16dp" />
+                    android:textColor="@color/ios_text_secondary"
+                    android:letterSpacing="0.06"
+                    android:layout_marginBottom="16dp"/>
 
+                <!-- Full Name -->
                 <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="16dp"
+                    android:hint="Full Name"
+                    app:boxBackgroundMode="outline"
+                    app:boxStrokeColor="@color/ios_blue"
+                    app:boxStrokeWidth="1dp"
+                    app:boxStrokeWidthFocused="2dp"
+                    app:boxCornerRadiusTopStart="12dp"
+                    app:boxCornerRadiusTopEnd="12dp"
+                    app:boxCornerRadiusBottomStart="12dp"
+                    app:boxCornerRadiusBottomEnd="12dp"
                     app:startIconDrawable="@drawable/ic_person_24"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+                    app:startIconTint="@color/ios_text_secondary"
+                    android:layout_marginBottom="14dp">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/edit_full_name"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="Full Name"
-                        android:inputType="textPersonName" />
-
+                        android:inputType="textPersonName"
+                        android:textSize="16sp"
+                        android:textColor="@color/ios_text_primary"/>
                 </com.google.android.material.textfield.TextInputLayout>
 
+                <!-- Email -->
                 <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="16dp"
+                    android:hint="Email Address"
+                    app:boxBackgroundMode="outline"
+                    app:boxStrokeColor="@color/ios_blue"
+                    app:boxStrokeWidth="1dp"
+                    app:boxStrokeWidthFocused="2dp"
+                    app:boxCornerRadiusTopStart="12dp"
+                    app:boxCornerRadiusTopEnd="12dp"
+                    app:boxCornerRadiusBottomStart="12dp"
+                    app:boxCornerRadiusBottomEnd="12dp"
                     app:startIconDrawable="@drawable/ic_baseline_email_24"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+                    app:startIconTint="@color/ios_text_secondary"
+                    android:layout_marginBottom="14dp">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/edit_email"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="Email Address"
-                        android:inputType="textEmailAddress" />
-
+                        android:inputType="textEmailAddress"
+                        android:textSize="16sp"
+                        android:textColor="@color/ios_text_primary"/>
                 </com.google.android.material.textfield.TextInputLayout>
 
+                <!-- Password -->
                 <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="16dp"
+                    android:hint="Password"
+                    app:boxBackgroundMode="outline"
+                    app:boxStrokeColor="@color/ios_blue"
+                    app:boxStrokeWidth="1dp"
+                    app:boxStrokeWidthFocused="2dp"
+                    app:boxCornerRadiusTopStart="12dp"
+                    app:boxCornerRadiusTopEnd="12dp"
+                    app:boxCornerRadiusBottomStart="12dp"
+                    app:boxCornerRadiusBottomEnd="12dp"
                     app:startIconDrawable="@drawable/ic_baseline_lock_24"
+                    app:startIconTint="@color/ios_text_secondary"
                     app:endIconMode="password_toggle"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+                    app:endIconTint="@color/ios_text_secondary"
+                    android:layout_marginBottom="14dp">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/edit_password"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="Password"
-                        android:inputType="textPassword" />
-
+                        android:inputType="textPassword"
+                        android:textSize="16sp"
+                        android:textColor="@color/ios_text_primary"/>
                 </com.google.android.material.textfield.TextInputLayout>
 
+                <!-- Confirm Password -->
                 <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="24dp"
+                    android:hint="Confirm Password"
+                    app:boxBackgroundMode="outline"
+                    app:boxStrokeColor="@color/ios_blue"
+                    app:boxStrokeWidth="1dp"
+                    app:boxStrokeWidthFocused="2dp"
+                    app:boxCornerRadiusTopStart="12dp"
+                    app:boxCornerRadiusTopEnd="12dp"
+                    app:boxCornerRadiusBottomStart="12dp"
+                    app:boxCornerRadiusBottomEnd="12dp"
                     app:startIconDrawable="@drawable/ic_baseline_lock_24"
+                    app:startIconTint="@color/ios_text_secondary"
                     app:endIconMode="password_toggle"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+                    app:endIconTint="@color/ios_text_secondary">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/edit_confirm_password"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="Confirm Password"
-                        android:inputType="textPassword" />
-
+                        android:inputType="textPassword"
+                        android:textSize="16sp"
+                        android:textColor="@color/ios_text_primary"/>
                 </com.google.android.material.textfield.TextInputLayout>
 
             </LinearLayout>
-
         </com.google.android.material.card.MaterialCardView>
 
+        <!-- Account Type Card -->
         <com.google.android.material.card.MaterialCardView
-            android:layout_width="match_parent"
+            android:id="@+id/card_account_type"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            app:cardCornerRadius="12dp"
-            app:cardElevation="4dp"
-            android:layout_marginBottom="24dp">
+            android:visibility="gone"
+            app:cardBackgroundColor="@color/ios_card_background"
+            app:cardCornerRadius="20dp"
+            app:cardElevation="0dp"
+            app:strokeColor="@color/ios_divider"
+            app:strokeWidth="0dp"
+            android:layout_marginTop="16dp"
+            app:layout_constraintTop_toBottomOf="@id/card_personal_info"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="16dp">
+                android:padding="20dp">
 
                 <TextView
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Account Type"
-                    android:textSize="18sp"
+                    android:text="ACCOUNT TYPE"
+                    android:textSize="12sp"
                     android:textStyle="bold"
-                    android:layout_marginBottom="16dp" />
+                    android:textColor="@color/ios_text_secondary"
+                    android:letterSpacing="0.06"
+                    android:layout_marginBottom="16dp"/>
 
                 <RadioGroup
                     android:id="@+id/radio_group_role"
@@ -146,107 +235,252 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
 
-                    <RadioButton
-                        android:id="@+id/radio_patient"
+                    <!-- Patient option -->
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Patient"
-                        android:layout_marginBottom="8dp"
-                        android:checked="true" />
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:paddingVertical="12dp"
+                        android:paddingHorizontal="4dp">
 
-                    <RadioButton
-                        android:id="@+id/radio_doctor"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Doctor"
-                        android:layout_marginBottom="8dp" />
+                        <RadioButton
+                            android:id="@+id/radio_patient"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:checked="true"
+                            android:buttonTint="@color/ios_blue"/>
 
-                    <RadioButton
-                        android:id="@+id/radio_admin"
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical"
+                            android:layout_marginStart="12dp">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Patient"
+                                android:textSize="16sp"
+                                android:textStyle="bold"
+                                android:textColor="@color/ios_text_primary"/>
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Book appointments and manage your health"
+                                android:textSize="13sp"
+                                android:textColor="@color/ios_text_secondary"
+                                android:layout_marginTop="2dp"/>
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@color/ios_divider"
+                        android:layout_marginStart="44dp"/>
+
+                    <!-- Doctor option -->
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Admin"
-                        android:layout_marginBottom="8dp" />
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:paddingVertical="12dp"
+                        android:paddingHorizontal="4dp">
+
+                        <RadioButton
+                            android:id="@+id/radio_doctor"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:buttonTint="@color/ios_blue"/>
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical"
+                            android:layout_marginStart="12dp">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Doctor"
+                                android:textSize="16sp"
+                                android:textStyle="bold"
+                                android:textColor="@color/ios_text_primary"/>
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Manage patients and consultations"
+                                android:textSize="13sp"
+                                android:textColor="@color/ios_text_secondary"
+                                android:layout_marginTop="2dp"/>
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@color/ios_divider"
+                        android:layout_marginStart="44dp"/>
+
+                    <!-- Admin option -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:paddingVertical="12dp"
+                        android:paddingHorizontal="4dp">
+
+                        <RadioButton
+                            android:id="@+id/radio_admin"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:buttonTint="@color/ios_blue"/>
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical"
+                            android:layout_marginStart="12dp">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Admin"
+                                android:textSize="16sp"
+                                android:textStyle="bold"
+                                android:textColor="@color/ios_text_primary"/>
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Platform administration access"
+                                android:textSize="13sp"
+                                android:textColor="@color/ios_text_secondary"
+                                android:layout_marginTop="2dp"/>
+                        </LinearLayout>
+                    </LinearLayout>
 
                 </RadioGroup>
 
-                <!-- Doctor-specific fields (visible only when doctor is selected) -->
+                <!-- Doctor specific fields -->
                 <LinearLayout
                     android:id="@+id/layout_doctor_fields"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:visibility="gone">
+                    android:visibility="gone"
+                    android:layout_marginTop="8dp">
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@color/ios_divider"
+                        android:layout_marginBottom="16dp"/>
 
                     <com.google.android.material.textfield.TextInputLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="16dp"
-                        android:hint="Medical Specialty">
+                        android:hint="Medical Specialty"
+                        app:boxBackgroundMode="outline"
+                        app:boxStrokeColor="@color/ios_blue"
+                        app:boxStrokeWidth="1dp"
+                        app:boxStrokeWidthFocused="2dp"
+                        app:boxCornerRadiusTopStart="12dp"
+                        app:boxCornerRadiusTopEnd="12dp"
+                        app:boxCornerRadiusBottomStart="12dp"
+                        app:boxCornerRadiusBottomEnd="12dp"
+                        android:layout_marginBottom="14dp">
 
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/edit_specialization"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:inputType="text" />
-
+                            android:inputType="text"
+                            android:textSize="16sp"
+                            android:textColor="@color/ios_text_primary"/>
                     </com.google.android.material.textfield.TextInputLayout>
 
                     <com.google.android.material.textfield.TextInputLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="16dp"
-                        android:hint="License Number">
+                        android:hint="License Number"
+                        app:boxBackgroundMode="outline"
+                        app:boxStrokeColor="@color/ios_blue"
+                        app:boxStrokeWidth="1dp"
+                        app:boxStrokeWidthFocused="2dp"
+                        app:boxCornerRadiusTopStart="12dp"
+                        app:boxCornerRadiusTopEnd="12dp"
+                        app:boxCornerRadiusBottomStart="12dp"
+                        app:boxCornerRadiusBottomEnd="12dp">
 
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/edit_license_number"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:inputType="text" />
-
+                            android:inputType="text"
+                            android:textSize="16sp"
+                            android:textColor="@color/ios_text_primary"/>
                     </com.google.android.material.textfield.TextInputLayout>
-
                 </LinearLayout>
 
             </LinearLayout>
-
         </com.google.android.material.card.MaterialCardView>
 
-        <Button
+        <!-- Register Button -->
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_register"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Register"
-            android:textSize="16sp"
-            android:padding="14dp"
-            android:layout_marginBottom="24dp"
-            style="@style/Widget.MaterialComponents.Button" />
+            android:layout_width="0dp"
+            android:layout_height="56dp"
+            android:text="Create Account"
+            android:textSize="17sp"
+            android:textStyle="bold"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            app:backgroundTint="@color/ios_blue"
+            app:cornerRadius="14dp"
+            android:layout_marginTop="24dp"
+            app:layout_constraintTop_toBottomOf="@id/card_account_type"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
 
+        <!-- Sign In Link -->
         <LinearLayout
-            android:layout_width="match_parent"
+            android:id="@+id/layout_sign_in"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:gravity="center">
+            android:gravity="center"
+            android:layout_marginTop="20dp"
+            app:layout_constraintTop_toBottomOf="@id/btn_register"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Already have an account? "
-                android:textSize="14sp" />
+                android:textSize="15sp"
+                android:textColor="@color/ios_text_secondary"/>
 
             <TextView
                 android:id="@+id/text_sign_in"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Sign In"
-                android:textSize="14sp"
-                android:textColor="@color/design_default_color_primary"
+                android:textSize="15sp"
+                android:textColor="@color/ios_blue"
                 android:textStyle="bold"
                 android:clickable="true"
-                android:focusable="true" />
-
+                android:focusable="true"/>
         </LinearLayout>
 
-    </LinearLayout>
-
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

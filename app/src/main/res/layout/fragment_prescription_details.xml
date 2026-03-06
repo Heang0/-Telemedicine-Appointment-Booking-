@@ -1,8 +1,9 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/light_grey_background"
     android:padding="16dp">
 
     <LinearLayout
@@ -14,16 +15,16 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Prescription Details"
-            android:textSize="24sp"
+            android:textSize="26sp"
             android:textStyle="bold"
-            android:layout_marginBottom="24dp"
-            android:gravity="center" />
+            android:textColor="@color/text_primary"
+            android:layout_marginBottom="16dp" />
 
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:cardCornerRadius="12dp"
-            app:cardElevation="4dp"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="2dp"
             android:layout_marginBottom="16dp">
 
             <LinearLayout
@@ -36,9 +37,10 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Patient Information"
-                    android:textSize="18sp"
+                    android:textSize="16sp"
                     android:textStyle="bold"
-                    android:layout_marginBottom="16dp" />
+                    android:textColor="@color/text_secondary"
+                    android:layout_marginBottom="12dp" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -51,7 +53,8 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:text="Patient:"
-                        android:textStyle="bold" />
+                        android:textStyle="bold"
+                        android:textColor="@color/text_secondary" />
 
                     <TextView
                         android:id="@+id/text_patient_name"
@@ -73,7 +76,8 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:text="Doctor:"
-                        android:textStyle="bold" />
+                        android:textStyle="bold"
+                        android:textColor="@color/text_secondary" />
 
                     <TextView
                         android:id="@+id/text_doctor_name"
@@ -95,7 +99,8 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:text="Date:"
-                        android:textStyle="bold" />
+                        android:textStyle="bold"
+                        android:textColor="@color/text_secondary" />
 
                     <TextView
                         android:id="@+id/text_date"
@@ -116,7 +121,8 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:text="Status:"
-                        android:textStyle="bold" />
+                        android:textStyle="bold"
+                        android:textColor="@color/text_secondary" />
 
                     <TextView
                         android:id="@+id/text_status"
@@ -124,7 +130,10 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="2"
                         android:text="Active"
-                        android:textColor="@color/design_default_color_primary" />
+                        android:textColor="@color/design_default_color_primary"
+                        android:background="@drawable/status_chip_background"
+                        android:paddingHorizontal="8dp"
+                        android:paddingVertical="4dp" />
 
                 </LinearLayout>
 
@@ -135,8 +144,8 @@
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:cardCornerRadius="12dp"
-            app:cardElevation="4dp"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="2dp"
             android:layout_marginBottom="16dp">
 
             <LinearLayout
@@ -149,9 +158,10 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Medications"
-                    android:textSize="18sp"
+                    android:textSize="16sp"
                     android:textStyle="bold"
-                    android:layout_marginBottom="16dp" />
+                    android:textColor="@color/text_secondary"
+                    android:layout_marginBottom="12dp" />
 
                 <TextView
                     android:id="@+id/text_medications"
@@ -168,8 +178,8 @@
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:cardCornerRadius="12dp"
-            app:cardElevation="4dp"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="2dp"
             android:layout_marginBottom="16dp">
 
             <LinearLayout
@@ -182,9 +192,10 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Instructions"
-                    android:textSize="18sp"
+                    android:textSize="16sp"
                     android:textStyle="bold"
-                    android:layout_marginBottom="16dp" />
+                    android:textColor="@color/text_secondary"
+                    android:layout_marginBottom="12dp" />
 
                 <TextView
                     android:id="@+id/text_instructions"
@@ -200,8 +211,8 @@
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:cardCornerRadius="12dp"
-            app:cardElevation="4dp"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="2dp"
             android:layout_marginBottom="16dp">
 
             <LinearLayout
@@ -214,9 +225,10 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Notes"
-                    android:textSize="18sp"
+                    android:textSize="16sp"
                     android:textStyle="bold"
-                    android:layout_marginBottom="16dp" />
+                    android:textColor="@color/text_secondary"
+                    android:layout_marginBottom="12dp" />
 
                 <TextView
                     android:id="@+id/text_notes"
@@ -241,7 +253,8 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="Edit"
-                android:visibility="gone" />
+                android:visibility="gone"
+                style="@style/Widget.Material3.Button.ElevatedButton" />
 
             <Button
                 android:id="@+id/btn_delete"
@@ -250,7 +263,8 @@
                 android:layout_weight="1"
                 android:layout_marginStart="8dp"
                 android:text="Delete"
-                android:visibility="gone" />
+                android:visibility="gone"
+                style="@style/Widget.Material3.Button.OutlinedButton" />
 
             <Button
                 android:id="@+id/btn_mark_filled"
@@ -259,7 +273,8 @@
                 android:layout_weight="1"
                 android:layout_marginStart="8dp"
                 android:text="Mark Filled"
-                android:visibility="gone" />
+                android:visibility="gone"
+                style="@style/Widget.Material3.Button.ElevatedButton" />
 
         </LinearLayout>
 
@@ -267,8 +282,10 @@
             android:id="@+id/btn_back"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Back to Prescriptions" />
+            android:text="Back to Prescriptions"
+            style="@style/Widget.Material3.Button" />
 
     </LinearLayout>
 
 </ScrollView>
+

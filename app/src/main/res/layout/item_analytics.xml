@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <TextView
+        android:id="@+id/textViewMetricType"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Metric Type"
+        android:textSize="18sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/textViewMetricValue"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Metric Value"
+        android:textSize="16sp"
+        android:textColor="@color/blue_600"
+        android:layout_marginTop="4dp" />
+
+    <TextView
+        android:id="@+id/textViewPeriod"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Period: daily/weekly/monthly"
+        android:textSize="14sp"
+        android:textColor="@color/gray_600"
+        android:layout_marginTop="4dp" />
+
+    <TextView
+        android:id="@+id/textViewDate"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Date: Timestamp"
+        android:textSize="12sp"
+        android:textColor="@color/gray_500"
+        android:layout_marginTop="4dp" />
+
+</LinearLayout>

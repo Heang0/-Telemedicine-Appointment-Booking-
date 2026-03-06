@@ -60,20 +60,37 @@ public class MedicalHistoryAdapter extends RecyclerView.Adapter<MedicalHistoryAd
         public void bind(MedicalHistoryItem item) {
             conditionText.setText(item.getCondition());
             dateText.setText("Diagnosed: " + item.getDiagnosisDate());
-            doctorText.setText("Dr. " + item.getTreatingDoctor());
-            statusText.setText(item.getStatus().toUpperCase());
-            notesText.setText(item.getNotes());
+            String clinician = item.getTreatingDoctor() != null ? item.getTreatingDoctor().trim() : "";
+            if (clinician.isEmpty()) {
+                doctorText.setText("Care team");
+            } else if (clinician.startsWith("Dr.") || "Profile".equalsIgnoreCase(clinician) || "Health Records".equalsIgnoreCase(clinician)) {
+                doctorText.setText(clinician);
+            } else {
+                doctorText.setText("Dr. " + clinician);
+            }
+            String status = item.getStatus() != null ? item.getStatus() : "active";
+            statusText.setText(status.toUpperCase());
+            notesText.setText(item.getNotes() != null ? item.getNotes() : "No notes available");
             
             // Color code based on status
-            switch (item.getStatus().toLowerCase()) {
+            switch (status.toLowerCase()) {
                 case "active":
+                case "scheduled":
+                case "pending":
                     statusText.setTextColor(itemView.getResources().getColor(android.R.color.holo_red_dark));
                     break;
                 case "resolved":
+                case "fulfilled":
+                case "completed":
                     statusText.setTextColor(itemView.getResources().getColor(android.R.color.holo_green_dark));
                     break;
                 case "chronic":
+                case "cancelled":
+                case "expired":
                     statusText.setTextColor(itemView.getResources().getColor(android.R.color.holo_orange_dark));
+                    break;
+                default:
+                    statusText.setTextColor(itemView.getResources().getColor(android.R.color.holo_blue_dark));
                     break;
             }
         }

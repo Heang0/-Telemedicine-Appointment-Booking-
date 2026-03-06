@@ -10,17 +10,20 @@ public class Appointment {
     private String patientName;
     private String doctorName;
     private Date appointmentDate;
-    private String status; // scheduled, completed, cancelled
+    private String status; // scheduled, completed, cancelled, missed
     private String reason;
     private String notes;
+    private String consultationType; // "in_person", "chat", "follow_up"
+    private String location; // For in-person appointments
+    private String meetingLink; // For chat consultations (will be empty for in-person)
     private long createdAt;
     private long updatedAt;
 
     // Empty constructor required for Firestore
     public Appointment() {}
 
-    public Appointment(String patientId, String doctorId, String patientName, String doctorName, 
-                      Date appointmentDate, String status, String reason) {
+    public Appointment(String patientId, String doctorId, String patientName, String doctorName,
+                      Date appointmentDate, String status, String reason, String consultationType) {
         this.patientId = patientId;
         this.doctorId = doctorId;
         this.patientName = patientName;
@@ -28,6 +31,25 @@ public class Appointment {
         this.appointmentDate = appointmentDate;
         this.status = status;
         this.reason = reason;
+        this.consultationType = consultationType;
+        this.createdAt = System.currentTimeMillis();
+        this.updatedAt = System.currentTimeMillis();
+    }
+
+    // Enhanced constructor with location and meeting link
+    public Appointment(String patientId, String doctorId, String patientName, String doctorName,
+                      Date appointmentDate, String status, String reason, String consultationType,
+                      String location, String meetingLink) {
+        this.patientId = patientId;
+        this.doctorId = doctorId;
+        this.patientName = patientName;
+        this.doctorName = doctorName;
+        this.appointmentDate = appointmentDate;
+        this.status = status;
+        this.reason = reason;
+        this.consultationType = consultationType;
+        this.location = location;
+        this.meetingLink = meetingLink;
         this.createdAt = System.currentTimeMillis();
         this.updatedAt = System.currentTimeMillis();
     }
@@ -121,5 +143,33 @@ public class Appointment {
 
     public void setUpdatedAt(long updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    // Getters and setters for new fields
+    public String getConsultationType() {
+        return consultationType;
+    }
+
+    public void setConsultationType(String consultationType) {
+        this.consultationType = consultationType;
+        this.updatedAt = System.currentTimeMillis();
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+        this.updatedAt = System.currentTimeMillis();
+    }
+
+    public String getMeetingLink() {
+        return meetingLink;
+    }
+
+    public void setMeetingLink(String meetingLink) {
+        this.meetingLink = meetingLink;
+        this.updatedAt = System.currentTimeMillis();
     }
 }

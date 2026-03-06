@@ -1,9 +1,130 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    // TEMPORARY: Allow all access for testing
-    match /{collection}/{document} {
-      allow read, write: if true;
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      return isSignedIn() &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == "admin";
+    }
+
+    function isDoctor() {
+      return isSignedIn() &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == "doctor";
+    }
+
+    function isPatient() {
+      return isSignedIn() &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == "patient";
+    }
+
+    function isConversationParticipant(conversationId) {
+      return isSignedIn() &&
+        request.auth.uid in get(/databases/$(database)/documents/conversations/$(conversationId)).data.participants;
+    }
+
+    match /users/{userId} {
+      allow read: if isSignedIn();
+      allow create: if isSignedIn() && request.auth.uid == userId;
+      allow update, delete: if isSignedIn() && (request.auth.uid == userId || isAdmin());
+
+      match /appointments/{appointmentRefId} {
+        allow read, write: if isSignedIn();
+      }
+
+      match /medical_records/{recordId} {
+        allow read, write: if isSignedIn() && (request.auth.uid == userId || isAdmin());
+      }
+    }
+
+    match /appointments/{appointmentId} {
+      allow read: if isSignedIn();
+      allow create: if isSignedIn() && (
+        request.auth.uid == request.resource.data.patientId ||
+        request.auth.uid == request.resource.data.doctorId ||
+        isAdmin()
+      );
+      allow update: if isSignedIn() && (
+        request.auth.uid == resource.data.patientId ||
+        request.auth.uid == resource.data.doctorId ||
+        isAdmin()
+      );
+      allow delete: if isSignedIn() && (request.auth.uid == resource.data.patientId || isAdmin());
+    }
+
+    match /prescriptions/{prescriptionId} {
+      allow read: if isSignedIn() && (
+        request.auth.uid == resource.data.doctorId ||
+        request.auth.uid == resource.data.patientId ||
+        request.auth.uid in resource.data.patientIds ||
+        isAdmin()
+      );
+
+      allow create: if isSignedIn() && (
+        request.auth.uid == request.resource.data.doctorId ||
+        isAdmin()
+      );
+
+      allow update: if isSignedIn() && (
+        request.auth.uid == resource.data.doctorId ||
+        (request.auth.uid == resource.data.patientId &&
+          request.resource.data.doctorId == resource.data.doctorId &&
+          request.resource.data.patientId == resource.data.patientId &&
+          request.resource.data.patientIds == resource.data.patientIds) ||
+        isAdmin()
+      );
+
+      allow delete: if isSignedIn() && (
+        request.auth.uid == resource.data.doctorId ||
+        isAdmin()
+      );
+    }
+
+    match /conversations/{conversationId} {
+      allow read: if isSignedIn() && request.auth.uid in resource.data.participants;
+
+      allow create: if isSignedIn() &&
+        request.auth.uid in request.resource.data.participants;
+
+      allow update: if isSignedIn() &&
+        request.auth.uid in resource.data.participants &&
+        request.resource.data.participants.hasAll(resource.data.participants) &&
+        resource.data.participants.hasAll(request.resource.data.participants);
+
+      allow delete: if isAdmin();
+
+      match /messages/{messageId} {
+        allow read: if isConversationParticipant(conversationId);
+
+        allow create: if isConversationParticipant(conversationId) &&
+          request.auth.uid == request.resource.data.senderId &&
+          request.resource.data.receiverId in get(/databases/$(database)/documents/conversations/$(conversationId)).data.participants;
+
+        allow update: if isConversationParticipant(conversationId) &&
+          request.auth.uid == resource.data.receiverId;
+
+        allow delete: if isAdmin();
+      }
+    }
+
+    match /medical_records/{recordId} {
+      allow read, write: if isSignedIn();
+    }
+
+    match /symptom_forms/{formId} {
+      allow read, write: if isSignedIn();
+    }
+
+    match /pharmacies/{pharmacyId} {
+      allow read: if isSignedIn();
+      allow write: if isAdmin();
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
     }
   }
 }

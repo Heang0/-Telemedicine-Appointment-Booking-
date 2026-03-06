@@ -62,15 +62,22 @@ public class PrescriptionDetailsFragment extends Fragment {
         btnDelete = view.findViewById(R.id.btn_delete);
         btnMarkFilled = view.findViewById(R.id.btn_mark_filled);
 
-        btnBack.setOnClickListener(v -> {
-            if (getActivity() != null) {
-                getActivity().getSupportFragmentManager().popBackStack();
-            }
-        });
-
-        btnEdit.setOnClickListener(v -> openEditPrescription());
-        btnDelete.setOnClickListener(v -> deletePrescription());
-        btnMarkFilled.setOnClickListener(v -> markAsFilled());
+        if (btnBack != null) {
+            btnBack.setOnClickListener(v -> {
+                if (getActivity() != null) {
+                    getActivity().getSupportFragmentManager().popBackStack();
+                }
+            });
+        }
+        if (btnEdit != null) {
+            btnEdit.setOnClickListener(v -> openEditPrescription());
+        }
+        if (btnDelete != null) {
+            btnDelete.setOnClickListener(v -> deletePrescription());
+        }
+        if (btnMarkFilled != null) {
+            btnMarkFilled.setOnClickListener(v -> markAsFilled());
+        }
     }
 
     private void loadPrescriptionDetails() {
@@ -85,6 +92,10 @@ public class PrescriptionDetailsFragment extends Fragment {
                 .addOnSuccessListener(documentSnapshot -> {
                     if (documentSnapshot.exists()) {
                         Prescription prescription = documentSnapshot.toObject(Prescription.class);
+                        if (prescription == null) {
+                            Toast.makeText(getContext(), "Prescription data is invalid", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
                         loadedPrescription = prescription;
 
                         // Populate the UI with prescription data
@@ -109,13 +120,14 @@ public class PrescriptionDetailsFragment extends Fragment {
                             }
                         }
 
-                        if (textStatus != null && prescription.getStatus() != null) {
-                            textStatus.setText(capitalizeFirstLetter(prescription.getStatus()));
+                        if (textStatus != null) {
+                            String status = prescription.getStatus() != null ? prescription.getStatus() : "active";
+                            textStatus.setText(capitalizeFirstLetter(status));
 
                             // Set status color based on status
-                            if ("fulfilled".equalsIgnoreCase(prescription.getStatus())) {
+                            if ("fulfilled".equalsIgnoreCase(status)) {
                                 textStatus.setTextColor(getResources().getColor(android.R.color.holo_green_dark));
-                            } else if ("expired".equalsIgnoreCase(prescription.getStatus())) {
+                            } else if ("expired".equalsIgnoreCase(status)) {
                                 textStatus.setTextColor(getResources().getColor(android.R.color.holo_red_dark));
                             } else {
                                 textStatus.setTextColor(getResources().getColor(android.R.color.holo_blue_dark));
@@ -126,13 +138,17 @@ public class PrescriptionDetailsFragment extends Fragment {
                             StringBuilder medText = new StringBuilder();
                             for (int i = 0; i < prescription.getMedications().size(); i++) {
                                 Prescription.Medication med = prescription.getMedications().get(i);
+                                if (med == null) {
+                                    continue;
+                                }
                                 if (i > 0) medText.append("\n");
-                                medText.append("- ").append(med.getName()).append(": ")
-                                      .append(med.getDosage()).append(" ")
-                                      .append(med.getFrequency()).append(" for ")
-                                      .append(med.getDuration()).append(" (Qty: ").append(med.getQuantity()).append(")");
+                                medText.append("- ").append(safe(med.getName(), "Medication")).append(": ")
+                                      .append(safe(med.getDosage(), "dosage pending")).append(" ")
+                                      .append(safe(med.getFrequency(), "frequency pending")).append(" for ")
+                                      .append(safe(med.getDuration(), "duration pending")).append(" (Qty: ")
+                                      .append(safe(med.getQuantity(), "N/A")).append(")");
                             }
-                            textMedications.setText(medText.toString());
+                            textMedications.setText(medText.length() > 0 ? medText.toString() : "No medications listed");
                         }
 
                         if (textInstructions != null && prescription.getInstructions() != null) {
@@ -227,8 +243,12 @@ public class PrescriptionDetailsFragment extends Fragment {
 
     private String capitalizeFirstLetter(String str) {
         if (str == null || str.isEmpty()) {
-            return str;
+            return "Active";
         }
         return str.substring(0, 1).toUpperCase() + str.substring(1);
+    }
+
+    private String safe(String value, String fallback) {
+        return value != null && !value.trim().isEmpty() ? value.trim() : fallback;
     }
 }

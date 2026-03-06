@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <TextView
+        android:id="@+id/textViewRecordTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Record Title"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:textColor="@color/blue_800" />
+
+    <TextView
+        android:id="@+id/textViewRecordType"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Record Type"
+        android:textSize="14sp"
+        android:textColor="@color/gray_600"
+        android:layout_marginTop="4dp" />
+
+    <TextView
+        android:id="@+id/textViewRecordDate"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Created: Date"
+        android:textSize="12sp"
+        android:textColor="@color/gray_600"
+        android:layout_marginTop="4dp" />
+
+    <TextView
+        android:id="@+id/textViewRecordStatus"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Status"
+        android:textSize="12sp"
+        android:textColor="@color/green_600"
+        android:layout_marginTop="4dp" />
+
+</LinearLayout>

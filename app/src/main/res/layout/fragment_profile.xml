@@ -1,86 +1,399 @@
-<?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+﻿<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/ios_background"
+    android:fillViewport="true">
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="16dp">
+        android:paddingHorizontal="20dp"
+        android:paddingTop="16dp"
+        android:paddingBottom="24dp">
 
-        <de.hdodenhof.circleimageview.CircleImageView
-            xmlns:app="http://schemas.android.com/apk/res-auto"
-            android:id="@+id/profile_image"
-            android:layout_width="120dp"
-            android:layout_height="120dp"
-            android:src="@drawable/ic_profile"
-            app:civ_border_width="2dp"
-            app:civ_border_color="#FF000000"
-            android:layout_gravity="center"
-            android:layout_marginBottom="16dp" />
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="match_parent"
+        <!-- Profile Header Card -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/card_profile_header"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp">
+            app:cardBackgroundColor="@color/ios_card_background"
+            app:cardCornerRadius="20dp"
+            app:cardElevation="0dp"
+            app:strokeColor="@color/ios_divider"
+            app:strokeWidth="0dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/edit_name"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Full Name" />
+                android:orientation="vertical"
+                android:padding="24dp"
+                android:gravity="center_horizontal">
 
-        </com.google.android.material.textfield.TextInputLayout>
+                <!-- Profile Image -->
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/profile_image"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:src="@drawable/ic_profile"
+                    app:civ_border_width="3dp"
+                    app:civ_border_color="@color/ios_divider"/>
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="match_parent"
+                <!-- User Name -->
+                <TextView
+                    android:id="@+id/text_user_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="John Doe"
+                    android:textSize="24sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/ios_text_primary"
+                    android:layout_marginTop="16dp"/>
+
+                <!-- User Email -->
+                <TextView
+                    android:id="@+id/text_user_email"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="john.doe@example.com"
+                    android:textSize="15sp"
+                    android:textColor="@color/ios_text_secondary"
+                    android:layout_marginTop="4dp"/>
+
+                <!-- User Role Badge -->
+                <TextView
+                    android:id="@+id/text_user_role"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Patient"
+                    android:textSize="13sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/ios_blue"
+                    android:background="@drawable/bg_status_badge"
+                    android:paddingHorizontal="14dp"
+                    android:paddingVertical="6dp"
+                    android:layout_marginTop="14dp"/>
+
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Account Section -->
+        <TextView
+            android:id="@+id/text_account_section"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp">
+            android:text="Account"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:textColor="@color/ios_text_secondary"
+            android:textAllCaps="true"
+            android:letterSpacing="0.05"
+            android:layout_marginTop="28dp"
+            app:layout_constraintTop_toBottomOf="@id/card_profile_header"
+            app:layout_constraintStart_toStartOf="parent"/>
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/edit_email"
+        <!-- Account Settings Card -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/card_account"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:cardBackgroundColor="@color/ios_card_background"
+            app:cardCornerRadius="20dp"
+            app:cardElevation="0dp"
+            app:strokeColor="@color/ios_divider"
+            app:strokeWidth="0dp"
+            android:layout_marginTop="12dp"
+            app:layout_constraintTop_toBottomOf="@id/text_account_section"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Email Address" />
+                android:orientation="vertical"
+                android:paddingVertical="8dp">
 
-        </com.google.android.material.textfield.TextInputLayout>
+                <!-- Edit Profile -->
+                <LinearLayout
+                    android:id="@+id/layout_edit_profile"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:paddingHorizontal="16dp"
+                    android:paddingVertical="15dp"
+                    android:background="?attr/selectableItemBackground">
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="match_parent"
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/ic_profile"
+                        app:tint="@color/ios_blue"/>
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Edit Profile"
+                        android:textSize="16sp"
+                        android:textColor="@color/ios_text_primary"
+                        android:layout_marginStart="16dp"/>
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/ic_arrow_forward"
+                        app:tint="@color/ios_text_tertiary"/>
+
+                </LinearLayout>
+
+                <!-- Divider -->
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/ios_divider"
+                    android:layout_marginStart="56dp"/>
+
+                <!-- Notifications -->
+                <LinearLayout
+                    android:id="@+id/layout_notifications"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:paddingHorizontal="16dp"
+                    android:paddingVertical="15dp"
+                    android:background="?attr/selectableItemBackground">
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/ic_notifications"
+                        app:tint="@color/ios_orange"/>
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Notifications"
+                        android:textSize="16sp"
+                        android:textColor="@color/ios_text_primary"
+                        android:layout_marginStart="16dp"/>
+
+                    <androidx.appcompat.widget.SwitchCompat
+                        android:id="@+id/switch_notifications"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:checked="true"/>
+
+                </LinearLayout>
+
+                <!-- Divider -->
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/ios_divider"
+                    android:layout_marginStart="56dp"/>
+
+                <!-- Privacy -->
+                <LinearLayout
+                    android:id="@+id/layout_privacy"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:paddingHorizontal="16dp"
+                    android:paddingVertical="15dp"
+                    android:background="?attr/selectableItemBackground">
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/ic_baseline_lock_24"
+                        app:tint="@color/ios_green"/>
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Privacy"
+                        android:textSize="16sp"
+                        android:textColor="@color/ios_text_primary"
+                        android:layout_marginStart="16dp"/>
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/ic_arrow_forward"
+                        app:tint="@color/ios_text_tertiary"/>
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Support Section -->
+        <TextView
+            android:id="@+id/text_support_section"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp">
+            android:text="Support"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:textColor="@color/ios_text_secondary"
+            android:textAllCaps="true"
+            android:letterSpacing="0.05"
+            android:layout_marginTop="24dp"
+            app:layout_constraintTop_toBottomOf="@id/card_account"
+            app:layout_constraintStart_toStartOf="parent"/>
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/edit_phone"
+        <!-- Support Card -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/card_support"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:cardBackgroundColor="@color/ios_card_background"
+            app:cardCornerRadius="20dp"
+            app:cardElevation="0dp"
+            app:strokeColor="@color/ios_divider"
+            app:strokeWidth="0dp"
+            android:layout_marginTop="12dp"
+            app:layout_constraintTop_toBottomOf="@id/text_support_section"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Phone Number" />
+                android:orientation="vertical"
+                android:paddingVertical="8dp">
 
-        </com.google.android.material.textfield.TextInputLayout>
+                <!-- Help Center -->
+                <LinearLayout
+                    android:id="@+id/layout_help"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:paddingHorizontal="16dp"
+                    android:paddingVertical="15dp"
+                    android:background="?attr/selectableItemBackground">
 
-        <Button
-            android:id="@+id/btn_view_health_profile"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="View Health Profile"
-            android:layout_marginBottom="8dp" />
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/ic_help"
+                        app:tint="@color/ios_blue"/>
 
-        <Button
-            android:id="@+id/btn_save_profile"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Save Profile"
-            android:layout_marginBottom="8dp" />
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Help Center"
+                        android:textSize="16sp"
+                        android:textColor="@color/ios_text_primary"
+                        android:layout_marginStart="16dp"/>
 
-        <Button
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/ic_arrow_forward"
+                        app:tint="@color/ios_text_tertiary"/>
+
+                </LinearLayout>
+
+                <!-- Divider -->
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/ios_divider"
+                    android:layout_marginStart="56dp"/>
+
+                <!-- Contact Us -->
+                <LinearLayout
+                    android:id="@+id/layout_contact"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:paddingHorizontal="16dp"
+                    android:paddingVertical="15dp"
+                    android:background="?attr/selectableItemBackground">
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/ic_baseline_email_24"
+                        app:tint="@color/ios_green"/>
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Contact Us"
+                        android:textSize="16sp"
+                        android:textColor="@color/ios_text_primary"
+                        android:layout_marginStart="16dp"/>
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/ic_arrow_forward"
+                        app:tint="@color/ios_text_tertiary"/>
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Logout Button -->
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_logout"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
+            android:layout_height="56dp"
+            android:text="Log Out"
+            android:textSize="17sp"
+            android:textStyle="bold"
+            android:textAllCaps="false"
+            android:layout_marginTop="28dp"
+            app:backgroundTint="@color/ios_red"
+            app:cornerRadius="14dp"
+            app:icon="@drawable/ic_logout"
+            app:iconGravity="textStart"
+            app:iconTint="@color/white"
+            app:iconSize="22dp"
+            app:layout_constraintTop_toBottomOf="@id/card_support"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+        <!-- App Version -->
+        <TextView
+            android:id="@+id/text_app_version"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Logout"
-            style="@style/Widget.Material3.Button.OutlinedButton" />
+            android:text="Version 1.0.0"
+            android:textSize="13sp"
+            android:textColor="@color/ios_text_tertiary"
+            android:layout_marginTop="20dp"
+            app:layout_constraintTop_toBottomOf="@id/btn_logout"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
 
-    </LinearLayout>
+        <!-- Bottom Spacer -->
+        <View
+            android:layout_width="0dp"
+            android:layout_height="32dp"
+            app:layout_constraintTop_toBottomOf="@id/text_app_version"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
 
-</ScrollView>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.core.widget.NestedScrollView>

@@ -1,0 +1,84 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="16dp"
+    app:cardCornerRadius="16dp"
+    app:cardElevation="4dp"
+    app:strokeColor="@color/ai_neutral_200"
+    app:strokeWidth="1dp"
+    app:backgroundTint="@color/card_background_light">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <TextView
+            android:id="@+id/card_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Card Title"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="@color/ai_neutral_900"
+            android:layout_marginBottom="8dp" />
+
+        <TextView
+            android:id="@+id/card_subtitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Card subtitle or description"
+            android:textSize="14sp"
+            android:textColor="@color/ai_neutral_600"
+            android:layout_marginBottom="12dp" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/ai_neutral_200"
+            android:layout_marginBottom="12dp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <ImageView
+                android:id="@+id/card_icon"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_ai_feature"
+                android:contentDescription="Icon" />
+
+            <TextView
+                android:id="@+id/card_text"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="12dp"
+                android:text="AI-powered insights and recommendations"
+                android:textSize="14sp"
+                android:textColor="@color/ai_neutral_700" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/card_action"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="View"
+                android:textSize="12sp"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
+                style="@style/Widget.Telemedicine.Button"
+                app:cornerRadius="8dp"
+                android:backgroundTint="@color/ai_neutral_100"
+                android:textColor="@color/ai_blue_primary" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</com.google.android.material.card.MaterialCardView>

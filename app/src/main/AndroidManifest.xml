@@ -2,6 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
     <application
         android:name=".TelemedicineApplication"
         android:allowBackup="true"
@@ -47,6 +50,38 @@
         </activity>
         <activity
             android:name=".PatientRegistrationActivity"
+            android:exported="false" />
+        <activity
+            android:name=".DebugActivity"
+            android:exported="true" />
+        
+        <!-- New activities for enhanced functionality -->
+        <activity
+            android:name=".SymptomFormActivity"
+            android:exported="false" />
+        <activity
+            android:name=".MedicalRecordsVaultActivity"
+            android:exported="false" />
+        <activity
+            android:name=".PharmacyLocatorActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ComplianceAuditLogActivity"
+            android:exported="false" />
+        <activity
+            android:name=".PlatformAnalyticsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".UserAccessControllerActivity"
+            android:exported="false" />
+        <activity
+            android:name=".PrescriptionQRCodeActivity"
+            android:exported="false" />
+        <activity
+            android:name=".SecureMessagingHubActivity"
+            android:exported="false" />
+        <activity
+            android:name=".DigitalPrescriptionPadActivity"
             android:exported="false" />
     </application>
 

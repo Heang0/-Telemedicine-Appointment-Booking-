@@ -1,23 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- iOS-Style Patient Bottom Navigation Menu - Clean SF Symbols -->
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/nav_patient"
-        android:icon="@drawable/ic_home"
-        android:title="Patient" />
+        android:icon="@drawable/ic_home_ios"
+        android:title="Home" />
     <item
         android:id="@+id/nav_appointments"
-        android:icon="@drawable/ic_calendar"
+        android:icon="@drawable/ic_calendar_ios"
         android:title="Appointments" />
     <item
         android:id="@+id/nav_prescriptions"
-        android:icon="@drawable/ic_prescription"
+        android:icon="@drawable/ic_prescription_ios"
         android:title="Prescriptions" />
     <item
-        android:id="@+id/nav_profile"
-        android:icon="@drawable/ic_profile"
-        android:title="Profile" />
+        android:id="@+id/nav_messages"
+        android:icon="@drawable/ic_chat_ios"
+        android:title="Messages" />
     <item
         android:id="@+id/nav_settings"
-        android:icon="@drawable/ic_settings"
+        android:icon="@drawable/ic_settings_ios"
         android:title="Settings" />
 </menu>

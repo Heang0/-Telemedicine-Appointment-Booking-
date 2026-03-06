@@ -17,6 +17,9 @@ public class User {
     private String specialization; // for doctors
     private String licenseNumber; // for doctors
     private boolean isVerified; // for doctors
+    private String availabilityStartTime;
+    private String availabilityEndTime;
+    private int availabilitySlotMinutes;
 
     // Empty constructor required for Firestore
     public User() {}
@@ -103,6 +106,30 @@ public class User {
 
     public void setVerified(boolean verified) {
         isVerified = verified;
+    }
+
+    public String getAvailabilityStartTime() {
+        return availabilityStartTime;
+    }
+
+    public void setAvailabilityStartTime(String availabilityStartTime) {
+        this.availabilityStartTime = availabilityStartTime;
+    }
+
+    public String getAvailabilityEndTime() {
+        return availabilityEndTime;
+    }
+
+    public void setAvailabilityEndTime(String availabilityEndTime) {
+        this.availabilityEndTime = availabilityEndTime;
+    }
+
+    public int getAvailabilitySlotMinutes() {
+        return availabilitySlotMinutes;
+    }
+
+    public void setAvailabilitySlotMinutes(int availabilitySlotMinutes) {
+        this.availabilitySlotMinutes = availabilitySlotMinutes;
     }
 
     public String getPhoneNumber() {

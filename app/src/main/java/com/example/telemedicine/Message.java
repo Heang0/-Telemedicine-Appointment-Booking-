@@ -1,33 +1,33 @@
 package com.example.telemedicine;
 
+import java.util.Date;
+
 public class Message {
-    private String messageId;
+    private String id;
     private String senderId;
     private String receiverId;
-    private String messageText;
-    private long timestamp;
+    private String message;
+    private Date timestamp;
     private boolean isRead;
-    private String messageType; // text, image, file, etc.
 
-    // Empty constructor required for Firestore
-    public Message() {}
+    public Message() {
+    }
 
-    public Message(String senderId, String receiverId, String messageText, String messageType) {
+    public Message(String senderId, String receiverId, String message) {
         this.senderId = senderId;
         this.receiverId = receiverId;
-        this.messageText = messageText;
-        this.messageType = messageType;
-        this.timestamp = System.currentTimeMillis();
+        this.message = message;
+        this.timestamp = new Date();
         this.isRead = false;
     }
 
-    // Getters and setters
-    public String getMessageId() {
-        return messageId;
+    // Getters and Setters
+    public String getId() {
+        return id;
     }
 
-    public void setMessageId(String messageId) {
-        this.messageId = messageId;
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getSenderId() {
@@ -46,19 +46,19 @@ public class Message {
         this.receiverId = receiverId;
     }
 
-    public String getMessageText() {
-        return messageText;
+    public String getMessage() {
+        return message;
     }
 
-    public void setMessageText(String messageText) {
-        this.messageText = messageText;
+    public void setMessage(String message) {
+        this.message = message;
     }
 
-    public long getTimestamp() {
+    public Date getTimestamp() {
         return timestamp;
     }
 
-    public void setTimestamp(long timestamp) {
+    public void setTimestamp(Date timestamp) {
         this.timestamp = timestamp;
     }
 
@@ -68,13 +68,5 @@ public class Message {
 
     public void setRead(boolean read) {
         isRead = read;
-    }
-
-    public String getMessageType() {
-        return messageType;
-    }
-
-    public void setMessageType(String messageType) {
-        this.messageType = messageType;
     }
 }

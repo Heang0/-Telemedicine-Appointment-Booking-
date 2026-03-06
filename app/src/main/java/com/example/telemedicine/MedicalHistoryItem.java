@@ -8,13 +8,19 @@ public class MedicalHistoryItem {
     private String treatingDoctor;
     private String status; // active, resolved, chronic
     private String notes;
+    private String sourceType;
 
     public MedicalHistoryItem(String condition, String diagnosisDate, String treatingDoctor, String status, String notes) {
+        this(condition, diagnosisDate, treatingDoctor, status, notes, "general");
+    }
+
+    public MedicalHistoryItem(String condition, String diagnosisDate, String treatingDoctor, String status, String notes, String sourceType) {
         this.condition = condition;
         this.diagnosisDate = diagnosisDate;
         this.treatingDoctor = treatingDoctor;
         this.status = status;
         this.notes = notes;
+        this.sourceType = sourceType;
     }
 
     // Getters
@@ -23,6 +29,7 @@ public class MedicalHistoryItem {
     public String getTreatingDoctor() { return treatingDoctor; }
     public String getStatus() { return status; }
     public String getNotes() { return notes; }
+    public String getSourceType() { return sourceType; }
 
     // Setters
     public void setCondition(String condition) { this.condition = condition; }
@@ -30,4 +37,5 @@ public class MedicalHistoryItem {
     public void setTreatingDoctor(String treatingDoctor) { this.treatingDoctor = treatingDoctor; }
     public void setStatus(String status) { this.status = status; }
     public void setNotes(String notes) { this.notes = notes; }
+    public void setSourceType(String sourceType) { this.sourceType = sourceType; }
 }

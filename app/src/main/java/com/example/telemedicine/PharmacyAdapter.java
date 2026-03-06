@@ -60,45 +60,55 @@ public class PharmacyAdapter extends RecyclerView.Adapter<PharmacyAdapter.Pharma
 
         public PharmacyViewHolder(@NonNull View itemView) {
             super(itemView);
-            
-            nameText = itemView.findViewById(R.id.pharmacy_name);
-            addressText = itemView.findViewById(R.id.pharmacy_address);
-            distanceText = itemView.findViewById(R.id.pharmacy_distance);
-            hoursText = itemView.findViewById(R.id.pharmacy_hours);
-            phoneText = itemView.findViewById(R.id.pharmacy_phone);
-            statusText = itemView.findViewById(R.id.pharmacy_status);
-            
-            btnDirections = itemView.findViewById(R.id.btn_directions);
-            btnCall = itemView.findViewById(R.id.btn_call);
 
-            btnDirections.setOnClickListener(v -> {
-                int position = getAdapterPosition();
-                if (position != RecyclerView.NO_POSITION && listener != null) {
-                    listener.onDirectionsRequested(pharmacies.get(position));
-                }
-            });
+            nameText = itemView.findViewById(R.id.textViewPharmacyName);
+            addressText = itemView.findViewById(R.id.textViewPharmacyAddress);
+            phoneText = itemView.findViewById(R.id.textViewPharmacyPhone);
+            // Optional: initialize others only if layout is updated later
+            distanceText = itemView.findViewById(R.id.textViewPharmacyDistance); // placeholder — will be null if not in layout
+            hoursText = itemView.findViewById(R.id.textViewPharmacyHours);
+            statusText = itemView.findViewById(R.id.textViewPharmacyStatus);
+            btnDirections = itemView.findViewById(R.id.btnDirections);
+            btnCall = itemView.findViewById(R.id.btnCall);
 
-            btnCall.setOnClickListener(v -> {
-                int position = getAdapterPosition();
-                if (position != RecyclerView.NO_POSITION && listener != null) {
-                    listener.onCallPharmacy(pharmacies.get(position));
-                }
-            });
+            // Set click listeners only if buttons exist
+            if (btnDirections != null) {
+                btnDirections.setOnClickListener(v -> {
+                    int position = getAdapterPosition();
+                    if (position != RecyclerView.NO_POSITION && listener != null) {
+                        listener.onDirectionsRequested(pharmacies.get(position));
+                    }
+                });
+            }
+            if (btnCall != null) {
+                btnCall.setOnClickListener(v -> {
+                    int position = getAdapterPosition();
+                    if (position != RecyclerView.NO_POSITION && listener != null) {
+                        listener.onCallPharmacy(pharmacies.get(position));
+                    }
+                });
+            }
         }
 
         public void bind(Pharmacy pharmacy) {
             nameText.setText(pharmacy.getName());
             addressText.setText(pharmacy.getAddress());
-            distanceText.setText(pharmacy.getDistance());
-            hoursText.setText(pharmacy.getHours());
             phoneText.setText(pharmacy.getPhone());
-            
-            if (pharmacy.isOpen()) {
-                statusText.setText("OPEN NOW");
-                statusText.setTextColor(itemView.getResources().getColor(android.R.color.holo_green_dark));
-            } else {
-                statusText.setText("CLOSED");
-                statusText.setTextColor(itemView.getResources().getColor(android.R.color.holo_red_dark));
+
+            if (distanceText != null) {
+                distanceText.setText(pharmacy.getDistance());
+            }
+            if (hoursText != null) {
+                hoursText.setText(pharmacy.getHours());
+            }
+            if (statusText != null) {
+                if (pharmacy.isOpen()) {
+                    statusText.setText("OPEN NOW");
+                    statusText.setTextColor(itemView.getResources().getColor(android.R.color.holo_green_dark));
+                } else {
+                    statusText.setText("CLOSED");
+                    statusText.setTextColor(itemView.getResources().getColor(android.R.color.holo_red_dark));
+                }
             }
         }
     }

@@ -58,8 +58,8 @@ public class AppointmentAdapter extends RecyclerView.Adapter<AppointmentAdapter.
         private TextView textDate;
         private TextView textStatus;
         private TextView textReason;
-        private Button btnViewDetails;
-        private Button btnComplete;
+        private TextView textAppointmentType;
+        private TextView textTime;
 
         public AppointmentViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -67,8 +67,8 @@ public class AppointmentAdapter extends RecyclerView.Adapter<AppointmentAdapter.
             textDate = itemView.findViewById(R.id.text_date);
             textStatus = itemView.findViewById(R.id.text_status);
             textReason = itemView.findViewById(R.id.text_reason);
-            btnViewDetails = itemView.findViewById(R.id.btn_view_details);
-            btnComplete = itemView.findViewById(R.id.btn_complete);
+            textAppointmentType = itemView.findViewById(R.id.text_appointment_type);
+            textTime = itemView.findViewById(R.id.text_time);
 
             itemView.setOnClickListener(v -> {
                 int position = getAdapterPosition();
@@ -82,16 +82,29 @@ public class AppointmentAdapter extends RecyclerView.Adapter<AppointmentAdapter.
             // Show patient name instead of doctor name for doctor view
             textPatientName.setText(appointment.getPatientName());
 
-            SimpleDateFormat dateFormat = new SimpleDateFormat("MMM dd, yyyy 'at' hh:mm a", Locale.getDefault());
+            // Set appointment type
+            textAppointmentType.setText("In-Person Visit");
+
+            // Set date
+            SimpleDateFormat dateFormat = new SimpleDateFormat("MMM dd, yyyy", Locale.getDefault());
             if (appointment.getAppointmentDate() != null) {
                 textDate.setText(dateFormat.format(appointment.getAppointmentDate()));
             } else {
                 textDate.setText("TBD");
             }
 
+            // Set time
+            SimpleDateFormat timeFormat = new SimpleDateFormat("hh:mm a", Locale.getDefault());
+            if (appointment.getAppointmentDate() != null) {
+                textTime.setText(timeFormat.format(appointment.getAppointmentDate()));
+            } else {
+                textTime.setText("TBD");
+            }
+
+            // Set status
             textStatus.setText(capitalizeFirstLetter(appointment.getStatus()));
             String reason = appointment.getReason();
-            textReason.setText("Reason: " + (reason == null ? "N/A" : reason));
+            textReason.setText(reason != null ? reason : "No reason specified");
 
             // Set status color based on status
             if ("completed".equalsIgnoreCase(appointment.getStatus())) {
@@ -101,21 +114,6 @@ public class AppointmentAdapter extends RecyclerView.Adapter<AppointmentAdapter.
             } else {
                 textStatus.setTextColor(itemView.getResources().getColor(android.R.color.holo_blue_dark));
             }
-
-            // Set button click listeners
-            btnViewDetails.setOnClickListener(v -> {
-                int position = getAdapterPosition();
-                if (position != RecyclerView.NO_POSITION && listener != null) {
-                    listener.onAppointmentClick(appointments.get(position));
-                }
-            });
-
-            btnComplete.setOnClickListener(v -> {
-                int position = getAdapterPosition();
-                if (position != RecyclerView.NO_POSITION) {
-                    updateAppointmentStatus(appointments.get(position), "completed");
-                }
-            });
         }
 
         private void updateAppointmentStatus(Appointment appointment, String newStatus) {

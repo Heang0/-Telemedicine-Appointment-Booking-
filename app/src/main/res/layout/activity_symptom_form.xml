@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/textViewAppointmentInfo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Appointment Information"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="16dp"
+            android:textColor="@color/blue_800" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Chief Complaint"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:layout_marginTop="8dp" />
+
+        <EditText
+            android:id="@+id/editTextChiefComplaint"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Describe your main concern"
+            android:inputType="textMultiLine"
+            android:minLines="3"
+            android:gravity="top|start"
+            android:layout_marginBottom="16dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Symptom Details"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:layout_marginTop="16dp" />
+
+        <EditText
+            android:id="@+id/editTextDuration"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Duration (e.g., 3 days)"
+            android:inputType="text"
+            android:layout_marginBottom="8dp" />
+
+        <EditText
+            android:id="@+id/editTextSeverity"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Severity (mild/moderate/severe)"
+            android:inputType="text"
+            android:layout_marginBottom="8dp" />
+
+        <EditText
+            android:id="@+id/editTextLocation"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Location of symptoms"
+            android:inputType="text"
+            android:layout_marginBottom="8dp" />
+
+        <EditText
+            android:id="@+id/editTextAssociatedSymptoms"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Associated symptoms"
+            android:inputType="textMultiLine"
+            android:minLines="2"
+            android:gravity="top|start"
+            android:layout_marginBottom="8dp" />
+
+        <EditText
+            android:id="@+id/editTextAggravatingFactors"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Aggravating factors"
+            android:inputType="textMultiLine"
+            android:minLines="2"
+            android:gravity="top|start"
+            android:layout_marginBottom="8dp" />
+
+        <EditText
+            android:id="@+id/editTextRelievingFactors"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Relieving factors"
+            android:inputType="textMultiLine"
+            android:minLines="2"
+            android:gravity="top|start"
+            android:layout_marginBottom="16dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Medical History"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:layout_marginTop="16dp" />
+
+        <EditText
+            android:id="@+id/editTextPastMedicalHistory"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Past medical history"
+            android:inputType="textMultiLine"
+            android:minLines="3"
+            android:gravity="top|start"
+            android:layout_marginBottom="8dp" />
+
+        <EditText
+            android:id="@+id/editTextMedications"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Current medications"
+            android:inputType="textMultiLine"
+            android:minLines="2"
+            android:gravity="top|start"
+            android:layout_marginBottom="8dp" />
+
+        <EditText
+            android:id="@+id/editTextAllergies"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Allergies"
+            android:inputType="textMultiLine"
+            android:minLines="2"
+            android:gravity="top|start"
+            android:layout_marginBottom="8dp" />
+
+        <EditText
+            android:id="@+id/editTextFamilyHistory"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Family history"
+            android:inputType="textMultiLine"
+            android:minLines="2"
+            android:gravity="top|start"
+            android:layout_marginBottom="8dp" />
+
+        <EditText
+            android:id="@+id/editTextSocialHistory"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Social history"
+            android:inputType="textMultiLine"
+            android:minLines="2"
+            android:gravity="top|start"
+            android:layout_marginBottom="16dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Additional Information"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:layout_marginTop="16dp" />
+
+        <EditText
+            android:id="@+id/editTextReviewOfSystems"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Review of systems"
+            android:inputType="textMultiLine"
+            android:minLines="3"
+            android:gravity="top|start"
+            android:layout_marginBottom="8dp" />
+
+        <EditText
+            android:id="@+id/editTextVitalSigns"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Vital signs"
+            android:inputType="text"
+            android:layout_marginBottom="8dp" />
+
+        <EditText
+            android:id="@+id/editTextNotes"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Additional notes"
+            android:inputType="textMultiLine"
+            android:minLines="3"
+            android:gravity="top|start"
+            android:layout_marginBottom="16dp" />
+
+        <Button
+            android:id="@+id/buttonSubmitSymptomForm"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Submit Symptom Form"
+            android:textSize="16sp"
+            android:backgroundTint="@color/blue_500"
+            android:textColor="@android:color/white" />
+
+    </LinearLayout>
+</ScrollView>

@@ -1,156 +1,212 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="16dp">
+    android:background="@color/ios_background"
+    android:clipToPadding="false"
+    android:fillViewport="true"
+    android:paddingStart="@dimen/ios_page_horizontal_padding"
+    android:paddingTop="@dimen/ios_header_top_padding"
+    android:paddingEnd="@dimen/ios_page_horizontal_padding"
+    android:paddingBottom="32dp">
 
-    <TextView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Schedule Appointment"
-        android:textSize="24sp"
-        android:textStyle="bold"
-        android:layout_marginBottom="16dp" />
-
-    <com.google.android.material.card.MaterialCardView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:cardCornerRadius="12dp"
-        app:cardElevation="4dp"
-        android:layout_marginBottom="16dp">
+        android:orientation="vertical">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="16dp">
+            android:layout_marginBottom="18dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/btn_back_schedule"
+                android:layout_width="42dp"
+                android:layout_height="42dp"
+                android:background="@drawable/bg_ios_input_field"
+                android:padding="10dp"
+                android:src="@drawable/ic_arrow_back"
+                app:tint="@color/ios_text_primary" />
 
             <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="12dp"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:text="Schedule Appointment"
+                android:textColor="@color/ios_text_primary"
+                android:textSize="22sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="18dp"
+            android:text="Choose the provider, date, and time. Appointments are saved dynamically in Firebase."
+            android:textColor="@color/ios_text_secondary"
+            android:textSize="14sp" />
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            app:cardBackgroundColor="@color/ios_card_background"
+            app:cardCornerRadius="20dp"
+            app:cardElevation="0dp"
+            app:strokeColor="@color/ios_divider"
+            app:strokeWidth="1dp">
+
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Select Provider"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                android:layout_marginBottom="8dp" />
+                android:orientation="vertical"
+                android:padding="18dp">
 
-            <Spinner
-                android:id="@+id/spinner_provider"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Appointment Type"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                android:layout_marginBottom="8dp" />
-
-            <RadioGroup
-                android:id="@+id/radio_group_appointment_type"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginBottom="16dp">
-
-                <RadioButton
-                    android:id="@+id/radio_virtual"
-                    android:layout_width="wrap_content"
+                <TextView
+                    android:id="@+id/text_provider_label"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Virtual"
-                    android:layout_marginEnd="16dp" />
+                    android:text="Select Provider"
+                    android:textColor="@color/ios_text_primary"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
 
-                <RadioButton
-                    android:id="@+id/radio_in_person"
-                    android:layout_width="wrap_content"
+                <Spinner
+                    android:id="@+id/spinner_provider"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="In-Person" />
+                    android:layout_marginTop="10dp" />
 
-            </RadioGroup>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="18dp"
+                    android:layout_marginBottom="8dp"
+                    android:text="Appointment Type"
+                    android:textColor="@color/ios_text_primary"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
 
-        </LinearLayout>
+                <RadioGroup
+                    android:id="@+id/radio_group_appointment_type"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
 
-    </com.google.android.material.card.MaterialCardView>
+                    <RadioButton
+                        android:id="@+id/radio_virtual"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="16dp"
+                        android:text="Virtual" />
 
-    <com.google.android.material.card.MaterialCardView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:cardCornerRadius="12dp"
-        app:cardElevation="4dp"
-        android:layout_marginBottom="16dp">
+                    <RadioButton
+                        android:id="@+id/radio_in_person"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="In-Person" />
 
-        <LinearLayout
+                </RadioGroup>
+
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="16dp">
+            android:layout_marginBottom="16dp"
+            app:cardBackgroundColor="@color/ios_card_background"
+            app:cardCornerRadius="20dp"
+            app:cardElevation="0dp"
+            app:strokeColor="@color/ios_divider"
+            app:strokeWidth="1dp">
 
-            <TextView
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Select Date"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                android:layout_marginBottom="8dp" />
+                android:orientation="vertical"
+                android:padding="18dp">
 
-            <CalendarView
-                android:id="@+id/calendar_view"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp" />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Select Date"
+                    android:textColor="@color/ios_text_primary"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
 
-        </LinearLayout>
+                <CalendarView
+                    android:id="@+id/calendar_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp" />
 
-    </com.google.android.material.card.MaterialCardView>
+            </LinearLayout>
 
-    <com.google.android.material.card.MaterialCardView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:cardCornerRadius="12dp"
-        app:cardElevation="4dp"
-        android:layout_marginBottom="16dp">
+        </com.google.android.material.card.MaterialCardView>
 
-        <LinearLayout
+        <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="16dp">
+            android:layout_marginBottom="18dp"
+            app:cardBackgroundColor="@color/ios_card_background"
+            app:cardCornerRadius="20dp"
+            app:cardElevation="0dp"
+            app:strokeColor="@color/ios_divider"
+            app:strokeWidth="1dp">
 
-            <TextView
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Select Time"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                android:layout_marginBottom="8dp" />
+                android:orientation="vertical"
+                android:padding="18dp">
 
-            <TextView
-                android:id="@+id/text_selected_date"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="No date selected"
-                android:textSize="14sp"
-                android:layout_marginBottom="12dp"
-                android:gravity="center" />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Select Time"
+                    android:textColor="@color/ios_text_primary"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recycler_time_slots"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:nestedScrollingEnabled="false" />
+                <TextView
+                    android:id="@+id/text_selected_date"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="12dp"
+                    android:gravity="center"
+                    android:text="No date selected"
+                    android:textColor="@color/ios_text_secondary"
+                    android:textSize="14sp" />
 
-        </LinearLayout>
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recycler_time_slots"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:nestedScrollingEnabled="false" />
 
-    </com.google.android.material.card.MaterialCardView>
+            </LinearLayout>
 
-    <Button
-        android:id="@+id/btn_schedule_appointment"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Schedule Appointment"
-        android:enabled="false" />
+        </com.google.android.material.card.MaterialCardView>
 
-</LinearLayout>
+        <Button
+            android:id="@+id/btn_schedule_appointment"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:enabled="false"
+            android:text="Schedule Appointment" />
+
+    </LinearLayout>
+
+</androidx.core.widget.NestedScrollView>
+

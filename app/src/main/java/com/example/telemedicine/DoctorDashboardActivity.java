@@ -34,6 +34,10 @@ public class DoctorDashboardActivity extends AppCompatActivity {
     private void setupBottomNavigation() {
         BottomNavigationView bottomNav = findViewById(R.id.bottom_navigation);
         if (bottomNav != null) {
+            bottomNav.setItemIconTintList(getResources().getColorStateList(R.color.bottom_nav_icon_color_ios, getTheme()));
+            bottomNav.setItemBackgroundResource(R.drawable.bg_bottom_nav_item_ios);
+            bottomNav.setLabelVisibilityMode(com.google.android.material.bottomnavigation.LabelVisibilityMode.LABEL_VISIBILITY_UNLABELED);
+
             // Load default fragment if container is empty
             if (getSupportFragmentManager().findFragmentById(R.id.fragment_container) == null) {
                 getSupportFragmentManager().beginTransaction()
@@ -54,10 +58,10 @@ public class DoctorDashboardActivity extends AppCompatActivity {
                     selectedFragment = new DoctorPatientsFragment();
                 } else if (itemId == R.id.nav_prescriptions) {
                     selectedFragment = new PrescriptionManagerFragment();
-                } else if (itemId == R.id.nav_profile) {
-                    selectedFragment = new ProfileFragment();
+                } else if (itemId == R.id.nav_messages) {
+                    selectedFragment = new SecureMessagingHubFragment();
                 } else if (itemId == R.id.nav_settings) {
-                    selectedFragment = new SettingsFragment();
+                    selectedFragment = new ProfileFragment();
                 }
 
                 if (selectedFragment != null) {

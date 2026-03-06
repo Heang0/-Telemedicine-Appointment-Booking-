@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <TextView
+        android:id="@+id/textViewUser"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="User Name (Role)"
+        android:textSize="16sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/textViewAction"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Action performed"
+        android:textSize="14sp"
+        android:textColor="@color/gray_600"
+        android:layout_marginTop="4dp" />
+
+    <TextView
+        android:id="@+id/textViewResource"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Resource: Type - ID"
+        android:textSize="14sp"
+        android:textColor="@color/gray_600"
+        android:layout_marginTop="4dp" />
+
+    <TextView
+        android:id="@+id/textViewStatus"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Status"
+        android:textSize="12sp"
+        android:textColor="@color/green_600"
+        android:layout_marginTop="4dp" />
+
+    <TextView
+        android:id="@+id/textViewTime"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Time: Timestamp"
+        android:textSize="12sp"
+        android:textColor="@color/gray_500"
+        android:layout_marginTop="4dp" />
+
+</LinearLayout>

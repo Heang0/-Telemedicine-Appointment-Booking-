@@ -3,28 +3,40 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="8dp"
-    app:cardCornerRadius="12dp"
-    app:cardElevation="4dp">
+    android:layout_marginVertical="6dp"
+    app:cardBackgroundColor="@color/ios_card_background"
+    app:cardCornerRadius="18dp"
+    app:cardElevation="0dp"
+    app:strokeColor="@color/ios_divider"
+    app:strokeWidth="1dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:gravity="center_vertical"
         android:orientation="horizontal"
-        android:padding="16dp"
-        android:gravity="center_vertical">
+        android:padding="16dp">
 
-        <ImageView
-            android:id="@+id/category_icon"
+        <FrameLayout
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:src="@drawable/ic_document"
-            android:layout_marginEnd="16dp" />
+            android:background="@drawable/bg_ios_input_field">
+
+            <ImageView
+                android:id="@+id/category_icon"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_document"
+                app:tint="@color/ios_blue" />
+
+        </FrameLayout>
 
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:layout_marginStart="14dp"
             android:orientation="vertical">
 
             <TextView
@@ -32,33 +44,48 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Lab Results"
+                android:textColor="@color/ios_text_primary"
                 android:textSize="16sp"
-                android:textStyle="bold"
-                android:layout_marginBottom="4dp" />
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/category_description"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Blood tests, imaging, etc."
-                android:textSize="14sp"
-                android:layout_marginBottom="4dp" />
-
-            <TextView
-                android:id="@+id/record_count"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="12 records"
-                android:textSize="12sp"
-                android:textColor="@android:color/darker_gray" />
+                android:layout_marginTop="4dp"
+                android:text="Blood tests, imaging, and synced diagnostics."
+                android:textColor="@color/ios_text_secondary"
+                android:textSize="13sp" />
 
         </LinearLayout>
 
-        <ImageView
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:src="@drawable/ic_arrow_forward"
-            android:layout_marginStart="8dp" />
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="end|center_vertical"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/record_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_ios_input_field"
+                android:paddingHorizontal="10dp"
+                android:paddingVertical="6dp"
+                android:text="0 records"
+                android:textColor="@color/ios_text_primary"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+
+            <ImageView
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:layout_gravity="end"
+                android:layout_marginTop="8dp"
+                android:src="@drawable/ic_arrow_forward"
+                app:tint="@color/ios_text_secondary" />
+
+        </LinearLayout>
 
     </LinearLayout>
 

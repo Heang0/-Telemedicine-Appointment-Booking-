@@ -11,6 +11,8 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 
 public class FirestoreHelper {
@@ -70,10 +72,72 @@ public class FirestoreHelper {
                 .add(appointmentData);
     }
 
+    // Save appointment with enhanced data structure
+    public Task<DocumentReference> saveAppointment(String patientId, String doctorId, String patientName,
+                                                   String doctorName, Date appointmentDate, String status,
+                                                   String reason, String consultationType, String location,
+                                                   String meetingLink) {
+        Map<String, Object> appointmentData = new HashMap<>();
+        appointmentData.put("patientId", patientId);
+        appointmentData.put("doctorId", doctorId);
+        appointmentData.put("patientName", patientName);
+        appointmentData.put("doctorName", doctorName);
+        appointmentData.put("appointmentDate", appointmentDate);
+        appointmentData.put("status", status);
+        appointmentData.put("reason", reason);
+        appointmentData.put("consultationType", consultationType);
+        appointmentData.put("location", location);
+        appointmentData.put("meetingLink", meetingLink);
+        appointmentData.put("createdAt", System.currentTimeMillis());
+        appointmentData.put("updatedAt", System.currentTimeMillis());
+
+        return db.collection("appointments").add(appointmentData);
+    }
+
     // Get appointments for user
     public Task<QuerySnapshot> getUserAppointments(String userId) {
         return db.collection("appointments")
                 .whereEqualTo("patientId", userId)
+                .get();
+    }
+
+    // Save symptom form
+    public Task<DocumentReference> saveSymptomForm(Map<String, Object> symptomFormData) {
+        return db.collection("symptom_forms")
+                .add(symptomFormData);
+    }
+
+    // Get symptom forms for appointment
+    public Task<QuerySnapshot> getSymptomFormsForAppointment(String appointmentId) {
+        return db.collection("symptom_forms")
+                .whereEqualTo("appointmentId", appointmentId)
+                .get();
+    }
+
+    // Save medical record
+    public Task<DocumentReference> saveMedicalRecord(Map<String, Object> medicalRecordData) {
+        return db.collection("medical_records")
+                .add(medicalRecordData);
+    }
+
+    // Get medical records for patient
+    public Task<QuerySnapshot> getMedicalRecordsForPatient(String patientId) {
+        return db.collection("medical_records")
+                .whereEqualTo("patientId", patientId)
+                .get();
+    }
+
+    // Save pharmacy
+    public Task<DocumentReference> savePharmacy(Map<String, Object> pharmacyData) {
+        return db.collection("pharmacies")
+                .add(pharmacyData);
+    }
+
+    // Get pharmacies by location
+    public Task<QuerySnapshot> getPharmaciesNearLocation(String city, String state) {
+        return db.collection("pharmacies")
+                .whereEqualTo("city", city)
+                .whereEqualTo("state", state)
                 .get();
     }
 

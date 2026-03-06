@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- iOS-Style Record Category Item -->
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="4dp"
+    android:layout_marginVertical="6dp"
+    app:cardBackgroundColor="@color/ios_card_background"
+    app:cardCornerRadius="18dp"
+    app:cardElevation="0dp"
+    app:strokeColor="@color/ios_divider"
+    app:strokeWidth="1dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="16dp"
+        android:gravity="center_vertical">
+
+        <!-- Icon Container -->
+        <FrameLayout
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="@drawable/bg_icon_container_blue">
+
+            <ImageView
+                android:id="@+id/image_category_icon"
+                android:layout_width="26dp"
+                android:layout_height="26dp"
+                android:src="@drawable/ic_document"
+                android:layout_gravity="center"
+                app:tint="@color/ios_blue"/>
+
+        </FrameLayout>
+
+        <!-- Category Info -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:layout_marginStart="14dp">
+
+            <TextView
+                android:id="@+id/text_category_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Lab Results"
+                android:textSize="17sp"
+                android:textStyle="bold"
+                android:textColor="@color/ios_text_primary"
+                android:fontFamily="sans-serif-medium"/>
+
+            <TextView
+                android:id="@+id/text_category_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="5 documents"
+                android:textSize="13sp"
+                android:textColor="@color/ios_text_secondary"
+                android:fontFamily="sans-serif"
+                android:layout_marginTop="2dp"/>
+
+        </LinearLayout>
+
+        <!-- Arrow -->
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_arrow_forward"
+            app:tint="@color/ios_text_secondary"
+            android:alpha="0.5"/>
+
+    </LinearLayout>
+
+</com.google.android.material.card.MaterialCardView>

@@ -1,171 +1,569 @@
-<?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+﻿<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/ios_background">
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="16dp">
+        android:paddingHorizontal="20dp"
+        android:paddingTop="16dp"
+        android:paddingBottom="24dp">
 
+        <!-- Page Title -->
         <TextView
-            android:layout_width="match_parent"
+            android:id="@+id/text_settings_header"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Settings"
-            android:textSize="24sp"
+            android:textSize="28sp"
             android:textStyle="bold"
-            android:layout_marginBottom="16dp" />
+            android:textColor="@color/ios_text_primary"
+            android:letterSpacing="-0.02"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"/>
 
-        <com.google.android.material.card.MaterialCardView
-            android:layout_width="match_parent"
+        <!-- Appearance Section -->
+        <TextView
+            android:id="@+id/text_appearance_title"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            app:cardCornerRadius="12dp"
-            app:cardElevation="4dp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="16dp">
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Account Settings"
-                    android:textSize="18sp"
-                    android:textStyle="bold"
-                    android:layout_marginBottom="12dp" />
-
-                <com.google.android.material.switchmaterial.SwitchMaterial
-                    android:id="@+id/switch_notifications"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Enable Notifications"
-                    android:checked="true"
-                    android:layout_marginBottom="8dp" />
-
-                <com.google.android.material.switchmaterial.SwitchMaterial
-                    android:id="@+id/switch_dark_mode"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Dark Mode"
-                    android:layout_marginBottom="8dp" />
-
-                <com.google.android.material.switchmaterial.SwitchMaterial
-                    android:id="@+id/switch_biometric"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Biometric Login"
-                    android:checked="false" />
-
-            </LinearLayout>
-
-        </com.google.android.material.card.MaterialCardView>
-
-        <com.google.android.material.card.MaterialCardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            app:cardCornerRadius="12dp"
-            app:cardElevation="4dp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="16dp">
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Privacy &amp; Security"
-                    android:textSize="18sp"
-                    android:textStyle="bold"
-                    android:layout_marginBottom="12dp" />
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Data Encryption"
-                    android:textSize="16sp"
-                    android:padding="12dp"
-                    android:background="?attr/selectableItemBackground"
-                    android:clickable="true"
-                    android:focusable="true" />
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Privacy Policy"
-                    android:textSize="16sp"
-                    android:padding="12dp"
-                    android:background="?attr/selectableItemBackground"
-                    android:clickable="true"
-                    android:focusable="true" />
-
-            </LinearLayout>
-
-        </com.google.android.material.card.MaterialCardView>
-
-        <com.google.android.material.card.MaterialCardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:cardCornerRadius="12dp"
-            app:cardElevation="4dp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="16dp">
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="About"
-                    android:textSize="18sp"
-                    android:textStyle="bold"
-                    android:layout_marginBottom="12dp" />
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="App Version"
-                    android:textSize="16sp"
-                    android:padding="12dp"
-                    android:background="?attr/selectableItemBackground"
-                    android:clickable="true"
-                    android:focusable="true" />
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Terms of Service"
-                    android:textSize="16sp"
-                    android:padding="12dp"
-                    android:background="?attr/selectableItemBackground"
-                    android:clickable="true"
-                    android:focusable="true" />
-
-            </LinearLayout>
-
-        </com.google.android.material.card.MaterialCardView>
-
-        <!-- Logout Button -->
-        <Button
-            android:id="@+id/btn_logout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Logout"
-            android:textSize="16sp"
-            android:padding="14dp"
+            android:text="Appearance"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:textColor="@color/ios_text_secondary"
+            android:textAllCaps="true"
+            android:letterSpacing="0.05"
             android:layout_marginTop="24dp"
-            android:backgroundTint="@color/design_default_color_error"
-            style="@style/Widget.MaterialComponents.Button" />
+            app:layout_constraintTop_toBottomOf="@id/text_settings_header"
+            app:layout_constraintStart_toStartOf="parent"/>
 
-    </LinearLayout>
+        <!-- Appearance Card -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/card_appearance"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:cardBackgroundColor="@color/ios_card_background"
+            app:cardCornerRadius="20dp"
+            app:cardElevation="0dp"
+            app:strokeColor="@color/ios_divider"
+            app:strokeWidth="0dp"
+            android:layout_marginTop="12dp"
+            app:layout_constraintTop_toBottomOf="@id/text_appearance_title"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
 
-</ScrollView>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingVertical="8dp">
+
+                <!-- Dark Mode -->
+                <LinearLayout
+                    android:id="@+id/layout_dark_mode"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:paddingHorizontal="16dp"
+                    android:paddingVertical="14dp"
+                    android:background="?attr/selectableItemBackground">
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/ic_settings"
+                        app:tint="@color/ios_text_secondary"/>
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Dark Mode"
+                        android:textSize="16sp"
+                        android:textColor="@color/ios_text_primary"
+                        android:layout_marginStart="16dp"/>
+
+                    <androidx.appcompat.widget.SwitchCompat
+                        android:id="@+id/switch_dark_mode"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
+
+                </LinearLayout>
+
+                <!-- Divider -->
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/ios_divider"
+                    android:layout_marginStart="56dp"/>
+
+                <!-- Font Size -->
+                <LinearLayout
+                    android:id="@+id/layout_font_size"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:paddingHorizontal="16dp"
+                    android:paddingVertical="14dp"
+                    android:background="?attr/selectableItemBackground">
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/ic_document"
+                        app:tint="@color/ios_text_secondary"/>
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Font Size"
+                        android:textSize="16sp"
+                        android:textColor="@color/ios_text_primary"
+                        android:layout_marginStart="16dp"/>
+
+                    <TextView
+                        android:id="@+id/text_font_size_value"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Medium"
+                        android:textSize="14sp"
+                        android:textColor="@color/ios_text_secondary"
+                        android:layout_marginEnd="8dp"/>
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/ic_arrow_forward"
+                        app:tint="@color/ios_text_tertiary"/>
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Notifications Section -->
+        <TextView
+            android:id="@+id/text_notifications_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Notifications"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:textColor="@color/ios_text_secondary"
+            android:textAllCaps="true"
+            android:letterSpacing="0.05"
+            android:layout_marginTop="24dp"
+            app:layout_constraintTop_toBottomOf="@id/card_appearance"
+            app:layout_constraintStart_toStartOf="parent"/>
+
+        <!-- Notifications Card -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/card_notifications"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:cardBackgroundColor="@color/ios_card_background"
+            app:cardCornerRadius="20dp"
+            app:cardElevation="0dp"
+            app:strokeColor="@color/ios_divider"
+            app:strokeWidth="0dp"
+            android:layout_marginTop="12dp"
+            app:layout_constraintTop_toBottomOf="@id/text_notifications_title"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingVertical="8dp">
+
+                <!-- Push Notifications -->
+                <LinearLayout
+                    android:id="@+id/layout_push_notifications"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:paddingHorizontal="16dp"
+                    android:paddingVertical="14dp"
+                    android:background="?attr/selectableItemBackground">
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/ic_notifications"
+                        app:tint="@color/ios_text_secondary"/>
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Push Notifications"
+                        android:textSize="16sp"
+                        android:textColor="@color/ios_text_primary"
+                        android:layout_marginStart="16dp"/>
+
+                    <androidx.appcompat.widget.SwitchCompat
+                        android:id="@+id/switch_push"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:checked="true"/>
+
+                </LinearLayout>
+
+                <!-- Divider -->
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/ios_divider"
+                    android:layout_marginStart="56dp"/>
+
+                <!-- Email Notifications -->
+                <LinearLayout
+                    android:id="@+id/layout_email_notifications"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:paddingHorizontal="16dp"
+                    android:paddingVertical="14dp"
+                    android:background="?attr/selectableItemBackground">
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/ic_baseline_email_24"
+                        app:tint="@color/ios_text_secondary"/>
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Email Notifications"
+                        android:textSize="16sp"
+                        android:textColor="@color/ios_text_primary"
+                        android:layout_marginStart="16dp"/>
+
+                    <androidx.appcompat.widget.SwitchCompat
+                        android:id="@+id/switch_email"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:checked="true"/>
+
+                </LinearLayout>
+
+                <!-- Divider -->
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/ios_divider"
+                    android:layout_marginStart="56dp"/>
+
+                <!-- Appointment Reminders -->
+                <LinearLayout
+                    android:id="@+id/layout_reminders"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:paddingHorizontal="16dp"
+                    android:paddingVertical="14dp"
+                    android:background="?attr/selectableItemBackground">
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/ic_calendar"
+                        app:tint="@color/ios_text_secondary"/>
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Appointment Reminders"
+                        android:textSize="16sp"
+                        android:textColor="@color/ios_text_primary"
+                        android:layout_marginStart="16dp"/>
+
+                    <androidx.appcompat.widget.SwitchCompat
+                        android:id="@+id/switch_reminders"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:checked="true"/>
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Privacy &amp; Security Section -->
+        <TextView
+            android:id="@+id/text_privacy_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Privacy &amp; Security"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:textColor="@color/ios_text_secondary"
+            android:textAllCaps="true"
+            android:letterSpacing="0.05"
+            android:layout_marginTop="24dp"
+            app:layout_constraintTop_toBottomOf="@id/card_notifications"
+            app:layout_constraintStart_toStartOf="parent"/>
+
+        <!-- Privacy Card -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/card_privacy"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:cardBackgroundColor="@color/ios_card_background"
+            app:cardCornerRadius="20dp"
+            app:cardElevation="0dp"
+            app:strokeColor="@color/ios_divider"
+            app:strokeWidth="0dp"
+            android:layout_marginTop="12dp"
+            app:layout_constraintTop_toBottomOf="@id/text_privacy_title"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingVertical="8dp">
+
+                <!-- Change Password -->
+                <LinearLayout
+                    android:id="@+id/layout_password"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:paddingHorizontal="16dp"
+                    android:paddingVertical="14dp"
+                    android:background="?attr/selectableItemBackground">
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/ic_baseline_lock_24"
+                        app:tint="@color/ios_text_secondary"/>
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Change Password"
+                        android:textSize="16sp"
+                        android:textColor="@color/ios_text_primary"
+                        android:layout_marginStart="16dp"/>
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/ic_arrow_forward"
+                        app:tint="@color/ios_text_tertiary"/>
+
+                </LinearLayout>
+
+                <!-- Divider -->
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/ios_divider"
+                    android:layout_marginStart="56dp"/>
+
+                <!-- Two-Factor Auth -->
+                <LinearLayout
+                    android:id="@+id/layout_2fa"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:paddingHorizontal="16dp"
+                    android:paddingVertical="14dp"
+                    android:background="?attr/selectableItemBackground">
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/ic_permissions"
+                        app:tint="@color/ios_text_secondary"/>
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Two-Factor Auth"
+                        android:textSize="16sp"
+                        android:textColor="@color/ios_text_primary"
+                        android:layout_marginStart="16dp"/>
+
+                    <androidx.appcompat.widget.SwitchCompat
+                        android:id="@+id/switch_2fa"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- About Section -->
+        <TextView
+            android:id="@+id/text_about_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="About"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:textColor="@color/ios_text_secondary"
+            android:textAllCaps="true"
+            android:letterSpacing="0.05"
+            android:layout_marginTop="24dp"
+            app:layout_constraintTop_toBottomOf="@id/card_privacy"
+            app:layout_constraintStart_toStartOf="parent"/>
+
+        <!-- About Card -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/card_about"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:cardBackgroundColor="@color/ios_card_background"
+            app:cardCornerRadius="20dp"
+            app:cardElevation="0dp"
+            app:strokeColor="@color/ios_divider"
+            app:strokeWidth="0dp"
+            android:layout_marginTop="12dp"
+            app:layout_constraintTop_toBottomOf="@id/text_about_title"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingVertical="8dp">
+
+                <!-- Terms of Service -->
+                <LinearLayout
+                    android:id="@+id/layout_terms"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:paddingHorizontal="16dp"
+                    android:paddingVertical="14dp"
+                    android:background="?attr/selectableItemBackground">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Terms of Service"
+                        android:textSize="16sp"
+                        android:textColor="@color/ios_text_primary"
+                        android:layout_marginStart="16dp"/>
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/ic_arrow_forward"
+                        app:tint="@color/ios_text_tertiary"/>
+
+                </LinearLayout>
+
+                <!-- Divider -->
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/ios_divider"
+                    android:layout_marginStart="56dp"/>
+
+                <!-- Privacy Policy -->
+                <LinearLayout
+                    android:id="@+id/layout_privacy_policy"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:paddingHorizontal="16dp"
+                    android:paddingVertical="14dp"
+                    android:background="?attr/selectableItemBackground">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Privacy Policy"
+                        android:textSize="16sp"
+                        android:textColor="@color/ios_text_primary"
+                        android:layout_marginStart="16dp"/>
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/ic_arrow_forward"
+                        app:tint="@color/ios_text_tertiary"/>
+
+                </LinearLayout>
+
+                <!-- Divider -->
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/ios_divider"
+                    android:layout_marginStart="56dp"/>
+
+                <!-- App Version -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:paddingHorizontal="16dp"
+                    android:paddingVertical="14dp">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="App Version"
+                        android:textSize="16sp"
+                        android:textColor="@color/ios_text_primary"
+                        android:layout_marginStart="16dp"/>
+
+                    <TextView
+                        android:id="@+id/text_app_version"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="1.0.0"
+                        android:textSize="14sp"
+                        android:textColor="@color/ios_text_secondary"/>
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Bottom Spacer -->
+        <View
+            android:layout_width="0dp"
+            android:layout_height="32dp"
+            app:layout_constraintTop_toBottomOf="@id/card_about"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.core.widget.NestedScrollView>

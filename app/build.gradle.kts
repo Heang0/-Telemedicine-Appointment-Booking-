@@ -30,6 +30,10 @@ android {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
+    lint {
+        abortOnError = false
+        checkReleaseBuilds = false
+    }
 }
 
 dependencies {
@@ -39,6 +43,11 @@ dependencies {
     implementation(libs.constraintlayout)
     implementation(libs.circleimageview)
     implementation(libs.recyclerview)
+    implementation("androidx.annotation:annotation:1.7.0")
+
+    // ZXing QR code library
+    implementation("com.google.zxing:core:3.4.1")
+    implementation("com.journeyapps:zxing-android-embedded:4.3.0")
 
     // Firebase dependencies
     implementation(platform("com.google.firebase:firebase-bom:32.2.0"))

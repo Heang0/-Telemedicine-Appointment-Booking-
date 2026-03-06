@@ -47,6 +47,7 @@ public class AuthRegistrationActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
+        super.onBackPressed();
         // Redirect to login instead of allowing back to main activity
         navigateToLogin();
     }
@@ -101,22 +102,34 @@ public class AuthRegistrationActivity extends AppCompatActivity {
                     if (task.isSuccessful()) {
                         // Sign up success
                         FirebaseUser user = mAuth.getCurrentUser();
-                        
+
+                        if (user == null) {
+                            Toast.makeText(AuthRegistrationActivity.this,
+                                "Registration failed: User is null",
+                                Toast.LENGTH_LONG).show();
+                            return;
+                        }
+
                         // Save user profile to Firestore
                         saveUserProfile(user.getUid(), fullName, email);
-                        
-                        Toast.makeText(AuthRegistrationActivity.this, 
-                            "Registration successful!", 
+
+                        Toast.makeText(AuthRegistrationActivity.this,
+                            "Registration successful!",
                             Toast.LENGTH_SHORT).show();
-                        
+
                         // Navigate to main dashboard
                         Intent intent = new Intent(AuthRegistrationActivity.this, MainActivity.class);
                         startActivity(intent);
                         finish(); // Close registration activity
                     } else {
                         // Sign up failed
-                        Toast.makeText(AuthRegistrationActivity.this, 
-                            "Registration failed: " + task.getException().getMessage(), 
+                        Exception exception = task.getException();
+                        String errorMessage = "Registration failed";
+                        if (exception != null) {
+                            errorMessage += ": " + exception.getMessage();
+                        }
+                        Toast.makeText(AuthRegistrationActivity.this,
+                            errorMessage,
                             Toast.LENGTH_LONG).show();
                     }
                 });
@@ -144,5 +157,6 @@ public class AuthRegistrationActivity extends AppCompatActivity {
     private void navigateToLogin() {
         Intent intent = new Intent(this, LoginActivity.class);
         startActivity(intent);
+        finish();
     }
 }

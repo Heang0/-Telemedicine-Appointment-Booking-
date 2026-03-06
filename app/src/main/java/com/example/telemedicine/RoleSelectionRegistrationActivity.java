@@ -45,9 +45,15 @@ public class RoleSelectionRegistrationActivity extends AppCompatActivity {
         // Set up role selection listener
         setupRoleSelection();
 
-        // Set click listener
+        // Set click listeners
         buttonRegister.setOnClickListener(v -> registerUser());
         textViewSignIn.setOnClickListener(v -> navigateToLogin());
+        
+        // Add click listener for sign up text view (if it exists)
+        TextView textSignUp = findViewById(R.id.text_sign_up);
+        if (textSignUp != null) {
+            textSignUp.setOnClickListener(v -> navigateToLogin());
+        }
     }
 
     private void initializeViews() {
@@ -79,11 +85,6 @@ public class RoleSelectionRegistrationActivity extends AppCompatActivity {
         String email = editTextEmail.getText().toString().trim();
         String password = editTextPassword.getText().toString().trim();
         String confirmPassword = editTextConfirmPassword.getText().toString().trim();
-        String specialization = editSpecialization.getText().toString().trim();
-        String licenseNumber = editLicenseNumber.getText().toString().trim();
-
-        // For patient registration only (doctors are created by admin)
-        String selectedRole = UserRole.PATIENT.getRoleName(); // Always patient for self-registration
 
         // Validate inputs
         if (TextUtils.isEmpty(fullName)) {
@@ -129,20 +130,25 @@ public class RoleSelectionRegistrationActivity extends AppCompatActivity {
                     if (task.isSuccessful()) {
                         // Sign up success
                         FirebaseUser user = mAuth.getCurrentUser();
-                        
+
+                        if (user == null) {
+                            Toast.makeText(RoleSelectionRegistrationActivity.this,
+                                "Registration failed: User is null",
+                                Toast.LENGTH_LONG).show();
+                            return;
+                        }
+
                         // Save user profile to Firestore
                         saveUserProfile(user.getUid(), fullName, email);
-                        
-                        Toast.makeText(RoleSelectionRegistrationActivity.this, 
-                            "Registration successful!", 
-                            Toast.LENGTH_SHORT).show();
-                        
-                        // Navigate to patient dashboard
-                        navigateBasedOnRole();
                     } else {
                         // Sign up failed
-                        Toast.makeText(RoleSelectionRegistrationActivity.this, 
-                            "Registration failed: " + task.getException().getMessage(), 
+                        Exception exception = task.getException();
+                        String errorMessage = "Registration failed";
+                        if (exception != null) {
+                            errorMessage += ": " + exception.getMessage();
+                        }
+                        Toast.makeText(RoleSelectionRegistrationActivity.this,
+                            errorMessage,
                             Toast.LENGTH_LONG).show();
                     }
                 });
@@ -157,10 +163,15 @@ public class RoleSelectionRegistrationActivity extends AppCompatActivity {
                 .document(userId)
                 .set(userProfile)
                 .addOnSuccessListener(aVoid -> {
-                    // Successfully saved to Firestore
+                    Toast.makeText(RoleSelectionRegistrationActivity.this,
+                        "Registration successful!",
+                        Toast.LENGTH_SHORT).show();
+                    navigateBasedOnRole();
                 })
                 .addOnFailureListener(e -> {
                     // Handle error
+                    buttonRegister.setEnabled(true);
+                    buttonRegister.setText("Register");
                     Toast.makeText(RoleSelectionRegistrationActivity.this,
                         "Failed to save user profile: " + e.getMessage(),
                         Toast.LENGTH_LONG).show();

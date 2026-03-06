@@ -1,3 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Telemedicine</string>
+    
+    <!-- Activity titles -->
+    <string name="title_symptom_form">Symptom Form</string>
+    <string name="title_medical_records_vault">Medical Records Vault</string>
+    <string name="title_pharmacy_locator">Pharmacy Locator</string>
+    <string name="title_secure_messaging_hub">Secure Messaging Hub</string>
+    <string name="title_digital_prescription_pad">Digital Prescription Pad</string>
+    <string name="title_compliance_audit_log">Compliance Audit Log</string>
+    <string name="title_platform_analytics">Platform Analytics</string>
+    <string name="title_user_access_controller">User Access Controller</string>
+    
+    <!-- Buttons -->
+    <string name="button_submit_symptom_form">Submit Symptom Form</string>
+    <string name="button_add_medical_record">Add New Record</string>
+    <string name="button_search_pharmacies">Search Pharmacies</string>
+    <string name="button_send_message">Send</string>
+    <string name="button_add_medication">Add Medication</string>
+    <string name="button_generate_prescription">Generate QR Code</string>
+    <string name="button_save_prescription">Save Prescription</string>
+    
+    <!-- Hints -->
+    <string name="hint_chief_complaint">Describe your main concern</string>
+    <string name="hint_duration">Duration (e.g., 3 days)</string>
+    <string name="hint_severity">Severity (mild/moderate/severe)</string>
+    <string name="hint_location">Location of symptoms</string>
+    <string name="hint_associated_symptoms">Associated symptoms</string>
+    <string name="hint_past_medical_history">Past medical history</string>
+    <string name="hint_current_medications">Current medications</string>
+    <string name="hint_allergies">Allergies</string>
+    <string name="hint_family_history">Family history</string>
+    <string name="hint_social_history">Social history</string>
+    <string name="hint_review_of_systems">Review of systems</string>
+    <string name="hint_vital_signs">Vital signs</string>
+    <string name="hint_additional_notes">Additional notes</string>
+    <string name="hint_medication_name">Medication Name</string>
+    <string name="hint_dosage">Dosage (e.g., 500mg)</string>
+    <string name="hint_frequency">Frequency (e.g., 2 times daily)</string>
+    <string name="hint_duration_days">Duration (e.g., 7 days)</string>
+    <string name="hint_quantity">Quantity (e.g., 30 tablets)</string>
+    <string name="hint_instructions">Instructions for use</string>
+    <string name="hint_city">City</string>
+    <string name="hint_state">State</string>
+    <string name="hint_type_your_message">Type your message...</string>
+    
+    <!-- Toast messages -->
+    <string name="message_symptom_form_submitted">Symptom form submitted successfully!</string>
+    <string name="message_error_submitting_form">Error submitting symptom form</string>
+    <string name="message_please_enter_chief_complaint">Please enter chief complaint</string>
+    <string name="message_no_pharmacies_found">No pharmacies found in %1$s, %2$s</string>
+    <string name="message_message_sent">Message sent successfully!</string>
+    <string name="message_error_sending_message">Error sending message: %1$s</string>
+    <string name="message_qr_code_generated">QR code generated successfully!</string>
+    <string name="message_error_generating_qr_code">Error generating QR code</string>
+    <string name="message_prescription_saved">Prescription saved successfully!</string>
+    <string name="message_error_saving_prescription">Error saving prescription: %1$s</string>
+
+    <!-- Spinner prompts -->
+    <string name="select_medication">Select Medication</string>
 </resources>

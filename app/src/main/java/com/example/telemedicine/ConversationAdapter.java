@@ -4,6 +4,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -28,7 +29,7 @@ public class ConversationAdapter extends RecyclerView.Adapter<ConversationAdapte
     @NonNull
     @Override
     public ConversationViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_conversation, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_conversation_ios, parent, false);
         return new ConversationViewHolder(view);
     }
 
@@ -53,16 +54,18 @@ public class ConversationAdapter extends RecyclerView.Adapter<ConversationAdapte
         private TextView lastMessageText;
         private TextView timeText;
         private TextView unreadCountText;
-        private TextView securityIndicator;
+        private TextView roleBadgeText;
+        private View onlineStatusView;
 
         public ConversationViewHolder(@NonNull View itemView) {
             super(itemView);
             
-            participantNameText = itemView.findViewById(R.id.participant_name);
-            lastMessageText = itemView.findViewById(R.id.last_message);
-            timeText = itemView.findViewById(R.id.message_time);
-            unreadCountText = itemView.findViewById(R.id.unread_count);
-            securityIndicator = itemView.findViewById(R.id.security_indicator);
+            participantNameText = itemView.findViewById(R.id.text_sender_name);
+            lastMessageText = itemView.findViewById(R.id.text_last_message);
+            timeText = itemView.findViewById(R.id.text_message_time);
+            unreadCountText = itemView.findViewById(R.id.badge_unread);
+            roleBadgeText = itemView.findViewById(R.id.text_role_badge);
+            onlineStatusView = itemView.findViewById(R.id.view_online_status);
 
             itemView.setOnClickListener(v -> {
                 int position = getAdapterPosition();
@@ -73,25 +76,41 @@ public class ConversationAdapter extends RecyclerView.Adapter<ConversationAdapte
         }
 
         public void bind(Conversation conversation) {
-            participantNameText.setText(conversation.getParticipantName());
-            lastMessageText.setText(conversation.getLastMessage());
-            
+            String participantName = conversation.getParticipantName() != null
+                    ? conversation.getParticipantName()
+                    : "User";
+            String lastMessage = conversation.getLastMessage() != null
+                    ? conversation.getLastMessage()
+                    : "Start a conversation";
+
+            participantNameText.setText(participantName);
+            lastMessageText.setText(lastMessage);
+
+            String role = conversation.getParticipantRole() != null ? conversation.getParticipantRole() : "";
+            if (roleBadgeText != null) {
+                if (!role.trim().isEmpty()) {
+                    roleBadgeText.setText(role.substring(0, 1).toUpperCase() + role.substring(1).toLowerCase(Locale.getDefault()));
+                    roleBadgeText.setVisibility(View.VISIBLE);
+                } else {
+                    roleBadgeText.setVisibility(View.GONE);
+                }
+            }
+            if (onlineStatusView != null) {
+                onlineStatusView.setVisibility(View.VISIBLE);
+            }
+
             SimpleDateFormat sdf = new SimpleDateFormat("hh:mm a", Locale.getDefault());
-            timeText.setText(sdf.format(conversation.getLastMessageTime()));
-            
+            if (conversation.getTimestamp() != null) {
+                timeText.setText(sdf.format(conversation.getTimestamp()));
+            } else {
+                timeText.setText("");
+            }
+
             if (conversation.getUnreadCount() > 0) {
                 unreadCountText.setText(String.valueOf(conversation.getUnreadCount()));
                 unreadCountText.setVisibility(View.VISIBLE);
             } else {
                 unreadCountText.setVisibility(View.GONE);
-            }
-            
-            if (conversation.isEncrypted()) {
-                securityIndicator.setText("🔒");
-                securityIndicator.setContentDescription("Encrypted");
-            } else {
-                securityIndicator.setText("🔓");
-                securityIndicator.setContentDescription("Not Encrypted");
             }
         }
     }

@@ -4,7 +4,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -23,7 +23,9 @@ import java.util.List;
 public class PrescriptionManagerFragment extends Fragment implements PrescriptionAdapter.OnPrescriptionClickListener {
 
     private RecyclerView recyclerPrescriptions;
-    private Button btnNewPrescription;
+    private View btnNewPrescription;
+    private TextView textActiveCount;
+    private TextView textPendingCount;
     private PrescriptionAdapter adapter;
     private List<Prescription> prescriptions;
 
@@ -34,7 +36,7 @@ public class PrescriptionManagerFragment extends Fragment implements Prescriptio
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_prescription_manager, container, false);
+        View view = inflater.inflate(R.layout.fragment_prescription_manager_ios, container, false);
 
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
@@ -43,16 +45,17 @@ public class PrescriptionManagerFragment extends Fragment implements Prescriptio
         setupRecyclerView();
         loadPrescriptions();
 
-        btnNewPrescription.setOnClickListener(v -> {
-            // Navigate to create new prescription
-            if (getActivity() != null) {
-                getActivity().getSupportFragmentManager()
-                        .beginTransaction()
-                        .replace(R.id.fragment_container, new DigitalPrescriptionPadFragment())
-                        .addToBackStack(null)
-                        .commit();
-            }
-        });
+        if (btnNewPrescription != null) {
+            btnNewPrescription.setOnClickListener(v -> {
+                if (getActivity() != null) {
+                    getActivity().getSupportFragmentManager()
+                            .beginTransaction()
+                            .replace(R.id.fragment_container, new DigitalPrescriptionPadFragment())
+                            .addToBackStack(null)
+                            .commit();
+                }
+            });
+        }
 
         return view;
     }
@@ -60,6 +63,8 @@ public class PrescriptionManagerFragment extends Fragment implements Prescriptio
     private void initializeViews(View view) {
         recyclerPrescriptions = view.findViewById(R.id.recycler_prescriptions);
         btnNewPrescription = view.findViewById(R.id.btn_new_prescription);
+        textActiveCount = view.findViewById(R.id.text_active_count);
+        textPendingCount = view.findViewById(R.id.text_pending_count);
     }
 
     private void setupRecyclerView() {
@@ -102,9 +107,28 @@ public class PrescriptionManagerFragment extends Fragment implements Prescriptio
                         }
 
                         prescriptions.sort((a, b) -> Long.compare(b.getCreatedAt(), a.getCreatedAt()));
+                        updateStats();
                         adapter.updatePrescriptions(prescriptions);
                     }
                 });
+    }
+
+    private void updateStats() {
+        int activeCount = 0;
+        int pendingCount = 0;
+        for (Prescription prescription : prescriptions) {
+            if ("pending".equalsIgnoreCase(prescription.getStatus())) {
+                pendingCount++;
+            } else {
+                activeCount++;
+            }
+        }
+        if (textActiveCount != null) {
+            textActiveCount.setText(String.valueOf(activeCount));
+        }
+        if (textPendingCount != null) {
+            textPendingCount.setText(String.valueOf(pendingCount));
+        }
     }
 
     @Override

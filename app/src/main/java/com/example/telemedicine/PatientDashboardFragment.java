@@ -24,13 +24,15 @@ public class PatientDashboardFragment extends Fragment {
 
     private TextView textUserName, textSeeAllAppointments;
     private RecyclerView recyclerUpcomingAppointments;
-    private AppointmentAdapter appointmentAdapter;
+    private AppointmentAdapterIOS appointmentAdapter;
     private List<Appointment> upcomingAppointments;
 
-    // New health stats views
+    // Header stats
+    private TextView textAppointmentsCount, textPrescriptionsCount, textMessagesCount;
+    // Health stats
     private TextView textLastVisitValue, textNextAppointmentValue, textMedicationsValue, textAllergiesValue;
-    // New chips
-    private View chipBookAppointment, chipMessages, chipMedicalRecords;
+    // Action buttons
+    private View chipBookAppointment, chipMessages, chipMedicalRecords, chipPrescriptions, chipLabResults;
 
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
@@ -39,7 +41,7 @@ public class PatientDashboardFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_patient_dashboard_modern, container, false);
+        View view = inflater.inflate(R.layout.fragment_patient_dashboard_ios, container, false);
 
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
@@ -48,14 +50,9 @@ public class PatientDashboardFragment extends Fragment {
         loadUserProfile();
         setupRecyclerView();
         loadUpcomingAppointments();
-        loadHealthStats(); // New method
+        loadHealthStats();
 
         setClickListeners();
-
-        // 🔍 DEBUG: visibly confirm fragment loaded
-        if (textUserName != null) {
-            textUserName.setText("✅ Loaded: Patient Dashboard");
-        }
 
         return view;
     }
@@ -65,16 +62,23 @@ public class PatientDashboardFragment extends Fragment {
         textSeeAllAppointments = view.findViewById(R.id.text_see_all_appointments);
         recyclerUpcomingAppointments = view.findViewById(R.id.recycler_upcoming_appointments);
 
+        // Header stats
+        textAppointmentsCount = view.findViewById(R.id.text_appointments_count);
+        textPrescriptionsCount = view.findViewById(R.id.text_prescriptions_count);
+        textMessagesCount = view.findViewById(R.id.text_messages_count);
+
         // Health stats
         textLastVisitValue = view.findViewById(R.id.text_last_visit_value);
         textNextAppointmentValue = view.findViewById(R.id.text_next_appointment_value);
         textMedicationsValue = view.findViewById(R.id.text_medications_value);
         textAllergiesValue = view.findViewById(R.id.text_allergies_value);
 
-        // Chips
+        // Action buttons
         chipBookAppointment = view.findViewById(R.id.chip_book_appointment);
         chipMessages = view.findViewById(R.id.chip_messages);
         chipMedicalRecords = view.findViewById(R.id.chip_medical_records);
+        chipPrescriptions = view.findViewById(R.id.chip_prescriptions);
+        chipLabResults = view.findViewById(R.id.chip_lab_results);
     }
 
     private void loadUserProfile() {
@@ -101,7 +105,7 @@ public class PatientDashboardFragment extends Fragment {
 
     private void setupRecyclerView() {
         upcomingAppointments = new ArrayList<>();
-        appointmentAdapter = new AppointmentAdapter(upcomingAppointments, appointment -> {
+        appointmentAdapter = new AppointmentAdapterIOS(upcomingAppointments, appointment -> {
             // Handle appointment click if needed
         });
         recyclerUpcomingAppointments.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -156,6 +160,11 @@ public class PatientDashboardFragment extends Fragment {
                             return a.getAppointmentDate().compareTo(b.getAppointmentDate());
                         });
 
+                        // Update header count
+                        if (textAppointmentsCount != null) {
+                            textAppointmentsCount.setText(String.valueOf(upcomingAppointments.size()));
+                        }
+
                         // Limit to 3 upcoming appointments
                         if (upcomingAppointments.size() > 3) {
                             upcomingAppointments = upcomingAppointments.subList(0, 3);
@@ -201,46 +210,96 @@ public class PatientDashboardFragment extends Fragment {
                             String allergies = user.getAllergies() != null && !user.getAllergies().trim().isEmpty() ?
                                     user.getAllergies() : "None";
 
-                            textLastVisitValue.setText(lastVisit);
-                            textNextAppointmentValue.setText(nextAppt);
-                            textMedicationsValue.setText(String.valueOf(medCount));
-                            textAllergiesValue.setText(allergies);
+                            // Update health stats
+                            if (textLastVisitValue != null) {
+                                textLastVisitValue.setText(lastVisit);
+                            }
+                            if (textNextAppointmentValue != null) {
+                                textNextAppointmentValue.setText(nextAppt);
+                            }
+                            if (textMedicationsValue != null) {
+                                textMedicationsValue.setText(String.valueOf(medCount));
+                            }
+                            if (textAllergiesValue != null) {
+                                textAllergiesValue.setText(allergies);
+                            }
+                            
+                            // Update header prescriptions count
+                            if (textPrescriptionsCount != null) {
+                                textPrescriptionsCount.setText(String.valueOf(medCount));
+                            }
                         }
                     }
                 });
     }
 
     private void setClickListeners() {
-        chipBookAppointment.setOnClickListener(v -> {
-            Intent intent = new Intent(getActivity(), ScheduleAppointmentActivity.class);
-            startActivity(intent);
-        });
+        if (chipBookAppointment != null) {
+            chipBookAppointment.setOnClickListener(v -> {
+                Intent intent = new Intent(getActivity(), ScheduleAppointmentActivity.class);
+                startActivity(intent);
+            });
+        }
 
-        chipMessages.setOnClickListener(v -> {
-            Intent intent = new Intent(getActivity(), MessageThreadActivity.class);
-            intent.putExtra("other_user_id", "doctor1");
-            startActivity(intent);
-        });
+        if (chipMessages != null) {
+            chipMessages.setOnClickListener(v -> {
+                if (getActivity() != null) {
+                    getActivity().getSupportFragmentManager()
+                            .beginTransaction()
+                            .replace(R.id.fragment_container, new SecureMessagingHubFragment())
+                            .addToBackStack(null)
+                            .commit();
+                }
+            });
+        }
 
-        chipMedicalRecords.setOnClickListener(v -> {
-            if (getActivity() != null) {
-                getActivity().getSupportFragmentManager()
-                        .beginTransaction()
-                        .replace(R.id.fragment_container, new PatientEMRFragment())
-                        .addToBackStack(null)
-                        .commit();
-            }
-        });
+        if (chipMedicalRecords != null) {
+            chipMedicalRecords.setOnClickListener(v -> {
+                if (getActivity() != null) {
+                    getActivity().getSupportFragmentManager()
+                            .beginTransaction()
+                            .replace(R.id.fragment_container, new PatientEMRFragment())
+                            .addToBackStack(null)
+                            .commit();
+                }
+            });
+        }
 
-        textSeeAllAppointments.setOnClickListener(v -> {
-            if (getActivity() != null) {
-                getActivity().getSupportFragmentManager()
-                        .beginTransaction()
-                        .replace(R.id.fragment_container, new AppointmentsFragment())
-                        .addToBackStack(null)
-                        .commit();
-            }
-        });
+        if (chipPrescriptions != null) {
+            chipPrescriptions.setOnClickListener(v -> {
+                if (getActivity() != null) {
+                    getActivity().getSupportFragmentManager()
+                            .beginTransaction()
+                            .replace(R.id.fragment_container, new PatientPrescriptionsFragment())
+                            .addToBackStack(null)
+                            .commit();
+                }
+            });
+        }
+
+        if (chipLabResults != null) {
+            chipLabResults.setOnClickListener(v -> {
+                if (getActivity() != null) {
+                    getActivity().getSupportFragmentManager()
+                            .beginTransaction()
+                            .replace(R.id.fragment_container, new MedicalRecordsVaultFragment())
+                            .addToBackStack(null)
+                            .commit();
+                }
+            });
+        }
+
+        if (textSeeAllAppointments != null) {
+            textSeeAllAppointments.setOnClickListener(v -> {
+                if (getActivity() != null) {
+                    getActivity().getSupportFragmentManager()
+                            .beginTransaction()
+                            .replace(R.id.fragment_container, new AppointmentsFragment())
+                            .addToBackStack(null)
+                            .commit();
+                }
+            });
+        }
     }
 
     @Override

@@ -1,32 +1,51 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:background="@color/light_grey_background"
     android:padding="16dp">
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Prescription Manager"
-        android:textSize="24sp"
+        android:text="Prescriptions"
+        android:textSize="26sp"
         android:textStyle="bold"
-        android:layout_marginBottom="24dp"
-        android:gravity="center" />
+        android:textColor="@color/text_primary" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recycler_prescriptions"
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Create and manage prescriptions for your patients."
+        android:textSize="14sp"
+        android:textColor="@color/text_secondary"
+        android:layout_marginBottom="16dp" />
+
+    <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:layout_marginBottom="16dp" />
+        app:cardCornerRadius="16dp"
+        app:cardElevation="2dp"
+        android:layout_marginBottom="16dp">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycler_prescriptions"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="8dp" />
+
+    </com.google.android.material.card.MaterialCardView>
 
     <Button
         android:id="@+id/btn_new_prescription"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Create New Prescription"
-        android:layout_marginBottom="8dp" />
+        android:layout_marginBottom="8dp"
+        style="@style/Widget.Material3.Button" />
 
 </LinearLayout>
+

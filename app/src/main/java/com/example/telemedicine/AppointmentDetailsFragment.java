@@ -85,16 +85,25 @@ public class AppointmentDetailsFragment extends Fragment {
                 .addOnSuccessListener(documentSnapshot -> {
                     if (documentSnapshot.exists()) {
                         Appointment appointment = documentSnapshot.toObject(Appointment.class);
+                        if (appointment == null) {
+                            Toast.makeText(getContext(), "Appointment data is invalid", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
 
                         // Update the local variables with actual data
                         patientName = appointment.getPatientName();
                         doctorName = appointment.getDoctorName();
                         appointmentStatus = appointment.getStatus();
                         reason = appointment.getReason();
+                        patientId = appointment.getPatientId();
+                        doctorId = appointment.getDoctorId();
 
                         // Format the date properly
                         SimpleDateFormat dateFormat = new SimpleDateFormat("MMM dd, yyyy 'at' hh:mm a", Locale.getDefault());
-                        String formattedDate = dateFormat.format(appointment.getAppointmentDate());
+                        String formattedDate = "TBD";
+                        if (appointment.getAppointmentDate() != null) {
+                            formattedDate = dateFormat.format(appointment.getAppointmentDate());
+                        }
 
                         // Populate the UI with actual data
                         if (textPatientName != null && patientName != null) {
@@ -124,11 +133,13 @@ public class AppointmentDetailsFragment extends Fragment {
 
                         if (textReason != null && reason != null) {
                             textReason.setText(reason);
+                        } else if (textReason != null) {
+                            textReason.setText("N/A");
                         }
 
                         // Determine if current user is doctor or patient and adjust UI accordingly
-                        String currentUserId = mAuth.getCurrentUser().getUid();
-                        boolean isDoctor = currentUserId.equals(doctorId);
+                        String currentUserId = mAuth.getCurrentUser() != null ? mAuth.getCurrentUser().getUid() : null;
+                        boolean isDoctor = currentUserId != null && currentUserId.equals(doctorId);
 
                         // Show/hide buttons based on user role
                         if (btnCompleteAppointment != null) {
@@ -174,9 +185,9 @@ public class AppointmentDetailsFragment extends Fragment {
         }
 
         // Check if the current user has permission to update the status
-        String currentUserId = mAuth.getCurrentUser().getUid();
-        boolean isDoctor = currentUserId.equals(doctorId);
-        boolean isPatient = currentUserId.equals(patientId);
+        String currentUserId = mAuth.getCurrentUser() != null ? mAuth.getCurrentUser().getUid() : null;
+        boolean isDoctor = currentUserId != null && currentUserId.equals(doctorId);
+        boolean isPatient = currentUserId != null && currentUserId.equals(patientId);
 
         // Doctors can mark as completed, patients can cancel
         boolean canUpdate = (isDoctor && newStatus.equals("completed")) ||

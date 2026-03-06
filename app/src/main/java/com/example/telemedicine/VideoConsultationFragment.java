@@ -64,7 +64,7 @@ public class VideoConsultationFragment extends Fragment {
         recyclerChatMessages.setAdapter(chatAdapter);
 
         // Add a welcome message
-        chatMessages.add(new ChatMessage("Hello! Welcome to your consultation with Dr. Smith.", "doctor"));
+        chatMessages.add(new ChatMessage("Hello! Welcome to your consultation with Dr. Smith.", "doctor", "demo_appointment_123"));
         chatAdapter.notifyDataSetChanged();
     }
 
@@ -125,7 +125,7 @@ public class VideoConsultationFragment extends Fragment {
     private void sendMessage() {
         String message = editChatMessage.getText().toString().trim();
         if (!message.isEmpty()) {
-            ChatMessage chatMessage = new ChatMessage(message, "patient");
+            ChatMessage chatMessage = new ChatMessage(message, "patient", "demo_appointment_123");
             chatAdapter.addMessage(chatMessage);
             editChatMessage.setText("");
 
@@ -141,7 +141,7 @@ public class VideoConsultationFragment extends Fragment {
             try {
                 Thread.sleep(2000); // Wait 2 seconds
                 requireActivity().runOnUiThread(() -> {
-                    ChatMessage response = new ChatMessage("Thank you for sharing that information. How long have you been experiencing these symptoms?", "doctor");
+                    ChatMessage response = new ChatMessage("Thank you for sharing that information. How long have you been experiencing these symptoms?", "doctor", "demo_appointment_123");
                     chatAdapter.addMessage(response);
                 });
             } catch (InterruptedException e) {

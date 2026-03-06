@@ -16,23 +16,24 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class DoctorPatientsFragment extends Fragment {
 
     private RecyclerView recyclerPatients;
-    private UserAdapter userAdapter;
+    private PatientAdapter patientAdapter;
     private List<User> patients;
 
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
     private com.google.firebase.firestore.ListenerRegistration appointmentsListenerRegistration;
-    private com.google.firebase.firestore.ListenerRegistration patientsListenerRegistration;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_doctor_patients, container, false);
+        View view = inflater.inflate(R.layout.fragment_doctor_patients_ios, container, false);
 
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
@@ -50,29 +51,35 @@ public class DoctorPatientsFragment extends Fragment {
 
     private void setupRecyclerView() {
         patients = new ArrayList<>();
-        userAdapter = new UserAdapter(patients, user -> {
-            // Handle patient click - navigate to schedule appointment with this patient
+        patientAdapter = new PatientAdapter(patients, patient -> {
             if (getActivity() != null) {
-                // Create intent to schedule appointment with this patient
-                android.content.Intent intent = new android.content.Intent(getActivity(), ScheduleAppointmentActivity.class);
-                intent.putExtra("selected_patient_id", user.getUserId());
-                intent.putExtra("selected_patient_name", user.getFullName());
-                getActivity().startActivity(intent);
+                getActivity().getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(
+                                R.id.fragment_container,
+                                AppointmentSchedulerFragment.newInstance(
+                                        UserRole.DOCTOR.getRoleName(),
+                                        patient.getUserId(),
+                                        patient.getFullName()
+                                )
+                        )
+                        .addToBackStack(null)
+                        .commit();
             }
         });
         recyclerPatients.setLayoutManager(new LinearLayoutManager(getContext()));
-        recyclerPatients.setAdapter(userAdapter);
+        recyclerPatients.setAdapter(patientAdapter);
     }
 
     private void loadPatients() {
+        if (mAuth.getCurrentUser() == null) {
+            return;
+        }
         String doctorId = mAuth.getCurrentUser().getUid();
 
-        // Remove previous listeners if they exist
+        // Remove previous listener if exists
         if (appointmentsListenerRegistration != null) {
             appointmentsListenerRegistration.remove();
-        }
-        if (patientsListenerRegistration != null) {
-            patientsListenerRegistration.remove();
         }
 
         // Get appointments for this doctor to find associated patients
@@ -84,33 +91,29 @@ public class DoctorPatientsFragment extends Fragment {
                     }
 
                     if (querySnapshot != null) {
-                        // Extract unique patient IDs from appointments
-                        List<String> patientIds = new ArrayList<>();
+                        Map<String, String> patientMap = new HashMap<>();
                         for (QueryDocumentSnapshot document : querySnapshot) {
-                            String patientId = document.getString("patientId");
-                            if (patientId != null && !patientIds.contains(patientId)) {
-                                patientIds.add(patientId);
-                            }
+                            Appointment appointment = document.toObject(Appointment.class);
+                            patientMap.put(appointment.getPatientId(), appointment.getPatientName());
                         }
 
-                        // Fetch patient details
-                        if (!patientIds.isEmpty()) {
-                            patientsListenerRegistration = db.collection("users")
-                                    .whereIn("userId", patientIds)
-                                    .addSnapshotListener((patientsSnapshot, patientsError) -> {
-                                        if (patientsError != null) {
-                                            return;
+                        // Now fetch the patient details
+                        if (!patientMap.isEmpty()) {
+                            List<String> patientIds = new ArrayList<>(patientMap.keySet());
+                            db.collection("users")
+                                    .whereIn("userId", patientIds.subList(0, Math.min(10, patientIds.size())))
+                                    .get()
+                                    .addOnSuccessListener(userSnapshot -> {
+                                        patients.clear();
+                                        for (QueryDocumentSnapshot userDoc : userSnapshot) {
+                                            User patient = userDoc.toObject(User.class);
+                                            patients.add(patient);
                                         }
-
-                                        if (patientsSnapshot != null) {
-                                            patients.clear();
-                                            for (QueryDocumentSnapshot patientDoc : patientsSnapshot) {
-                                                User patient = patientDoc.toObject(User.class);
-                                                patients.add(patient);
-                                            }
-                                            userAdapter.updateUsers(patients);
-                                        }
+                                        patientAdapter.updatePatients(patients);
                                     });
+                        } else {
+                            patients.clear();
+                            patientAdapter.updatePatients(patients);
                         }
                     }
                 });
@@ -119,12 +122,8 @@ public class DoctorPatientsFragment extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        // Clean up the listeners to prevent memory leaks
         if (appointmentsListenerRegistration != null) {
             appointmentsListenerRegistration.remove();
-        }
-        if (patientsListenerRegistration != null) {
-            patientsListenerRegistration.remove();
         }
     }
 }

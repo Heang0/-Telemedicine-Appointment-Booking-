@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/textViewPharmacyLocatorTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Pharmacy Locator"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:padding="16dp"
+        android:background="@color/blue_100"
+        android:textColor="@color/blue_800" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="16dp">
+
+        <EditText
+            android:id="@+id/editTextCity"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="City"
+            android:inputType="text"
+            android:layout_marginEnd="8dp" />
+
+        <EditText
+            android:id="@+id/editTextState"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="State"
+            android:inputType="text"
+            android:layout_marginStart="8dp" />
+
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/buttonSearchPharmacies"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Search Pharmacies"
+        android:textSize="16sp"
+        android:backgroundTint="@color/blue_500"
+        android:textColor="@color/white"
+        android:layout_margin="16dp" />
+
+    <ListView
+        android:id="@+id/listViewPharmacies"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:divider="@color/gray_200"
+        android:dividerHeight="1dp"
+        android:padding="8dp" />
+
+</LinearLayout>

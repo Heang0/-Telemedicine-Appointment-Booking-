@@ -9,6 +9,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
@@ -27,205 +28,320 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         // Apply theme before calling super.onCreate
-        ThemeUtils.applyTheme(this);
+        try {
+            ThemeUtils.applyTheme(this);
+        } catch (Exception e) {
+            Log.e("MainActivity", "Error applying theme", e);
+            Toast.makeText(this, "Theme error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+        }
 
         super.onCreate(savedInstanceState);
 
-        // Initialize Firebase Auth
-        mAuth = FirebaseAuth.getInstance();
+        // Handle back button press
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
+                    getSupportFragmentManager().popBackStack();
+                } else {
+                    finish();
+                }
+            }
+        });
 
-        // Check if user is signed in
-        FirebaseUser currentUser = mAuth.getCurrentUser();
-        if (currentUser == null) {
-            Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-            startActivity(intent);
+        try {
+            // Initialize Firebase Auth
+            mAuth = FirebaseAuth.getInstance();
+
+            // Check if Firebase is properly initialized
+            if (mAuth == null) {
+                Log.e("MainActivity", "FirebaseAuth instance is null!");
+                Toast.makeText(this, "Firebase initialization failed", Toast.LENGTH_LONG).show();
+                finish();
+                return;
+            }
+
+            // Check if user is signed in
+            FirebaseUser currentUser = mAuth.getCurrentUser();
+            if (currentUser == null) {
+                Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                startActivity(intent);
+                finish();
+                return;
+            }
+
+            // Reset flag
+            isThemeChange = false;
+
+            // Proceed with role check
+            Log.d("MainActivity", "User signed in: " + currentUser.getUid());
+            Log.d("MainActivity", "Fresh start → checking user role");
+            checkUserRoleAndRedirect(currentUser.getUid());
+        } catch (Exception e) {
+            Log.e("MainActivity", "Critical error in onCreate", e);
+            Toast.makeText(this, "App startup failed: " + e.getMessage(), Toast.LENGTH_LONG).show();
             finish();
-            return;
         }
-
-        // Reset flag
-        isThemeChange = false;
-
-        // Proceed with role check
-        Log.d("MainActivity", "User signed in: " + currentUser.getUid());
-        Log.d("MainActivity", "Fresh start → checking user role");
-        checkUserRoleAndRedirect(currentUser.getUid());
     }
 
     private void checkUserRoleAndRedirect(String userId) {
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        try {
+            FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-        // Store the listener reference to clean up later if needed
-        userRoleListener = db.collection("users")
-                .document(userId)
-                .addSnapshotListener((documentSnapshot, e) -> {
-                    if (e != null) {
-                        // If there's an error checking role, default to patient dashboard
-                        Log.e("MainActivity", "Error checking user role", e);
-                        runOnUiThread(() -> {
-                            setContentView(R.layout.activity_main);
-                            setupPatientDashboard();
-                        });
-                        return;
-                    }
-
-                    if (documentSnapshot != null && documentSnapshot.exists()) {
-                        User user = documentSnapshot.toObject(User.class);
-                        if (user != null) {
-                            String role = user.getRole();
-
-                            // Check if doctor is verified
-                            if (UserRole.DOCTOR.getRoleName().equals(role) && !user.isVerified()) {
-                                // Doctor not verified, show message or redirect to verification pending
+            // Store the listener reference to clean up later if needed
+            userRoleListener = db.collection("users")
+                    .document(userId)
+                    .addSnapshotListener((documentSnapshot, e) -> {
+                        try {
+                            if (e != null) {
+                                // If there's an error checking role, default to patient dashboard
+                                Log.e("MainActivity", "Error checking user role", e);
                                 runOnUiThread(() -> {
-                                    Toast.makeText(MainActivity.this, "Your account is pending verification", Toast.LENGTH_LONG).show();
-                                });
-                                // For now, we'll still allow access but in a real app you might restrict features
-                            }
-
-                            // Redirect based on role
-                            Intent intent;
-                            if (UserRole.DOCTOR.getRoleName().equalsIgnoreCase(role)) {
-                                intent = new Intent(MainActivity.this, DoctorDashboardActivity.class);
-                            } else if (UserRole.ADMIN.getRoleName().equalsIgnoreCase(role)) {
-                                intent = new Intent(MainActivity.this, AdminDashboardActivity.class);
-                            } else {
-                                // Default to patient dashboard - load the layout and setup UI
-                                runOnUiThread(() -> {
+                                    Toast.makeText(MainActivity.this, "Error loading user data: " + e.getMessage(), Toast.LENGTH_LONG).show();
                                     setContentView(R.layout.activity_main);
-                                    setupPatientDashboard();
+                                    checkUserRoleAndRedirectFallback();
                                 });
-                                return; // Don't finish, continue with patient dashboard
+                                return;
                             }
 
-                            runOnUiThread(() -> {
-                                startActivity(intent);
-                                finish(); // Close this activity to prevent back to patient dashboard
-                            });
-                            return;
-                        }
-                    }
+                            if (documentSnapshot != null && documentSnapshot.exists()) {
+                                User user = documentSnapshot.toObject(User.class);
+                                if (user != null) {
+                                    String role = user.getRole();
 
-                    // If no special role or user doesn't exist, continue with patient dashboard
-                    runOnUiThread(() -> {
-                        setContentView(R.layout.activity_main);
-                        setupPatientDashboard();
+                                    // Check if doctor is verified
+                                    if (UserRole.DOCTOR.getRoleName().equals(role) && !user.isVerified()) {
+                                        // Doctor not verified, show message or redirect to verification pending
+                                        runOnUiThread(() -> {
+                                            Toast.makeText(MainActivity.this, "Your account is pending verification", Toast.LENGTH_LONG).show();
+                                        });
+                                        // For now, we'll still allow access but in a real app you might restrict features
+                                    }
+
+                                    // Redirect based on role - ALL use the same MainActivity with different menus
+                                    runOnUiThread(() -> {
+                                        setContentView(R.layout.activity_main);
+                                        setupDashboard(role);
+                                    });
+                                    return;
+                                }
+                            }
+
+                            // If no special role or user doesn't exist, continue with patient dashboard
+                            runOnUiThread(() -> {
+                                setContentView(R.layout.activity_main);
+                                checkUserRoleAndRedirectFallback();
+                            });
+                        } catch (Exception ex) {
+                            Log.e("MainActivity", "Exception in snapshot listener", ex);
+                            runOnUiThread(() -> {
+                                Toast.makeText(MainActivity.this, "Critical error: " + ex.getMessage(), Toast.LENGTH_LONG).show();
+                                setContentView(R.layout.activity_main);
+                                checkUserRoleAndRedirectFallback();
+                            });
+                        }
                     });
-                });
+        } catch (Exception e) {
+            Log.e("MainActivity", "Error in checkUserRoleAndRedirect", e);
+            runOnUiThread(() -> {
+                Toast.makeText(MainActivity.this, "Role check failed: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                setContentView(R.layout.activity_main);
+                checkUserRoleAndRedirectFallback();
+            });
+        }
     }
 
-    private void setupPatientDashboard() {
-        // Ensure the layout is set before finding views
-        setContentView(R.layout.activity_main);
+    private void checkUserRoleAndRedirectFallback() {
+        // Fallback method - default to patient dashboard
+        String userId = mAuth.getCurrentUser() != null ? mAuth.getCurrentUser().getUid() : "";
+        setupDashboard("patient");
+    }
 
-        androidx.appcompat.widget.Toolbar toolbar = findViewById(R.id.toolbar);
-        if (toolbar == null) {
-            Toast.makeText(this, "ERROR: toolbar not found!", Toast.LENGTH_LONG).show();
-            Log.e("MainActivity", "toolbar is null");
-            return;
+    private void setupDashboard(String role) {
+        try {
+            com.google.android.material.bottomnavigation.BottomNavigationView bottomNav = findViewById(R.id.bottom_navigation);
+            if (bottomNav == null) {
+                return;
+            }
+
+            bottomNav.setItemIconTintList(getResources().getColorStateList(R.color.bottom_nav_icon_color_ios, getTheme()));
+            bottomNav.setItemBackgroundResource(R.drawable.bg_bottom_nav_item_ios);
+            bottomNav.setLabelVisibilityMode(com.google.android.material.bottomnavigation.LabelVisibilityMode.LABEL_VISIBILITY_UNLABELED);
+
+            // Set menu based on role
+            if (UserRole.DOCTOR.getRoleName().equalsIgnoreCase(role)) {
+                bottomNav.inflateMenu(R.menu.doctor_bottom_nav_menu);
+                setupDoctorDashboard(bottomNav);
+            } else if (UserRole.ADMIN.getRoleName().equalsIgnoreCase(role)) {
+                bottomNav.inflateMenu(R.menu.admin_bottom_nav_menu);
+                setupAdminDashboard(bottomNav);
+            } else {
+                bottomNav.inflateMenu(R.menu.bottom_nav_menu);
+                setupPatientDashboard(bottomNav);
+            }
+        } catch (Exception e) {
+            Log.e("MainActivity", "Error in setupDashboard", e);
         }
-        setSupportActionBar(toolbar);
+    }
 
-        com.google.android.material.bottomnavigation.BottomNavigationView bottomNav = findViewById(R.id.bottom_navigation);
-        if (bottomNav == null) {
-            Toast.makeText(this, "ERROR: bottom_navigation not found!", Toast.LENGTH_LONG).show();
-            Log.e("MainActivity", "bottom_navigation is null");
-            return;
-        }
+    private void setupPatientDashboard(com.google.android.material.bottomnavigation.BottomNavigationView bottomNav) {
+        try {
+            FrameLayout container = findViewById(R.id.fragment_container);
+            if (container == null) {
+                return;
+            }
 
-        FrameLayout container = findViewById(R.id.fragment_container);
-        if (container == null) {
-            // CRITICAL: fragment_container NOT FOUND - this is likely causing "Hello World"
-            Log.e("MainActivity", "fragment_container is null — layout mismatch?");
+            // Apply iOS-style appearance
+            bottomNav.setItemIconTintList(getResources().getColorStateList(R.color.bottom_nav_icon_color_ios, getTheme()));
+            bottomNav.setLabelVisibilityMode(com.google.android.material.bottomnavigation.LabelVisibilityMode.LABEL_VISIBILITY_UNLABELED);
 
-            // Force load the patient dashboard fragment directly
-            runOnUiThread(() -> {
-                try {
-                    setContentView(R.layout.activity_main);
-
-                    // Re-find the views after setting content view
-                    Toolbar toolbar2 = findViewById(R.id.toolbar);
-                    BottomNavigationView bottomNav2 = findViewById(R.id.bottom_navigation);
-                    FrameLayout container2 = findViewById(R.id.fragment_container);
-
-                    if (container2 != null) {
-                        // Now load the fragment
-                        getSupportFragmentManager().beginTransaction()
-                                .replace(R.id.fragment_container, new PatientDashboardFragment())
-                                .commit();
-
-                        if (bottomNav2 != null) {
-                            bottomNav2.setSelectedItemId(R.id.nav_patient);
-                        }
-                    } else {
-                        // Ultimate fallback: show proper dashboard message
-                        TextView textView = new TextView(MainActivity.this);
-                        textView.setText("Telemedicine Dashboard");
-                        textView.setTextSize(24);
-                        textView.setGravity(android.view.Gravity.CENTER);
-                        textView.setPadding(40, 40, 40, 40);
-                        setContentView(textView);
-                    }
-                } catch (Exception e) {
-                    Log.e("MainActivity", "Error in setupPatientDashboard", e);
-                    TextView textView = new TextView(MainActivity.this);
-                    textView.setText("Telemedicine App Dashboard");
-                    textView.setTextSize(24);
-                    textView.setGravity(android.view.Gravity.CENTER);
-                    textView.setPadding(40, 40, 40, 40);
-                    setContentView(textView);
+            // Set up navigation listener FIRST
+            bottomNav.setOnItemSelectedListener(item -> {
+                Fragment selectedFragment = null;
+                int itemId = item.getItemId();
+                if (itemId == R.id.nav_patient) {
+                    selectedFragment = new PatientDashboardFragment();
+                } else if (itemId == R.id.nav_appointments) {
+                    selectedFragment = new AppointmentsFragment();
+                } else if (itemId == R.id.nav_prescriptions) {
+                    selectedFragment = new PatientPrescriptionsFragment();
+                } else if (itemId == R.id.nav_messages) {
+                    selectedFragment = new SecureMessagingHubFragment();
+                } else if (itemId == R.id.nav_settings) {
+                    selectedFragment = new ProfileFragment();
                 }
-            });
-            return;
-        }
 
-        // Load default fragment if container is empty
-        if (getSupportFragmentManager().findFragmentById(R.id.fragment_container) == null) {
-            Log.d("MainActivity", "Loading PatientDashboardFragment into fragment_container");
+                if (selectedFragment != null) {
+                    getSupportFragmentManager().beginTransaction()
+                            .replace(R.id.fragment_container, selectedFragment)
+                            .commit();
+                    return true;
+                }
+                return false;
+            });
+
+            // Load default fragment
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.fragment_container, new PatientDashboardFragment())
                     .commit();
 
-            // Set the default selected item
+            // Set selected item AFTER listener is set up
             bottomNav.setSelectedItemId(R.id.nav_patient);
+        } catch (Exception e) {
+            Log.e("MainActivity", "Error in setupPatientDashboard", e);
         }
+    }
 
-        bottomNav.setOnItemSelectedListener(item -> {
-            Fragment selectedFragment = null;
-
-            int itemId = item.getItemId();
-            if (itemId == R.id.nav_patient) {
-                selectedFragment = new PatientDashboardFragment();
-            } else if (itemId == R.id.nav_appointments) {
-                selectedFragment = new AppointmentsFragment();
-            } else if (itemId == R.id.nav_prescriptions) {
-                selectedFragment = new PatientPrescriptionsFragment();
-            } else if (itemId == R.id.nav_profile) {
-                selectedFragment = new ProfileFragment();
-            } else if (itemId == R.id.nav_settings) {
-                selectedFragment = new SettingsFragment();
+    private void setupDoctorDashboard(com.google.android.material.bottomnavigation.BottomNavigationView bottomNav) {
+        try {
+            FrameLayout container = findViewById(R.id.fragment_container);
+            if (container == null) {
+                return;
             }
 
-            if (selectedFragment != null) {
-                getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.fragment_container, selectedFragment)
-                        .commit();
-                return true;
+            // Apply iOS-style appearance
+            bottomNav.setItemIconTintList(getResources().getColorStateList(R.color.bottom_nav_icon_color_ios, getTheme()));
+            bottomNav.setLabelVisibilityMode(com.google.android.material.bottomnavigation.LabelVisibilityMode.LABEL_VISIBILITY_UNLABELED);
+
+            // Set up navigation listener FIRST
+            bottomNav.setOnItemSelectedListener(item -> {
+                Fragment selectedFragment = null;
+                int itemId = item.getItemId();
+                if (itemId == R.id.nav_appointments) {
+                    selectedFragment = new DoctorDashboardFragment();
+                } else if (itemId == R.id.nav_patients) {
+                    selectedFragment = new DoctorPatientsFragment();
+                } else if (itemId == R.id.nav_prescriptions) {
+                    selectedFragment = new PrescriptionManagerFragment();
+                } else if (itemId == R.id.nav_messages) {
+                    selectedFragment = new SecureMessagingHubFragment();
+                } else if (itemId == R.id.nav_settings) {
+                    selectedFragment = new ProfileFragment();
+                }
+
+                if (selectedFragment != null) {
+                    getSupportFragmentManager().beginTransaction()
+                            .replace(R.id.fragment_container, selectedFragment)
+                            .commit();
+                    return true;
+                }
+                return false;
+            });
+
+            // Load default fragment
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.fragment_container, new DoctorDashboardFragment())
+                    .commit();
+
+            // Set selected item AFTER listener is set up
+            bottomNav.setSelectedItemId(R.id.nav_appointments);
+        } catch (Exception e) {
+            Log.e("MainActivity", "Error in setupDoctorDashboard", e);
+        }
+    }
+
+    private void setupAdminDashboard(com.google.android.material.bottomnavigation.BottomNavigationView bottomNav) {
+        try {
+            FrameLayout container = findViewById(R.id.fragment_container);
+            if (container == null) {
+                return;
             }
-            return false;
-        });
+
+            // Apply iOS-style appearance
+            bottomNav.setItemIconTintList(getResources().getColorStateList(R.color.bottom_nav_icon_color_ios, getTheme()));
+            bottomNav.setLabelVisibilityMode(com.google.android.material.bottomnavigation.LabelVisibilityMode.LABEL_VISIBILITY_UNLABELED);
+
+            // Set up navigation listener FIRST
+            bottomNav.setOnItemSelectedListener(item -> {
+                Fragment selectedFragment = null;
+                int itemId = item.getItemId();
+                if (itemId == R.id.nav_admin_home) {
+                    selectedFragment = new AdminDashboardFragment();
+                } else if (itemId == R.id.nav_admin_users) {
+                    selectedFragment = new AllUsersFragment();
+                } else if (itemId == R.id.nav_admin_audit) {
+                    selectedFragment = new AdminDashboardFragment();
+                } else if (itemId == R.id.nav_admin_analytics) {
+                    selectedFragment = new AdminDashboardFragment();
+                } else if (itemId == R.id.nav_admin_profile) {
+                    selectedFragment = new ProfileFragment();
+                }
+
+                if (selectedFragment != null) {
+                    getSupportFragmentManager().beginTransaction()
+                            .replace(R.id.fragment_container, selectedFragment)
+                            .commit();
+                    return true;
+                }
+                return false;
+            });
+
+            // Load default fragment
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.fragment_container, new AdminDashboardFragment())
+                    .commit();
+
+            // Set selected item AFTER listener is set up
+            bottomNav.setSelectedItemId(R.id.nav_admin_home);
+        } catch (Exception e) {
+            Log.e("MainActivity", "Error in setupAdminDashboard", e);
+        }
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        // Check if user is still signed in
-        FirebaseUser currentUser = mAuth.getCurrentUser();
-        if (currentUser == null) {
-            // User is not signed in, redirect to login
-            Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-            startActivity(intent);
-            finish();
+        try {
+            // Check if user is still signed in
+            FirebaseUser currentUser = mAuth.getCurrentUser();
+            if (currentUser == null) {
+                // User is not signed in, redirect to login
+                Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        } catch (Exception e) {
+            Log.e("MainActivity", "Error in onResume", e);
         }
     }
 
@@ -233,8 +349,12 @@ public class MainActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         // Clean up the listener to prevent memory leaks
-        if (userRoleListener != null) {
-            userRoleListener.remove();
+        try {
+            if (userRoleListener != null) {
+                userRoleListener.remove();
+            }
+        } catch (Exception e) {
+            Log.e("MainActivity", "Error cleaning up listener", e);
         }
     }
 }

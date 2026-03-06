@@ -1,12 +1,14 @@
 package com.example.telemedicine;
 
 import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -28,9 +30,10 @@ import java.util.Map;
 
 public class ScheduleAppointmentActivity extends AppCompatActivity {
 
-    private Spinner spinnerDoctor, spinnerMonth, spinnerDay, spinnerYear, spinnerHour, spinnerMinute;
+    private Spinner spinnerDoctor, spinnerAppointmentType;
     private EditText editReason;
     private Button btnSchedule;
+    private TextView textSelectedDate, textSelectedTime;
 
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
@@ -130,63 +133,62 @@ public class ScheduleAppointmentActivity extends AppCompatActivity {
 
     private void initializeViews() {
         spinnerDoctor = findViewById(R.id.spinner_doctor);
-        spinnerMonth = findViewById(R.id.spinner_month);
-        spinnerDay = findViewById(R.id.spinner_day);
-        spinnerYear = findViewById(R.id.spinner_year);
-        spinnerHour = findViewById(R.id.spinner_hour);
-        spinnerMinute = findViewById(R.id.spinner_minute);
+        spinnerAppointmentType = findViewById(R.id.spinner_appointment_type);
+        textSelectedDate = findViewById(R.id.text_selected_date);
+        textSelectedTime = findViewById(R.id.text_selected_time);
         editReason = findViewById(R.id.edit_reason);
+        btnSchedule = findViewById(R.id.btn_schedule);
     }
 
     private void setupSpinners() {
-        // Months
-        String[] months = {"Jan", "Feb", "Mar", "Apr", "May", "Jun",
-                          "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
-        ArrayAdapter<String> monthAdapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_spinner_item, months);
-        monthAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinnerMonth.setAdapter(monthAdapter);
+        // Setup doctor spinner adapter
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
+                android.R.layout.simple_spinner_item, new ArrayList<>());
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerDoctor.setAdapter(adapter);
 
-        // Days
-        String[] days = new String[31];
-        for (int i = 0; i < 31; i++) {
-            days[i] = String.format(Locale.getDefault(), "%02d", i + 1);
-        }
-        ArrayAdapter<String> dayAdapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_spinner_item, days);
-        dayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinnerDay.setAdapter(dayAdapter);
+        // Setup appointment type spinner
+        String[] appointmentTypes = {"In-Person Visit", "Video Consultation", "Follow-up", "Chat Consultation"};
+        ArrayAdapter<String> typeAdapter = new ArrayAdapter<>(this,
+                android.R.layout.simple_spinner_item, appointmentTypes);
+        typeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerAppointmentType.setAdapter(typeAdapter);
 
-        // Years (next 2 years)
-        int currentYear = Calendar.getInstance().get(Calendar.YEAR);
-        String[] years = new String[2];
-        for (int i = 0; i < 2; i++) {
-            years[i] = String.valueOf(currentYear + i);
-        }
-        ArrayAdapter<String> yearAdapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_spinner_item, years);
-        yearAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinnerYear.setAdapter(yearAdapter);
+        // Setup date picker
+        textSelectedDate.setOnClickListener(v -> showDatePicker());
 
-        // Hours
-        String[] hours = new String[24];
-        for (int i = 0; i < 24; i++) {
-            hours[i] = String.format(Locale.getDefault(), "%02d", i);
-        }
-        ArrayAdapter<String> hourAdapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_spinner_item, hours);
-        hourAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinnerHour.setAdapter(hourAdapter);
+        // Setup time picker
+        textSelectedTime.setOnClickListener(v -> showTimePicker());
+    }
 
-        // Minutes
-        String[] minutes = new String[60];
-        for (int i = 0; i < 60; i++) {
-            minutes[i] = String.format(Locale.getDefault(), "%02d", i);
-        }
-        ArrayAdapter<String> minuteAdapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_spinner_item, minutes);
-        minuteAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinnerMinute.setAdapter(minuteAdapter);
+    private void showDatePicker() {
+        Calendar calendar = Calendar.getInstance();
+        DatePickerDialog datePickerDialog = new DatePickerDialog(
+                this,
+                (view, year, month, dayOfMonth) -> {
+                    String date = String.format(Locale.getDefault(), "%d/%02d/%02d", year, month + 1, dayOfMonth);
+                    textSelectedDate.setText(date);
+                },
+                calendar.get(Calendar.YEAR),
+                calendar.get(Calendar.MONTH),
+                calendar.get(Calendar.DAY_OF_MONTH)
+        );
+        datePickerDialog.show();
+    }
+
+    private void showTimePicker() {
+        Calendar calendar = Calendar.getInstance();
+        TimePickerDialog timePickerDialog = new TimePickerDialog(
+                this,
+                (view, hourOfDay, minute) -> {
+                    String time = String.format(Locale.getDefault(), "%02d:%02d", hourOfDay, minute);
+                    textSelectedTime.setText(time);
+                },
+                calendar.get(Calendar.HOUR_OF_DAY),
+                calendar.get(Calendar.MINUTE),
+                true
+        );
+        timePickerDialog.show();
     }
 
     private void loadDoctors() {
@@ -246,6 +248,10 @@ public class ScheduleAppointmentActivity extends AppCompatActivity {
         if (isDoctorScheduling) {
             // Doctor is scheduling with a specific patient
             // The doctor is the current user
+            if (mAuth.getCurrentUser() == null) {
+                Toast.makeText(this, "User not authenticated", Toast.LENGTH_SHORT).show();
+                return;
+            }
             String currentDoctorId = mAuth.getCurrentUser().getUid();
             // Get doctor's name from the spinner (it should be the current doctor's name)
             String currentDoctorName = spinnerDoctor.getSelectedItem().toString();
@@ -259,7 +265,15 @@ public class ScheduleAppointmentActivity extends AppCompatActivity {
             // Regular scheduling (patient scheduling with a doctor)
             String selectedDoctorName = spinnerDoctor.getSelectedItem().toString();
             int selectedDoctorIndex = doctorNames.indexOf(selectedDoctorName);
+            if (selectedDoctorIndex < 0 || doctorIds == null || selectedDoctorIndex >= doctorIds.size()) {
+                Toast.makeText(this, "Please select a valid doctor", Toast.LENGTH_SHORT).show();
+                return;
+            }
             String currentDoctorId = doctorIds.get(selectedDoctorIndex);
+            if (currentDoctorId == null || currentDoctorId.trim().isEmpty()) {
+                Toast.makeText(this, "No doctors available", Toast.LENGTH_SHORT).show();
+                return;
+            }
             String currentDoctorName = selectedDoctorName;
 
             // Get current user info (patient)
@@ -296,18 +310,25 @@ public class ScheduleAppointmentActivity extends AppCompatActivity {
     }
 
     private void createAppointment(String patientId, String patientName, String doctorId, String doctorName) {
-        String monthStr = spinnerMonth.getSelectedItem().toString();
-        String dayStr = spinnerDay.getSelectedItem().toString();
-        String yearStr = spinnerYear.getSelectedItem().toString();
-        String hourStr = spinnerHour.getSelectedItem().toString();
-        String minuteStr = spinnerMinute.getSelectedItem().toString();
+        // Get date from text view
+        String dateStr = textSelectedDate.getText().toString();
+        String timeStr = textSelectedTime.getText().toString();
 
-        // Parse date and time
-        int month = getMonthNumber(monthStr);
-        int day = Integer.parseInt(dayStr);
-        int year = Integer.parseInt(yearStr);
-        int hour = Integer.parseInt(hourStr);
-        int minute = Integer.parseInt(minuteStr);
+        if (dateStr.equals("Select Date") || timeStr.equals("Select Time")) {
+            Toast.makeText(this, "Please select date and time", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // Parse date (format: yyyy/MM/dd)
+        String[] dateParts = dateStr.split("/");
+        int year = Integer.parseInt(dateParts[0]);
+        int month = Integer.parseInt(dateParts[1]) - 1; // Calendar months are 0-based
+        int day = Integer.parseInt(dateParts[2]);
+
+        // Parse time (format: HH:mm)
+        String[] timeParts = timeStr.split(":");
+        int hour = Integer.parseInt(timeParts[0]);
+        int minute = Integer.parseInt(timeParts[1]);
 
         Calendar calendar = Calendar.getInstance();
         calendar.set(year, month, day, hour, minute, 0);
@@ -319,6 +340,9 @@ public class ScheduleAppointmentActivity extends AppCompatActivity {
             return;
         }
 
+        // Get appointment type
+        String appointmentType = spinnerAppointmentType.getSelectedItem().toString().toLowerCase().replace(" ", "_");
+
         // Create appointment object
         Appointment appointment = new Appointment(
                 patientId,
@@ -327,7 +351,8 @@ public class ScheduleAppointmentActivity extends AppCompatActivity {
                 doctorName,
                 appointmentDateTime,
                 "scheduled",
-                editReason.getText().toString().trim()
+                editReason.getText().toString().trim(),
+                appointmentType
         );
 
         // Save to Firestore

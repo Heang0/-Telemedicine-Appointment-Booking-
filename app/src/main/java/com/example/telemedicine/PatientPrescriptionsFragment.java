@@ -24,6 +24,8 @@ public class PatientPrescriptionsFragment extends Fragment implements Prescripti
     private RecyclerView recyclerPrescriptions;
     private PrescriptionAdapter adapter;
     private List<Prescription> prescriptions;
+    private android.widget.TextView textActiveCount;
+    private android.widget.TextView textFilledCount;
 
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
@@ -32,7 +34,7 @@ public class PatientPrescriptionsFragment extends Fragment implements Prescripti
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_patient_prescriptions, container, false);
+        View view = inflater.inflate(R.layout.fragment_patient_prescriptions_ios, container, false);
 
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
@@ -46,6 +48,8 @@ public class PatientPrescriptionsFragment extends Fragment implements Prescripti
 
     private void initializeViews(View view) {
         recyclerPrescriptions = view.findViewById(R.id.recycler_prescriptions);
+        textActiveCount = view.findViewById(R.id.text_active_count);
+        textFilledCount = view.findViewById(R.id.text_filled_count);
     }
 
     private void setupRecyclerView() {
@@ -68,7 +72,7 @@ public class PatientPrescriptionsFragment extends Fragment implements Prescripti
         }
 
         prescriptionsListenerRegistration = db.collection("prescriptions")
-                .whereArrayContains("patientIds", patientId)
+                .whereEqualTo("patientId", patientId)
                 .addSnapshotListener((querySnapshot, error) -> {
                     if (error != null) {
                         android.util.Log.e("PatientPrescriptions", "Error loading prescriptions", error);
@@ -86,9 +90,28 @@ public class PatientPrescriptionsFragment extends Fragment implements Prescripti
                         }
 
                         prescriptions.sort((a, b) -> Long.compare(b.getCreatedAt(), a.getCreatedAt()));
+                        updateStats();
                         adapter.updatePrescriptions(prescriptions);
                     }
                 });
+    }
+
+    private void updateStats() {
+        int activeCount = 0;
+        int filledCount = 0;
+        for (Prescription prescription : prescriptions) {
+            if ("fulfilled".equalsIgnoreCase(prescription.getStatus())) {
+                filledCount++;
+            } else {
+                activeCount++;
+            }
+        }
+        if (textActiveCount != null) {
+            textActiveCount.setText(String.valueOf(activeCount));
+        }
+        if (textFilledCount != null) {
+            textFilledCount.setText(String.valueOf(filledCount));
+        }
     }
 
     @Override

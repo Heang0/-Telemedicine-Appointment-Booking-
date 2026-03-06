@@ -29,7 +29,7 @@ public class PrescriptionAdapter extends RecyclerView.Adapter<PrescriptionAdapte
     @Override
     public PrescriptionViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.item_prescription, parent, false);
+                .inflate(R.layout.item_prescription_ios, parent, false);
         return new PrescriptionViewHolder(view);
     }
 
@@ -50,19 +50,21 @@ public class PrescriptionAdapter extends RecyclerView.Adapter<PrescriptionAdapte
     }
 
     class PrescriptionViewHolder extends RecyclerView.ViewHolder {
+        private TextView textMedicationName;
         private TextView textPatientName;
-        private TextView textDoctorName;
-        private TextView textDate;
         private TextView textStatus;
-        private TextView textMedications;
+        private TextView textDosage;
+        private TextView textDuration;
+        private TextView textPrescribedBy;
 
         public PrescriptionViewHolder(@NonNull View itemView) {
             super(itemView);
+            textMedicationName = itemView.findViewById(R.id.text_medication_name);
             textPatientName = itemView.findViewById(R.id.text_patient_name);
-            textDoctorName = itemView.findViewById(R.id.text_doctor_name);
-            textDate = itemView.findViewById(R.id.text_date);
             textStatus = itemView.findViewById(R.id.text_status);
-            textMedications = itemView.findViewById(R.id.text_medications);
+            textDosage = itemView.findViewById(R.id.text_dosage);
+            textDuration = itemView.findViewById(R.id.text_duration);
+            textPrescribedBy = itemView.findViewById(R.id.text_prescribed_by);
 
             itemView.setOnClickListener(v -> {
                 int position = getAdapterPosition();
@@ -73,38 +75,56 @@ public class PrescriptionAdapter extends RecyclerView.Adapter<PrescriptionAdapte
         }
 
         public void bind(Prescription prescription) {
-            textPatientName.setText(prescription.getPatientName());
-            textDoctorName.setText(prescription.getDoctorName());
-
-            SimpleDateFormat dateFormat = new SimpleDateFormat("MMM dd, yyyy", Locale.getDefault());
-            textDate.setText(dateFormat.format(prescription.getPrescribedDate()));
-
-            textStatus.setText(capitalizeFirstLetter(prescription.getStatus()));
-
-            // Display medications
-            StringBuilder medText = new StringBuilder();
-            if (prescription.getMedications() != null) {
-                for (int i = 0; i < prescription.getMedications().size(); i++) {
-                    Prescription.Medication med = prescription.getMedications().get(i);
-                    if (i > 0) medText.append("\n");
-                    medText.append("- ").append(med.getName()).append(" (").append(med.getDosage()).append(")");
-                }
+            Prescription.Medication primaryMedication = null;
+            if (prescription.getMedications() != null && !prescription.getMedications().isEmpty()) {
+                primaryMedication = prescription.getMedications().get(0);
             }
-            textMedications.setText(medText.toString());
 
-            // Set status color based on status
-            if ("fulfilled".equalsIgnoreCase(prescription.getStatus())) {
+            textMedicationName.setText(primaryMedication != null && primaryMedication.getName() != null
+                    ? primaryMedication.getName()
+                    : "Prescription");
+            textPatientName.setText(prescription.getPatientName() != null
+                    ? "Patient: " + prescription.getPatientName()
+                    : "Patient information pending");
+
+            String status = prescription.getStatus();
+            textStatus.setText(capitalizeFirstLetter(status));
+
+            if (primaryMedication != null) {
+                String dosage = primaryMedication.getDosage() != null ? primaryMedication.getDosage() : "Dosage pending";
+                String frequency = primaryMedication.getFrequency() != null ? primaryMedication.getFrequency() : "";
+                String duration = primaryMedication.getDuration() != null ? primaryMedication.getDuration() : "";
+                textDosage.setText(frequency.isEmpty() ? dosage : dosage + " • " + frequency);
+                textDuration.setText(duration.isEmpty() ? buildIssuedDate(prescription) : duration);
+            } else {
+                textDosage.setText("Medication details pending");
+                textDuration.setText(buildIssuedDate(prescription));
+            }
+            textPrescribedBy.setText(prescription.getDoctorName() != null ? prescription.getDoctorName() : "Doctor pending");
+
+            if ("fulfilled".equalsIgnoreCase(status)) {
                 textStatus.setTextColor(itemView.getResources().getColor(android.R.color.holo_green_dark));
-            } else if ("expired".equalsIgnoreCase(prescription.getStatus())) {
+            } else if ("expired".equalsIgnoreCase(status)) {
                 textStatus.setTextColor(itemView.getResources().getColor(android.R.color.holo_red_dark));
             } else {
                 textStatus.setTextColor(itemView.getResources().getColor(android.R.color.holo_blue_dark));
             }
         }
 
+        private String buildIssuedDate(Prescription prescription) {
+            SimpleDateFormat dateFormat = new SimpleDateFormat("MMM dd, yyyy", Locale.getDefault());
+            if (prescription.getPrescribedDate() != null) {
+                return dateFormat.format(prescription.getPrescribedDate());
+            }
+            if (prescription.getCreatedAt() > 0) {
+                return dateFormat.format(new java.util.Date(prescription.getCreatedAt()));
+            }
+            return "TBD";
+        }
+
         private String capitalizeFirstLetter(String str) {
             if (str == null || str.isEmpty()) {
-                return str;
+                return "Active";
             }
             return str.substring(0, 1).toUpperCase() + str.substring(1);
         }

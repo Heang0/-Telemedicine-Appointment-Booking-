@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/textViewVaultTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Medical Records Vault"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:padding="16dp"
+        android:background="@color/blue_100"
+        android:textColor="@color/blue_800" />
+
+    <Button
+        android:id="@+id/buttonAddMedicalRecord"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Add New Record"
+        android:textSize="16sp"
+        android:backgroundTint="@color/green_500"
+        android:textColor="@color/white"
+        android:layout_margin="16dp" />
+
+    <ListView
+        android:id="@+id/listViewMedicalRecords"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:divider="@color/gray_200"
+        android:dividerHeight="1dp"
+        android:padding="8dp" />
+
+</LinearLayout>

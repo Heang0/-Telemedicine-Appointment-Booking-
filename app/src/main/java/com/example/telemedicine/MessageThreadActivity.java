@@ -152,7 +152,7 @@ public class MessageThreadActivity extends AppCompatActivity {
                                 Message message = dc.getDocument().toObject(Message.class);
                                 messageList.add(message);
                                 // Sort by timestamp to maintain order
-                                messageList.sort((m1, m2) -> Long.compare(m1.getTimestamp(), m2.getTimestamp()));
+                                messageList.sort((m1, m2) -> m1.getTimestamp().compareTo(m2.getTimestamp()));
                                 messageAdapter.notifyDataSetChanged();
                                 recyclerMessages.scrollToPosition(messageList.size() - 1);
                                 break;
@@ -169,7 +169,7 @@ public class MessageThreadActivity extends AppCompatActivity {
         }
 
         // Create message object
-        Message message = new Message(currentUserId, otherUserId, messageText, "text");
+        Message message = new Message(currentUserId, otherUserId, messageText);
 
         // Save to Firestore
         db.collection("messages")
