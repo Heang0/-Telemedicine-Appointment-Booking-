@@ -1,37 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingHorizontal="12dp"
-    android:paddingVertical="6dp">
+    android:paddingStart="16dp"
+    android:paddingEnd="16dp"
+    android:paddingTop="8dp"
+    android:paddingBottom="8dp">
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="start"
-        android:maxWidth="280dp"
+        android:maxWidth="260dp"
         android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/text_message"
+        <com.google.android.material.card.MaterialCardView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/bg_message_received"
-            android:paddingHorizontal="16dp"
-            android:paddingVertical="12dp"
-            android:text="Message text"
-            android:textColor="@color/ios_text_primary"
-            android:textSize="15sp" />
+            app:cardBackgroundColor="@color/ios_card_background"
+            app:cardCornerRadius="18dp"
+            app:cardElevation="0dp"
+            app:strokeColor="@color/ios_divider"
+            app:strokeWidth="1dp">
+
+            <TextView
+                android:id="@+id/text_message"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingStart="16dp"
+                android:paddingTop="12dp"
+                android:paddingEnd="16dp"
+                android:paddingBottom="12dp"
+                android:text="Message text"
+                android:textColor="@color/ios_text_primary"
+                android:textSize="15sp"
+                android:lineSpacingExtra="2dp" />
+
+        </com.google.android.material.card.MaterialCardView>
 
         <TextView
             android:id="@+id/text_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="start"
-            android:layout_marginTop="4dp"
+            android:layout_marginTop="6dp"
             android:text="10:30 AM"
             android:textColor="@color/ios_text_secondary"
-            android:textSize="11sp" />
+            android:textSize="12sp"
+            android:fontFamily="sans-serif-medium" />
 
     </LinearLayout>
 

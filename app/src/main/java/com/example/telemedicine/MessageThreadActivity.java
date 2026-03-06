@@ -1,8 +1,9 @@
 package com.example.telemedicine;
 
 import android.os.Bundle;
-import android.view.View;
 import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -26,6 +27,9 @@ public class MessageThreadActivity extends AppCompatActivity {
     private RecyclerView recyclerMessages;
     private TextInputEditText editMessage;
     private ImageButton btnSend;
+    private ImageView btnBack;
+    private TextView textChatUserName;
+    private TextView textUserOnlineStatus;
 
     private MessageAdapter messageAdapter;
     private List<Message> messageList;
@@ -33,7 +37,8 @@ public class MessageThreadActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
 
-    private String otherUserId; // The person we're chatting with
+    private String otherUserId;
+    private String otherUserName;
     private String currentUserId;
 
     private com.google.firebase.firestore.ListenerRegistration outgoingMessagesListener;
@@ -41,7 +46,6 @@ public class MessageThreadActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        // Apply theme before calling super.onCreate
         ThemeUtils.applyTheme(this);
 
         super.onCreate(savedInstanceState);
@@ -50,38 +54,42 @@ public class MessageThreadActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
 
+        if (mAuth.getCurrentUser() == null) {
+            Toast.makeText(this, "User not authenticated", Toast.LENGTH_SHORT).show();
+            finish();
+            return;
+        }
+
         currentUserId = mAuth.getCurrentUser().getUid();
 
-        // Get the other user ID from intent extras
-        // In a real app, you would pass this when starting the activity
         otherUserId = getIntent().getStringExtra("other_user_id");
+        otherUserName = getIntent().getStringExtra("other_user_name");
+        
         if (otherUserId == null) {
-            // For demo purposes, we'll use a placeholder
-            otherUserId = "doctor1"; // This would normally come from the contact/appointment
+            otherUserId = "doctor1";
+        }
+        if (otherUserName == null) {
+            otherUserName = "Chat";
         }
 
         initializeViews();
-
-        // Setup toolbar with back button
-        androidx.appcompat.widget.Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-
-        // Enable back button in action bar
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            getSupportActionBar().setDisplayShowHomeEnabled(true);
-        }
-
         setupRecyclerView();
+        resolveOtherUserProfile();
         loadMessages();
-
-        btnSend.setOnClickListener(v -> sendMessage());
+        setupClickListeners();
     }
 
     private void initializeViews() {
         recyclerMessages = findViewById(R.id.recycler_messages);
         editMessage = findViewById(R.id.edit_message);
         btnSend = findViewById(R.id.btn_send);
+        btnBack = findViewById(R.id.btn_back_chat);
+        textChatUserName = findViewById(R.id.text_chat_user_name);
+        textUserOnlineStatus = findViewById(R.id.text_user_online_status);
+        
+        textChatUserName.setText(getDisplayName(otherUserName));
+        textUserOnlineStatus.setText("Secure direct message");
+        textUserOnlineStatus.setVisibility(android.view.View.VISIBLE);
     }
 
     private void setupRecyclerView() {
@@ -91,52 +99,61 @@ public class MessageThreadActivity extends AppCompatActivity {
         recyclerMessages.setAdapter(messageAdapter);
     }
 
+    private void setupClickListeners() {
+        btnSend.setOnClickListener(v -> sendMessage());
+        btnBack.setOnClickListener(v -> onBackPressed());
+    }
+
+    private void resolveOtherUserProfile() {
+        if (otherUserId == null || otherUserId.trim().isEmpty()) {
+            textChatUserName.setText(getDisplayName(otherUserName));
+            return;
+        }
+
+        db.collection("users")
+                .document(otherUserId)
+                .get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    User user = documentSnapshot.toObject(User.class);
+                    if (user != null && user.getFullName() != null && !user.getFullName().trim().isEmpty()) {
+                        otherUserName = user.getFullName().trim();
+                    }
+                    textChatUserName.setText(getDisplayName(otherUserName));
+                })
+                .addOnFailureListener(e -> textChatUserName.setText(getDisplayName(otherUserName)));
+    }
+
     private void loadMessages() {
-        // Remove previous listener if exists
         if (outgoingMessagesListener != null) {
             outgoingMessagesListener.remove();
         }
 
-        // Query messages between current user and other user
         outgoingMessagesListener = db.collection("messages")
                 .whereEqualTo("senderId", currentUserId)
                 .whereEqualTo("receiverId", otherUserId)
                 .orderBy("timestamp", Query.Direction.ASCENDING)
-                .addSnapshotListener(new EventListener<QuerySnapshot>() {
-                    @Override
-                    public void onEvent(QuerySnapshot queryDocumentSnapshots, FirebaseFirestoreException e) {
-                        if (e != null) {
-                            return;
-                        }
+                .addSnapshotListener((queryDocumentSnapshots, e) -> {
+                    if (e != null) {
+                        return;
+                    }
 
-                        for (DocumentChange dc : queryDocumentSnapshots.getDocumentChanges()) {
-                            switch (dc.getType()) {
-                                case ADDED:
-                                    Message message = dc.getDocument().toObject(Message.class);
-                                    messageList.add(message);
-                                    break;
-                                case MODIFIED:
-                                    // Handle message updates if needed
-                                    break;
-                                case REMOVED:
-                                    // Handle message removal if needed
-                                    break;
+                    for (DocumentChange dc : queryDocumentSnapshots.getDocumentChanges()) {
+                        if (dc.getType() == DocumentChange.Type.ADDED) {
+                            Message message = dc.getDocument().toObject(Message.class);
+                            if (!messageList.contains(message)) {
+                                messageList.add(message);
                             }
                         }
-
-                        // Also listen for messages from the other user to current user
-                        loadIncomingMessages();
                     }
+                    loadIncomingMessages();
                 });
     }
 
     private void loadIncomingMessages() {
-        // Remove previous listener if exists
         if (incomingMessagesListener != null) {
             incomingMessagesListener.remove();
         }
 
-        // Query messages from other user to current user
         incomingMessagesListener = db.collection("messages")
                 .whereEqualTo("senderId", otherUserId)
                 .whereEqualTo("receiverId", currentUserId)
@@ -147,15 +164,14 @@ public class MessageThreadActivity extends AppCompatActivity {
                     }
 
                     for (DocumentChange dc : queryDocumentSnapshots.getDocumentChanges()) {
-                        switch (dc.getType()) {
-                            case ADDED:
-                                Message message = dc.getDocument().toObject(Message.class);
+                        if (dc.getType() == DocumentChange.Type.ADDED) {
+                            Message message = dc.getDocument().toObject(Message.class);
+                            if (!messageList.contains(message)) {
                                 messageList.add(message);
-                                // Sort by timestamp to maintain order
                                 messageList.sort((m1, m2) -> m1.getTimestamp().compareTo(m2.getTimestamp()));
                                 messageAdapter.notifyDataSetChanged();
                                 recyclerMessages.scrollToPosition(messageList.size() - 1);
-                                break;
+                            }
                         }
                     }
                 });
@@ -168,17 +184,12 @@ public class MessageThreadActivity extends AppCompatActivity {
             return;
         }
 
-        // Create message object
         Message message = new Message(currentUserId, otherUserId, messageText);
 
-        // Save to Firestore
         db.collection("messages")
                 .add(message)
                 .addOnSuccessListener(documentReference -> {
-                    // Clear the input field
                     editMessage.setText("");
-
-                    // Optionally update the local list and scroll to bottom
                     messageList.add(message);
                     messageAdapter.notifyItemInserted(messageList.size() - 1);
                     recyclerMessages.scrollToPosition(messageList.size() - 1);
@@ -191,24 +202,17 @@ public class MessageThreadActivity extends AppCompatActivity {
     }
 
     @Override
-    public boolean onOptionsItemSelected(android.view.MenuItem item) {
-        if (item.getItemId() == android.R.id.home) {
-            // Handle the back button press
-            onBackPressed();
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
     protected void onDestroy() {
         super.onDestroy();
-        // Clean up the listeners to prevent memory leaks
         if (outgoingMessagesListener != null) {
             outgoingMessagesListener.remove();
         }
         if (incomingMessagesListener != null) {
             incomingMessagesListener.remove();
         }
+    }
+
+    private String getDisplayName(String name) {
+        return name != null && !name.trim().isEmpty() ? name.trim() : "Chat";
     }
 }

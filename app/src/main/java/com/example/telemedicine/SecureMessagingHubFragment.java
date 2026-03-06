@@ -1,7 +1,9 @@
 package com.example.telemedicine;
 
 import android.os.Bundle;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -49,6 +51,8 @@ public class SecureMessagingHubFragment extends Fragment implements Conversation
     private com.google.firebase.firestore.ListenerRegistration contactsListener;
     private final Map<String, Conversation> conversationMap = new HashMap<>();
     private final Map<String, Conversation> contactMap = new HashMap<>();
+    private final Map<String, String> userNameCache = new HashMap<>();
+    private final Map<String, String> userRoleCache = new HashMap<>();
     private String activeFilter = "all";
 
     @Nullable
@@ -191,23 +195,22 @@ public class SecureMessagingHubFragment extends Fragment implements Conversation
 
         Conversation conversation = new Conversation();
         conversation.setParticipantId(otherParticipantId);
-        conversation.setParticipantName(otherParticipantName != null && !otherParticipantName.trim().isEmpty()
-                ? otherParticipantName
-                : "User");
+        conversation.setParticipantName(getFallbackDisplayName(otherParticipantName, otherParticipantRole));
         conversation.setParticipantRole(otherParticipantRole);
         conversation.setLastMessage("Start a conversation");
         conversation.setTimestamp(appointment.getAppointmentDate());
         conversation.setUnreadCount(0);
+        resolveParticipantDetails(conversation);
         return conversation;
     }
 
     private void populateConversationParticipant(Conversation conversation) {
         if (conversation.getParticipant1() != null && conversation.getParticipant1().equals(currentUserId)) {
             conversation.setParticipantId(conversation.getParticipant2());
-            conversation.setParticipantName(conversation.getParticipant2Name() != null ? conversation.getParticipant2Name() : "User");
+            conversation.setParticipantName(conversation.getParticipant2Name());
         } else {
             conversation.setParticipantId(conversation.getParticipant1());
-            conversation.setParticipantName(conversation.getParticipant1Name() != null ? conversation.getParticipant1Name() : "User");
+            conversation.setParticipantName(conversation.getParticipant1Name());
         }
 
         if (conversation.getParticipantRole() == null || conversation.getParticipantRole().trim().isEmpty()) {
@@ -217,6 +220,12 @@ public class SecureMessagingHubFragment extends Fragment implements Conversation
                 conversation.setParticipantRole(UserRole.DOCTOR.getRoleName());
             }
         }
+
+        conversation.setParticipantName(getFallbackDisplayName(
+                conversation.getParticipantName(),
+                conversation.getParticipantRole()
+        ));
+        resolveParticipantDetails(conversation);
     }
 
     private void rebuildConversationList() {
@@ -240,10 +249,22 @@ public class SecureMessagingHubFragment extends Fragment implements Conversation
     }
 
     private void setupEventListeners() {
-        editSearchConversations.setOnEditorActionListener((v, actionId, event) -> {
-            applyFilters();
-            return true;
-        });
+        if (editSearchConversations != null) {
+            editSearchConversations.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                }
+
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+                    applyFilters();
+                }
+
+                @Override
+                public void afterTextChanged(Editable s) {
+                }
+            });
+        }
 
         if (chipAll != null) {
             chipAll.setOnClickListener(v -> setActiveFilter("all"));
@@ -339,13 +360,19 @@ public class SecureMessagingHubFragment extends Fragment implements Conversation
                         if (!doctor.isVerified()) {
                             continue;
                         }
-                        if (doctor.getUserId() == null || doctor.getUserId().trim().isEmpty()) {
+                        String doctorId = doctor.getUserId() != null && !doctor.getUserId().trim().isEmpty()
+                                ? doctor.getUserId().trim()
+                                : document.getId();
+                        if (doctorId.isEmpty() || doctorId.equals(currentUserId)) {
                             continue;
                         }
 
                         Conversation conversation = new Conversation();
-                        conversation.setParticipantId(doctor.getUserId());
-                        conversation.setParticipantName(doctor.getFullName() != null ? doctor.getFullName() : "Doctor");
+                        conversation.setParticipantId(doctorId);
+                        conversation.setParticipantName(getFallbackDisplayName(
+                                doctor.getFullName(),
+                                UserRole.DOCTOR.getRoleName()
+                        ));
                         conversation.setParticipantRole(UserRole.DOCTOR.getRoleName());
                         conversation.setLastMessage("Start a conversation");
                         doctorChoices.add(conversation);
@@ -382,6 +409,75 @@ public class SecureMessagingHubFragment extends Fragment implements Conversation
                 .setItems(names, (dialog, which) -> onConversationClick(choices.get(which)))
                 .setNegativeButton("Cancel", null)
                 .show();
+    }
+
+    private void resolveParticipantDetails(Conversation conversation) {
+        if (conversation == null) {
+            return;
+        }
+
+        String participantId = conversation.getParticipantId();
+        if (participantId == null || participantId.trim().isEmpty()) {
+            return;
+        }
+
+        String cachedName = userNameCache.get(participantId);
+        if (cachedName != null && !cachedName.trim().isEmpty()) {
+            conversation.setParticipantName(cachedName);
+        }
+
+        String cachedRole = userRoleCache.get(participantId);
+        if (cachedRole != null && !cachedRole.trim().isEmpty()) {
+            conversation.setParticipantRole(cachedRole);
+        }
+
+        if (shouldResolveUserProfile(conversation, cachedName, cachedRole)) {
+            db.collection("users")
+                    .document(participantId)
+                    .get()
+                    .addOnSuccessListener(documentSnapshot -> {
+                        User user = documentSnapshot.toObject(User.class);
+                        if (user == null) {
+                            return;
+                        }
+
+                        String resolvedName = getFallbackDisplayName(user.getFullName(), user.getRole());
+                        userNameCache.put(participantId, resolvedName);
+                        conversation.setParticipantName(resolvedName);
+
+                        if (user.getRole() != null && !user.getRole().trim().isEmpty()) {
+                            userRoleCache.put(participantId, user.getRole().trim());
+                            conversation.setParticipantRole(user.getRole().trim());
+                        }
+
+                        applyFilters();
+                    });
+        }
+    }
+
+    private boolean shouldResolveUserProfile(Conversation conversation, String cachedName, String cachedRole) {
+        boolean missingName = conversation.getParticipantName() == null
+                || conversation.getParticipantName().trim().isEmpty()
+                || "User".equalsIgnoreCase(conversation.getParticipantName().trim())
+                || "Doctor".equalsIgnoreCase(conversation.getParticipantName().trim())
+                || "Patient".equalsIgnoreCase(conversation.getParticipantName().trim());
+        boolean missingRole = conversation.getParticipantRole() == null || conversation.getParticipantRole().trim().isEmpty();
+        boolean cacheComplete = cachedName != null && !cachedName.trim().isEmpty()
+                && cachedRole != null && !cachedRole.trim().isEmpty();
+        return (missingName || missingRole) && !cacheComplete;
+    }
+
+    private String getFallbackDisplayName(String name, String role) {
+        if (name != null && !name.trim().isEmpty()) {
+            return name.trim();
+        }
+        if (UserRole.DOCTOR.getRoleName().equalsIgnoreCase(role)) {
+            return "Doctor";
+        }
+        if (UserRole.PATIENT.getRoleName().equalsIgnoreCase(role)) {
+            return "Patient";
+        }
+        return "User";
     }
 
     @Override

@@ -227,8 +227,12 @@ public class DoctorDashboardFragment extends Fragment {
                 .get()
                 .addOnSuccessListener(querySnapshot -> {
                     int count = 0;
+                    java.util.Set<String> uniquePatientIds = new java.util.HashSet<>();
                     for (QueryDocumentSnapshot document : querySnapshot) {
                         Appointment appointment = document.toObject(Appointment.class);
+                        if (appointment.getPatientId() != null && !appointment.getPatientId().trim().isEmpty()) {
+                            uniquePatientIds.add(appointment.getPatientId().trim());
+                        }
                         java.util.Date apptDate = appointment.getAppointmentDate();
                         if (apptDate != null) {
                             long time = apptDate.getTime();
@@ -242,7 +246,7 @@ public class DoctorDashboardFragment extends Fragment {
                     }
                     // Update header patients count (total unique patients)
                     if (textPatientsCount != null) {
-                        textPatientsCount.setText(String.valueOf(count + 150)); // Mock total
+                        textPatientsCount.setText(String.valueOf(uniquePatientIds.size()));
                     }
                 })
                 .addOnFailureListener(e -> {
@@ -276,7 +280,10 @@ public class DoctorDashboardFragment extends Fragment {
                 if (getActivity() != null) {
                     getActivity().getSupportFragmentManager()
                             .beginTransaction()
-                            .replace(R.id.fragment_container, new DoctorPatientsFragment())
+                            .replace(
+                                    R.id.fragment_container,
+                                    DoctorPatientsFragment.newInstance(DoctorPatientsFragment.MODE_SCHEDULE)
+                            )
                             .addToBackStack(null)
                             .commit();
                 }
@@ -312,7 +319,10 @@ public class DoctorDashboardFragment extends Fragment {
                 if (getActivity() != null) {
                     getActivity().getSupportFragmentManager()
                             .beginTransaction()
-                            .replace(R.id.fragment_container, new MedicalRecordsVaultFragment())
+                            .replace(
+                                    R.id.fragment_container,
+                                    DoctorPatientsFragment.newInstance(DoctorPatientsFragment.MODE_MEDICAL_RECORDS)
+                            )
                             .addToBackStack(null)
                             .commit();
                 }

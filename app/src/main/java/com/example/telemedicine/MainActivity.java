@@ -166,7 +166,8 @@ public class MainActivity extends AppCompatActivity {
 
             bottomNav.setItemIconTintList(getResources().getColorStateList(R.color.bottom_nav_icon_color_ios, getTheme()));
             bottomNav.setItemBackgroundResource(R.drawable.bg_bottom_nav_item_ios);
-            bottomNav.setLabelVisibilityMode(com.google.android.material.bottomnavigation.LabelVisibilityMode.LABEL_VISIBILITY_UNLABELED);
+            bottomNav.setItemTextColor(getResources().getColorStateList(R.color.bottom_nav_text_color_ios, getTheme()));
+            bottomNav.setLabelVisibilityMode(com.google.android.material.bottomnavigation.LabelVisibilityMode.LABEL_VISIBILITY_SELECTED);
 
             // Set menu based on role
             if (UserRole.DOCTOR.getRoleName().equalsIgnoreCase(role)) {
@@ -193,7 +194,8 @@ public class MainActivity extends AppCompatActivity {
 
             // Apply iOS-style appearance
             bottomNav.setItemIconTintList(getResources().getColorStateList(R.color.bottom_nav_icon_color_ios, getTheme()));
-            bottomNav.setLabelVisibilityMode(com.google.android.material.bottomnavigation.LabelVisibilityMode.LABEL_VISIBILITY_UNLABELED);
+            bottomNav.setItemTextColor(getResources().getColorStateList(R.color.bottom_nav_text_color_ios, getTheme()));
+            bottomNav.setLabelVisibilityMode(com.google.android.material.bottomnavigation.LabelVisibilityMode.LABEL_VISIBILITY_SELECTED);
 
             // Set up navigation listener FIRST
             bottomNav.setOnItemSelectedListener(item -> {
@@ -241,7 +243,8 @@ public class MainActivity extends AppCompatActivity {
 
             // Apply iOS-style appearance
             bottomNav.setItemIconTintList(getResources().getColorStateList(R.color.bottom_nav_icon_color_ios, getTheme()));
-            bottomNav.setLabelVisibilityMode(com.google.android.material.bottomnavigation.LabelVisibilityMode.LABEL_VISIBILITY_UNLABELED);
+            bottomNav.setItemTextColor(getResources().getColorStateList(R.color.bottom_nav_text_color_ios, getTheme()));
+            bottomNav.setLabelVisibilityMode(com.google.android.material.bottomnavigation.LabelVisibilityMode.LABEL_VISIBILITY_SELECTED);
 
             // Set up navigation listener FIRST
             bottomNav.setOnItemSelectedListener(item -> {
@@ -289,7 +292,8 @@ public class MainActivity extends AppCompatActivity {
 
             // Apply iOS-style appearance
             bottomNav.setItemIconTintList(getResources().getColorStateList(R.color.bottom_nav_icon_color_ios, getTheme()));
-            bottomNav.setLabelVisibilityMode(com.google.android.material.bottomnavigation.LabelVisibilityMode.LABEL_VISIBILITY_UNLABELED);
+            bottomNav.setItemTextColor(getResources().getColorStateList(R.color.bottom_nav_text_color_ios, getTheme()));
+            bottomNav.setLabelVisibilityMode(com.google.android.material.bottomnavigation.LabelVisibilityMode.LABEL_VISIBILITY_SELECTED);
 
             // Set up navigation listener FIRST
             bottomNav.setOnItemSelectedListener(item -> {

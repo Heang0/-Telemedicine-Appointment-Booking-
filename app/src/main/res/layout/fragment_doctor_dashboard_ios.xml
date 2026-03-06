@@ -515,7 +515,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Lab Results"
+                            android:text="Medical Records"
                             android:textSize="17sp"
                             android:textStyle="bold"
                             android:textColor="@color/ios_text_primary"
@@ -525,7 +525,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Review test results"
+                            android:text="Open patient EMR"
                             android:textSize="13sp"
                             android:textColor="@color/ios_text_secondary"
                             android:fontFamily="sans-serif"

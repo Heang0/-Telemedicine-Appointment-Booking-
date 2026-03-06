@@ -12,6 +12,8 @@ public class User {
     private String medications;
     private String insuranceProvider;
     private String policyNumber;
+    private String bloodType;
+    private String primaryCareProvider;
     private long createdAt;
     private String role; // patient, doctor, admin
     private String specialization; // for doctors
@@ -194,5 +196,21 @@ public class User {
 
     public void setPolicyNumber(String policyNumber) {
         this.policyNumber = policyNumber;
+    }
+
+    public String getBloodType() {
+        return bloodType;
+    }
+
+    public void setBloodType(String bloodType) {
+        this.bloodType = bloodType;
+    }
+
+    public String getPrimaryCareProvider() {
+        return primaryCareProvider;
+    }
+
+    public void setPrimaryCareProvider(String primaryCareProvider) {
+        this.primaryCareProvider = primaryCareProvider;
     }
 }

@@ -23,6 +23,10 @@ import java.util.Locale;
 
 public class PatientEMRFragment extends Fragment {
 
+    private static final String ARG_PATIENT_ID = "patient_id";
+    private static final String ARG_PATIENT_NAME = "patient_name";
+    private static final String ARG_RECORD_FILTER = "record_filter";
+
     private RecyclerView recyclerMedicalHistory;
     private MedicalHistoryAdapter historyAdapter;
     private final List<MedicalHistoryItem> historyItems = new ArrayList<>();
@@ -38,7 +42,18 @@ public class PatientEMRFragment extends Fragment {
     private FirebaseFirestore db;
     private String currentUserId;
     private String currentUserRole = UserRole.PATIENT.getRoleName();
+    private String targetPatientId;
+    private String targetPatientName;
     private String recordFilter = "";
+
+    public static PatientEMRFragment newInstance(String patientId, String patientName) {
+        PatientEMRFragment fragment = new PatientEMRFragment();
+        Bundle args = new Bundle();
+        args.putString(ARG_PATIENT_ID, patientId);
+        args.putString(ARG_PATIENT_NAME, patientName);
+        fragment.setArguments(args);
+        return fragment;
+    }
 
     @Nullable
     @Override
@@ -50,7 +65,12 @@ public class PatientEMRFragment extends Fragment {
         currentUserId = mAuth.getCurrentUser() != null ? mAuth.getCurrentUser().getUid() : null;
 
         if (getArguments() != null) {
-            recordFilter = getArguments().getString("record_filter", "");
+            recordFilter = getArguments().getString(ARG_RECORD_FILTER, "");
+            targetPatientId = getArguments().getString(ARG_PATIENT_ID);
+            targetPatientName = getArguments().getString(ARG_PATIENT_NAME);
+        }
+        if (targetPatientId == null || targetPatientId.trim().isEmpty()) {
+            targetPatientId = currentUserId;
         }
 
         initializeViews(view);
@@ -78,7 +98,7 @@ public class PatientEMRFragment extends Fragment {
     }
 
     private void loadDynamicData() {
-        if (currentUserId == null) {
+        if (currentUserId == null || targetPatientId == null || targetPatientId.trim().isEmpty()) {
             return;
         }
 
@@ -86,45 +106,53 @@ public class PatientEMRFragment extends Fragment {
                 .document(currentUserId)
                 .get()
                 .addOnSuccessListener(documentSnapshot -> {
-                    User user = documentSnapshot.toObject(User.class);
-                    if (user == null) {
-                        return;
+                    User currentUser = documentSnapshot.toObject(User.class);
+                    if (currentUser != null && currentUser.getRole() != null && !currentUser.getRole().trim().isEmpty()) {
+                        currentUserRole = currentUser.getRole().trim();
                     }
-                    if (user.getRole() != null && !user.getRole().trim().isEmpty()) {
-                        currentUserRole = user.getRole();
-                    }
-                    populateUserInfo(user);
-                    loadHistory(user);
+
+                    db.collection("users")
+                            .document(targetPatientId)
+                            .get()
+                            .addOnSuccessListener(patientSnapshot -> {
+                                User patient = patientSnapshot.toObject(User.class);
+                                if (patient == null) {
+                                    return;
+                                }
+                                if ((patient.getUserId() == null || patient.getUserId().trim().isEmpty()) && patientSnapshot.getId() != null) {
+                                    patient.setUserId(patientSnapshot.getId());
+                                }
+                                populateUserInfo(patient);
+                                loadHistory(patient);
+                            });
                 });
     }
 
     private void populateUserInfo(User user) {
-        boolean isDoctor = UserRole.DOCTOR.getRoleName().equalsIgnoreCase(currentUserRole);
+        String resolvedPatientName = user.getFullName() != null && !user.getFullName().trim().isEmpty()
+                ? user.getFullName().trim()
+                : safe(targetPatientName, "Patient");
+        String resolvedPatientId = user.getUserId() != null && !user.getUserId().trim().isEmpty()
+                ? user.getUserId().trim()
+                : targetPatientId;
+
         if (textPatientName != null) {
-            textPatientName.setText(user.getFullName() != null ? user.getFullName() : (isDoctor ? "Doctor" : "Patient"));
+            textPatientName.setText(resolvedPatientName);
         }
         if (textPatientDob != null) {
-            textPatientDob.setText(user.getDateOfBirth() != null && !user.getDateOfBirth().trim().isEmpty() ? user.getDateOfBirth() : "Not provided");
+            textPatientDob.setText(formatProfileValue(user.getDateOfBirth(), "Not provided"));
         }
         if (textPatientGender != null) {
-            textPatientGender.setText(user.getGender() != null && !user.getGender().trim().isEmpty() ? user.getGender() : "Not provided");
+            textPatientGender.setText(formatProfileValue(user.getGender(), "Not provided"));
         }
         if (textPatientMrn != null) {
-            String identifier = isDoctor ? "Clinician ID" : "Patient ID";
-            textPatientMrn.setText(identifier + ": " + (user.getUserId() != null ? user.getUserId() : currentUserId));
+            textPatientMrn.setText("Patient ID: " + safe(resolvedPatientId, "Unavailable"));
         }
         if (textPrimaryCare != null) {
-            if (isDoctor) {
-                String specialization = user.getSpecialization() != null && !user.getSpecialization().trim().isEmpty()
-                        ? user.getSpecialization()
-                        : "General Practice";
-                textPrimaryCare.setText(specialization);
-            } else {
-                textPrimaryCare.setText("Care team synced from appointments");
-            }
+            textPrimaryCare.setText(formatProfileValue(user.getPrimaryCareProvider(), "Loading..."));
         }
         if (textBloodType != null) {
-            textBloodType.setText("N/A");
+            textBloodType.setText(formatProfileValue(user.getBloodType(), "Not recorded"));
         }
     }
 
@@ -133,53 +161,47 @@ public class PatientEMRFragment extends Fragment {
         addProfileHistory(user);
         publishHistory();
 
-        String appointmentField = UserRole.DOCTOR.getRoleName().equalsIgnoreCase(currentUserRole) ? "doctorId" : "patientId";
         db.collection("appointments")
-                .whereEqualTo(appointmentField, currentUserId)
+                .whereEqualTo("patientId", targetPatientId)
                 .get()
                 .addOnSuccessListener(querySnapshot -> {
                     SimpleDateFormat sdf = new SimpleDateFormat("MMM dd, yyyy", Locale.getDefault());
+                    Appointment latestAppointment = null;
                     for (com.google.firebase.firestore.QueryDocumentSnapshot document : querySnapshot) {
                         Appointment appointment = document.toObject(Appointment.class);
-                        String counterpartyName = UserRole.DOCTOR.getRoleName().equalsIgnoreCase(currentUserRole)
-                                ? appointment.getPatientName()
-                                : appointment.getDoctorName();
-                        String summary = UserRole.DOCTOR.getRoleName().equalsIgnoreCase(currentUserRole)
-                                ? "Consultation with " + safe(counterpartyName, "patient")
-                                : "Visit with " + safe(counterpartyName, "doctor");
+                        String doctorName = safe(appointment.getDoctorName(), "Care team");
                         String dateText = appointment.getAppointmentDate() != null ? sdf.format(appointment.getAppointmentDate()) : "Scheduled";
-                        String notes = safe(appointment.getConsultationType(), "consultation") + " • " + safe(appointment.getReason(), "No reason provided");
+                        String notes = safe(appointment.getConsultationType(), "consultation") + " - " + safe(appointment.getReason(), "No reason provided");
                         allHistoryItems.add(new MedicalHistoryItem(
-                                summary,
+                                "Consultation with " + doctorName,
                                 dateText,
-                                safe(counterpartyName, "Care team"),
+                                doctorName,
                                 safe(appointment.getStatus(), "scheduled"),
                                 notes,
                                 "visit"
                         ));
+                        if (latestAppointment == null || compareAppointments(appointment, latestAppointment) > 0) {
+                            latestAppointment = appointment;
+                        }
                     }
+                    applyPrimaryCareFallback(user, latestAppointment);
                     publishHistory();
                 });
 
-        String prescriptionField = UserRole.DOCTOR.getRoleName().equalsIgnoreCase(currentUserRole) ? "doctorId" : "patientId";
         db.collection("prescriptions")
-                .whereEqualTo(prescriptionField, currentUserId)
+                .whereEqualTo("patientId", targetPatientId)
                 .get()
                 .addOnSuccessListener(querySnapshot -> {
                     SimpleDateFormat sdf = new SimpleDateFormat("MMM dd, yyyy", Locale.getDefault());
                     for (com.google.firebase.firestore.QueryDocumentSnapshot document : querySnapshot) {
                         Prescription prescription = document.toObject(Prescription.class);
-                        String counterpartyName = UserRole.DOCTOR.getRoleName().equalsIgnoreCase(currentUserRole)
-                                ? prescription.getPatientName()
-                                : prescription.getDoctorName();
-                        String medicationSummary = buildMedicationSummary(prescription);
                         String dateText = prescription.getPrescribedDate() != null
                                 ? sdf.format(prescription.getPrescribedDate())
                                 : formatTimestamp(prescription.getCreatedAt());
                         allHistoryItems.add(new MedicalHistoryItem(
-                                "Prescription: " + medicationSummary,
+                                "Prescription: " + buildMedicationSummary(prescription),
                                 dateText,
-                                safe(counterpartyName, "Care team"),
+                                safe(prescription.getDoctorName(), "Care team"),
                                 safe(prescription.getStatus(), "active"),
                                 safe(prescription.getInstructions(), "Medication plan available in prescription details"),
                                 "prescription"
@@ -188,30 +210,30 @@ public class PatientEMRFragment extends Fragment {
                     publishHistory();
                 });
 
-        if (!UserRole.DOCTOR.getRoleName().equalsIgnoreCase(currentUserRole)) {
-            db.collection("medical_records")
-                    .whereEqualTo("patientId", currentUserId)
-                    .get()
-                    .addOnSuccessListener(querySnapshot -> {
-                        for (com.google.firebase.firestore.QueryDocumentSnapshot document : querySnapshot) {
-                            MedicalRecordsVault.MedicalRecord record = document.toObject(MedicalRecordsVault.MedicalRecord.class);
-                            String sourceType = record.getRecordType() != null ? record.getRecordType() : "record";
-                            allHistoryItems.add(new MedicalHistoryItem(
-                                    safe(record.getTitle(), "Medical Record"),
-                                    record.getCreatedAt() != null ? new SimpleDateFormat("MMM dd, yyyy", Locale.getDefault()).format(record.getCreatedAt()) : "Saved",
-                                    "Health Records",
-                                    safe(record.getStatus(), "active"),
-                                    safe(record.getDescription(), "Secure clinical record"),
-                                    sourceType
-                            ));
-                        }
-                        publishHistory();
-                    });
-        }
+        db.collection("medical_records")
+                .whereEqualTo("patientId", targetPatientId)
+                .get()
+                .addOnSuccessListener(querySnapshot -> {
+                    for (com.google.firebase.firestore.QueryDocumentSnapshot document : querySnapshot) {
+                        MedicalRecordsVault.MedicalRecord record = document.toObject(MedicalRecordsVault.MedicalRecord.class);
+                        String sourceType = record.getRecordType() != null ? record.getRecordType() : "record";
+                        allHistoryItems.add(new MedicalHistoryItem(
+                                safe(record.getTitle(), "Medical Record"),
+                                record.getCreatedAt() != null
+                                        ? new SimpleDateFormat("MMM dd, yyyy", Locale.getDefault()).format(record.getCreatedAt())
+                                        : "Saved",
+                                "Health Records",
+                                safe(record.getStatus(), "active"),
+                                safe(record.getDescription(), "Secure clinical record"),
+                                sourceType
+                        ));
+                    }
+                    publishHistory();
+                });
     }
 
     private void addProfileHistory(User user) {
-        if (user == null || UserRole.DOCTOR.getRoleName().equalsIgnoreCase(currentUserRole)) {
+        if (user == null || UserRole.DOCTOR.getRoleName().equalsIgnoreCase(user.getRole())) {
             return;
         }
 
@@ -304,8 +326,41 @@ public class PatientEMRFragment extends Fragment {
         return new SimpleDateFormat("MMM dd, yyyy", Locale.getDefault()).format(new Date(value));
     }
 
+    private void applyPrimaryCareFallback(User user, Appointment latestAppointment) {
+        if (textPrimaryCare == null) {
+            return;
+        }
+        if (user.getPrimaryCareProvider() != null && !user.getPrimaryCareProvider().trim().isEmpty()) {
+            textPrimaryCare.setText(user.getPrimaryCareProvider().trim());
+            return;
+        }
+        if (latestAppointment != null && latestAppointment.getDoctorName() != null && !latestAppointment.getDoctorName().trim().isEmpty()) {
+            textPrimaryCare.setText(latestAppointment.getDoctorName().trim());
+            return;
+        }
+        textPrimaryCare.setText("Not assigned");
+    }
+
+    private int compareAppointments(Appointment left, Appointment right) {
+        Date leftDate = left != null ? left.getAppointmentDate() : null;
+        Date rightDate = right != null ? right.getAppointmentDate() : null;
+        if (leftDate == null && rightDate == null) {
+            return 0;
+        }
+        if (leftDate == null) {
+            return -1;
+        }
+        if (rightDate == null) {
+            return 1;
+        }
+        return leftDate.compareTo(rightDate);
+    }
+
+    private String formatProfileValue(String value, String fallback) {
+        return value != null && !value.trim().isEmpty() ? value.trim() : fallback;
+    }
+
     private String safe(String value, String fallback) {
         return value != null && !value.trim().isEmpty() ? value.trim() : fallback;
     }
 }
-

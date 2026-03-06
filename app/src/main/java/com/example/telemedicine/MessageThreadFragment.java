@@ -5,23 +5,19 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.widget.Toolbar;
-import androidx.core.content.ContextCompat;
-import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentChange;
-import com.google.firebase.firestore.EventListener;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -41,7 +37,10 @@ public class MessageThreadFragment extends Fragment {
     private List<Message> messages;
     private EditText editMessage;
     private View btnSend;
+    private ImageView btnBack;
     private TextView textEmptyState;
+    private TextView textChatUserName;
+    private TextView textUserOnlineStatus;
 
     private String otherUserId;
     private String otherUserName;
@@ -85,6 +84,7 @@ public class MessageThreadFragment extends Fragment {
         setupRecyclerView();
         generateConversationId();
         loadCurrentUserProfile();
+        loadOtherUserProfile();
         loadMessages();
         setupSendButton();
 
@@ -95,19 +95,20 @@ public class MessageThreadFragment extends Fragment {
         recyclerMessages = view.findViewById(R.id.recycler_messages);
         editMessage = view.findViewById(R.id.edit_message);
         btnSend = view.findViewById(R.id.btn_send);
+        btnBack = view.findViewById(R.id.btn_back_chat);
         textEmptyState = view.findViewById(R.id.text_empty_state);
+        textChatUserName = view.findViewById(R.id.text_chat_user_name);
+        textUserOnlineStatus = view.findViewById(R.id.text_user_online_status);
 
-        // Setup toolbar
-        Toolbar toolbar = view.findViewById(R.id.toolbar);
-        if (toolbar != null) {
-            toolbar.setTitle(otherUserName);
-            toolbar.setSubtitle("Secure direct message");
-            if (toolbar.getNavigationIcon() != null) {
-                android.graphics.drawable.Drawable navigationIcon = DrawableCompat.wrap(toolbar.getNavigationIcon().mutate());
-                DrawableCompat.setTint(navigationIcon, ContextCompat.getColor(requireContext(), R.color.ios_text_primary));
-                toolbar.setNavigationIcon(navigationIcon);
-            }
-            toolbar.setNavigationOnClickListener(v -> {
+        if (textChatUserName != null) {
+            textChatUserName.setText(getDisplayName(otherUserName));
+        }
+        if (textUserOnlineStatus != null) {
+            textUserOnlineStatus.setText("Secure direct message");
+            textUserOnlineStatus.setVisibility(View.VISIBLE);
+        }
+        if (btnBack != null) {
+            btnBack.setOnClickListener(v -> {
                 if (getActivity() != null) {
                     getActivity().getSupportFragmentManager().popBackStack();
                 }
@@ -149,6 +150,25 @@ public class MessageThreadFragment extends Fragment {
                 });
     }
 
+    private void loadOtherUserProfile() {
+        if (otherUserId == null || otherUserId.trim().isEmpty()) {
+            updateHeaderName(otherUserName);
+            return;
+        }
+
+        db.collection("users")
+                .document(otherUserId)
+                .get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    User otherUser = documentSnapshot.toObject(User.class);
+                    if (otherUser != null && otherUser.getFullName() != null && !otherUser.getFullName().trim().isEmpty()) {
+                        otherUserName = otherUser.getFullName().trim();
+                    }
+                    updateHeaderName(otherUserName);
+                })
+                .addOnFailureListener(e -> updateHeaderName(otherUserName));
+    }
+
     private void loadMessages() {
         if (conversationId == null) {
             return;
@@ -165,13 +185,11 @@ public class MessageThreadFragment extends Fragment {
 
                     if (value != null) {
                         messages.clear();
-                        for (DocumentChange dc : value.getDocumentChanges()) {
-                            if (dc.getType() == DocumentChange.Type.ADDED) {
-                                Message message = dc.getDocument().toObject(Message.class);
-                                messages.add(message);
-                            }
+                        for (com.google.firebase.firestore.QueryDocumentSnapshot document : value) {
+                            Message message = document.toObject(Message.class);
+                            messages.add(message);
                         }
-                        
+
                         if (messages.isEmpty()) {
                             textEmptyState.setVisibility(View.VISIBLE);
                             recyclerMessages.setVisibility(View.GONE);
@@ -238,8 +256,8 @@ public class MessageThreadFragment extends Fragment {
         Map<String, Object> conversationData = new HashMap<>();
         conversationData.put("participant1", currentUserId);
         conversationData.put("participant2", otherUserId);
-        conversationData.put("participant1Name", currentUserName != null ? currentUserName : "User");
-        conversationData.put("participant2Name", otherUserName != null ? otherUserName : "User");
+        conversationData.put("participant1Name", getDisplayName(currentUserName));
+        conversationData.put("participant2Name", getDisplayName(otherUserName));
         conversationData.put("lastMessage", lastMessage);
         conversationData.put("timestamp", new Date());
         conversationData.put("participants", participants);
@@ -251,6 +269,16 @@ public class MessageThreadFragment extends Fragment {
         participants.removeIf(participant -> participant == null || participant.trim().isEmpty());
         Collections.sort(participants);
         return participants;
+    }
+
+    private void updateHeaderName(String name) {
+        if (textChatUserName != null) {
+            textChatUserName.setText(getDisplayName(name));
+        }
+    }
+
+    private String getDisplayName(String name) {
+        return name != null && !name.trim().isEmpty() ? name.trim() : "Chat";
     }
 
     @Override

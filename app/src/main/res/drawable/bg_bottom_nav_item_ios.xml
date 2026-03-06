@@ -1,24 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- iOS-style selected tab pill -->
 <ripple xmlns:android="http://schemas.android.com/apk/res/android"
-    android:color="#14007AFF">
+    android:color="#12007AFF">
     <item android:id="@android:id/mask">
         <shape android:shape="rectangle">
-            <corners android:radius="22dp" />
+            <corners android:radius="24dp" />
             <solid android:color="@android:color/white" />
         </shape>
     </item>
     <item>
         <selector>
             <item android:state_checked="true">
-                <shape android:shape="rectangle">
-                    <corners android:radius="22dp" />
-                    <solid android:color="#14007AFF" />
-                </shape>
+                <layer-list>
+                    <item android:bottom="2dp">
+                        <shape android:shape="rectangle">
+                            <solid android:color="#15005FCC" />
+                            <corners android:radius="24dp" />
+                        </shape>
+                    </item>
+                    <item>
+                        <shape android:shape="rectangle">
+                            <gradient
+                                android:angle="90"
+                                android:endColor="@color/ios_blue_dark"
+                                android:startColor="@color/ios_blue" />
+                            <corners android:radius="24dp" />
+                        </shape>
+                    </item>
+                </layer-list>
             </item>
             <item>
                 <shape android:shape="rectangle">
                     <solid android:color="@android:color/transparent" />
+                    <corners android:radius="24dp" />
                 </shape>
             </item>
         </selector>

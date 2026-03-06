@@ -1,5 +1,6 @@
 package com.example.telemedicine;
 
+import android.app.TimePickerDialog;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -50,6 +51,7 @@ public class AppointmentSchedulerFragment extends Fragment implements TimeSlotAd
     private RadioGroup radioGroupAppointmentType;
     private Button btnScheduleAppointment;
     private View btnBack;
+    private com.google.android.material.button.MaterialButton btnPickCustomTime;
 
     private final List<String> providerIds = new ArrayList<>();
     private final List<String> providerNames = new ArrayList<>();
@@ -69,6 +71,7 @@ public class AppointmentSchedulerFragment extends Fragment implements TimeSlotAd
     private String preselectedProviderId = "";
     private String preselectedProviderName = "";
     private String appointmentType = "";
+    private Calendar selectedCalendar = Calendar.getInstance();
 
     public static AppointmentSchedulerFragment newInstance(String schedulerMode) {
         return newInstance(schedulerMode, "", "");
@@ -122,6 +125,7 @@ public class AppointmentSchedulerFragment extends Fragment implements TimeSlotAd
         radioGroupAppointmentType = view.findViewById(R.id.radio_group_appointment_type);
         btnScheduleAppointment = view.findViewById(R.id.btn_schedule_appointment);
         btnBack = view.findViewById(R.id.btn_back_schedule);
+        btnPickCustomTime = view.findViewById(R.id.btn_pick_custom_time);
     }
 
     private void loadCurrentUserProfile() {
@@ -147,10 +151,16 @@ public class AppointmentSchedulerFragment extends Fragment implements TimeSlotAd
                     if (UserRole.DOCTOR.getRoleName().equalsIgnoreCase(getEffectiveSchedulerMode())) {
                         textProviderLabel.setText("Select Patient");
                         btnScheduleAppointment.setText("Schedule Patient Appointment");
+                        if (btnPickCustomTime != null) {
+                            btnPickCustomTime.setVisibility(View.VISIBLE);
+                        }
                         loadPatients();
                     } else {
                         textProviderLabel.setText("Select Doctor");
                         btnScheduleAppointment.setText("Schedule Appointment");
+                        if (btnPickCustomTime != null) {
+                            btnPickCustomTime.setVisibility(View.GONE);
+                        }
                         loadDoctors();
                     }
                 })
@@ -167,22 +177,25 @@ public class AppointmentSchedulerFragment extends Fragment implements TimeSlotAd
 
     private void setupCalendar() {
         Calendar today = Calendar.getInstance();
+        selectedCalendar = (Calendar) today.clone();
         SimpleDateFormat dateFormat = new SimpleDateFormat("EEEE, MMM dd, yyyy", Locale.getDefault());
         selectedDateString = dateFormat.format(today.getTime());
         textSelectedDate.setText(selectedDateString);
 
         calendarView.setOnDateChangeListener((view, year, month, dayOfMonth) -> {
-            Calendar selectedCalendar = Calendar.getInstance();
+            selectedCalendar = Calendar.getInstance();
             selectedCalendar.set(year, month, dayOfMonth);
 
             selectedDateString = dateFormat.format(selectedCalendar.getTime());
             textSelectedDate.setText(selectedDateString);
+            selectedTimeSlot = null;
+            btnScheduleAppointment.setEnabled(false);
             generateTimeSlotsForDate(selectedCalendar);
         });
     }
 
     private void setupTimeSlots() {
-        recyclerTimeSlots.setLayoutManager(new LinearLayoutManager(getContext()));
+        recyclerTimeSlots.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
         timeSlots = new ArrayList<>();
         timeSlotAdapter = new TimeSlotAdapter(timeSlots, this);
         recyclerTimeSlots.setAdapter(timeSlotAdapter);
@@ -200,11 +213,6 @@ public class AppointmentSchedulerFragment extends Fragment implements TimeSlotAd
         int endHour = isDoctorScheduler ? 21 : 17;
         if (isToday) {
             startHour = Math.max(startHour, now.get(Calendar.HOUR_OF_DAY));
-            if (startHour >= endHour) {
-                Toast.makeText(getContext(), "No more appointments available for today. Please select another date.", Toast.LENGTH_LONG).show();
-                timeSlotAdapter.updateTimeSlots(timeSlots);
-                return;
-            }
         }
 
         for (int hour = startHour; hour < endHour; hour++) {
@@ -227,6 +235,9 @@ public class AppointmentSchedulerFragment extends Fragment implements TimeSlotAd
         }
 
         timeSlotAdapter.updateTimeSlots(timeSlots);
+        if (timeSlots.isEmpty() && isToday) {
+            Toast.makeText(getContext(), "No generated slots left for today. Choose another date or use custom time.", Toast.LENGTH_LONG).show();
+        }
     }
 
     private boolean isSameDay(Calendar cal1, Calendar cal2) {
@@ -369,6 +380,90 @@ public class AppointmentSchedulerFragment extends Fragment implements TimeSlotAd
                 }
             });
         }
+        if (btnPickCustomTime != null) {
+            btnPickCustomTime.setOnClickListener(v -> openCustomTimePicker());
+        }
+    }
+
+    private void openCustomTimePicker() {
+        if (!UserRole.DOCTOR.getRoleName().equalsIgnoreCase(getEffectiveSchedulerMode())) {
+            return;
+        }
+
+        Calendar defaultTime = Calendar.getInstance();
+        if (selectedTimeSlot != null) {
+            try {
+                Date parsedTime = new SimpleDateFormat("h:mm a", Locale.getDefault()).parse(selectedTimeSlot.getTime());
+                if (parsedTime != null) {
+                    defaultTime.setTime(parsedTime);
+                }
+            } catch (ParseException ignored) {
+            }
+        }
+
+        new TimePickerDialog(
+                requireContext(),
+                (view, hourOfDay, minute) -> addOrSelectCustomTime(hourOfDay, minute),
+                defaultTime.get(Calendar.HOUR_OF_DAY),
+                defaultTime.get(Calendar.MINUTE),
+                false
+        ).show();
+    }
+
+    private void addOrSelectCustomTime(int hourOfDay, int minute) {
+        Calendar customSlotTime = (Calendar) selectedCalendar.clone();
+        customSlotTime.set(Calendar.HOUR_OF_DAY, hourOfDay);
+        customSlotTime.set(Calendar.MINUTE, minute);
+        customSlotTime.set(Calendar.SECOND, 0);
+        customSlotTime.set(Calendar.MILLISECOND, 0);
+
+        if (customSlotTime.before(new Date())) {
+            Toast.makeText(getContext(), "Please choose a future time", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        String customTimeLabel = formatTime(hourOfDay, minute);
+        int existingIndex = -1;
+        for (int i = 0; i < timeSlots.size(); i++) {
+            if (customTimeLabel.equals(timeSlots.get(i).getTime())) {
+                existingIndex = i;
+                break;
+            }
+        }
+
+        if (existingIndex == -1) {
+            timeSlots.add(new TimeSlot(customTimeLabel, true));
+            timeSlots.sort((first, second) -> {
+                try {
+                    Date firstDate = new SimpleDateFormat("h:mm a", Locale.getDefault()).parse(first.getTime());
+                    Date secondDate = new SimpleDateFormat("h:mm a", Locale.getDefault()).parse(second.getTime());
+                    if (firstDate == null || secondDate == null) {
+                        return 0;
+                    }
+                    return firstDate.compareTo(secondDate);
+                } catch (ParseException e) {
+                    return 0;
+                }
+            });
+            existingIndex = findTimeSlotIndex(customTimeLabel);
+            timeSlotAdapter.updateTimeSlots(timeSlots);
+        }
+
+        if (existingIndex >= 0 && existingIndex < timeSlots.size()) {
+            selectedTimeSlot = timeSlots.get(existingIndex);
+            timeSlotAdapter.setSelectedPosition(existingIndex);
+            btnScheduleAppointment.setEnabled(true);
+            Toast.makeText(getContext(), "Selected time: " + customTimeLabel, Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private int findTimeSlotIndex(String timeLabel) {
+        for (int i = 0; i < timeSlots.size(); i++) {
+            if (timeLabel.equals(timeSlots.get(i).getTime())) {
+                return i;
+            }
+        }
+        return -1;
     }
 
     private void scheduleAppointment() {

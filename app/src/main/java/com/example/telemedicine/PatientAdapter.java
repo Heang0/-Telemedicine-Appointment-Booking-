@@ -119,9 +119,14 @@ public class PatientAdapter extends RecyclerView.Adapter<PatientAdapter.PatientV
                 return "?";
             }
             try {
-                String[] parts = dob.split("/");
+                String normalizedDob = dob.trim();
+                String[] parts = normalizedDob.contains("-")
+                        ? normalizedDob.split("-")
+                        : normalizedDob.split("/");
                 if (parts.length == 3) {
-                    int year = Integer.parseInt(parts[2]);
+                    int year = normalizedDob.contains("-")
+                            ? Integer.parseInt(parts[0])
+                            : Integer.parseInt(parts[2]);
                     int currentYear = java.util.Calendar.getInstance().get(java.util.Calendar.YEAR);
                     return String.valueOf(currentYear - year);
                 }

@@ -1,13 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Floating iOS-style tab bar container -->
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
-    <item>
+    <item
+        android:left="6dp"
+        android:right="6dp"
+        android:top="10dp">
         <shape android:shape="rectangle">
-            <solid android:color="@color/ios_card_background" />
-            <corners android:radius="28dp" />
+            <solid android:color="#12000000" />
+            <corners android:radius="34dp" />
+        </shape>
+    </item>
+
+    <item android:bottom="6dp">
+        <shape android:shape="rectangle">
+            <gradient
+                android:angle="90"
+                android:endColor="#F7FBFF"
+                android:startColor="#FFFFFFFF" />
+            <corners android:radius="34dp" />
             <stroke
                 android:width="1dp"
-                android:color="@color/ios_divider" />
+                android:color="#D9E2EC" />
         </shape>
     </item>
 </layer-list>

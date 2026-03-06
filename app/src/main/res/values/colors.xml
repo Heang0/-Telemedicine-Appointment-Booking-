@@ -141,4 +141,12 @@
     
     <!-- iOS Shadow -->
     <color name="ios_shadow">#0000001A</color>
+    
+    <!-- Additional iOS Colors -->
+    <color name="ios_ultra_light_gray">#F2F2F7</color>
+    <color name="ios_system_blue">#007AFF</color>
+    <color name="ios_system_green">#34C759</color>
+    <color name="ios_system_orange">#FF9500</color>
+    <color name="ios_system_red">#FF3B30</color>
+    <color name="ios_system_purple">#BF5AF2</color>
 </resources>

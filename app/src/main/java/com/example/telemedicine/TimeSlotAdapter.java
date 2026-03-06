@@ -1,20 +1,23 @@
 package com.example.telemedicine;
 
+import android.content.res.ColorStateList;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckBox;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.android.material.card.MaterialCardView;
 
 import java.util.List;
 
 public class TimeSlotAdapter extends RecyclerView.Adapter<TimeSlotAdapter.TimeSlotViewHolder> {
     private List<TimeSlot> timeSlots;
     private OnTimeSlotSelectedListener listener;
-    private int selectedPosition = -1; // Track selected position
+    private int selectedPosition = -1;
 
     public interface OnTimeSlotSelectedListener {
         void onTimeSlotSelected(TimeSlot timeSlot);
@@ -45,25 +48,26 @@ public class TimeSlotAdapter extends RecyclerView.Adapter<TimeSlotAdapter.TimeSl
 
     public void updateTimeSlots(List<TimeSlot> newTimeSlots) {
         this.timeSlots = newTimeSlots;
+        selectedPosition = -1;
         notifyDataSetChanged();
     }
 
     public void setSelectedPosition(int position) {
         int previousPosition = selectedPosition;
         selectedPosition = position;
-        
+
         if (previousPosition >= 0) notifyItemChanged(previousPosition);
         if (selectedPosition >= 0) notifyItemChanged(selectedPosition);
     }
 
     class TimeSlotViewHolder extends RecyclerView.ViewHolder {
         private TextView timeText;
-        private CheckBox checkBox;
+        private MaterialCardView cardView;
 
         public TimeSlotViewHolder(@NonNull View itemView) {
             super(itemView);
             timeText = itemView.findViewById(R.id.text_time_slot);
-            checkBox = itemView.findViewById(R.id.check_time_selected);
+            cardView = (MaterialCardView) itemView;
 
             itemView.setOnClickListener(v -> {
                 int position = getAdapterPosition();
@@ -78,8 +82,18 @@ public class TimeSlotAdapter extends RecyclerView.Adapter<TimeSlotAdapter.TimeSl
 
         public void bind(TimeSlot timeSlot, boolean isSelected) {
             timeText.setText(timeSlot.getTime());
-            checkBox.setChecked(isSelected);
-            
+
+            if (isSelected) {
+                cardView.setCardBackgroundColor(ContextCompat.getColor(itemView.getContext(), com.example.telemedicine.R.color.ios_blue));
+                timeText.setTextColor(ContextCompat.getColor(itemView.getContext(), com.example.telemedicine.R.color.white));
+                cardView.setStrokeWidth(0);
+            } else {
+                cardView.setCardBackgroundColor(ContextCompat.getColor(itemView.getContext(), com.example.telemedicine.R.color.ios_card_background));
+                timeText.setTextColor(ContextCompat.getColor(itemView.getContext(), com.example.telemedicine.R.color.ios_text_primary));
+                cardView.setStrokeColor(ContextCompat.getColor(itemView.getContext(), com.example.telemedicine.R.color.ios_divider));
+                cardView.setStrokeWidth(1);
+            }
+
             if (timeSlot.isAvailable()) {
                 itemView.setEnabled(true);
                 timeText.setEnabled(true);

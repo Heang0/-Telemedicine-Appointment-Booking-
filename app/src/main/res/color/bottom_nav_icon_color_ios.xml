@@ -1,10 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- iOS-Style Bottom Navigation Icon Color -->
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <!-- Selected state - iOS Blue -->
-    <item android:state_checked="true" android:color="#007AFF"/>
-    <!-- Pressed state -->
-    <item android:state_pressed="true" android:color="#007AFF"/>
-    <!-- Default state - iOS Gray -->
-    <item android:color="#8E8E93"/>
+    <item android:state_checked="true" android:color="@color/white"/>
+    <item android:state_pressed="true" android:color="@color/ios_text_primary"/>
+    <item android:color="#6B7280"/>
 </selector>
