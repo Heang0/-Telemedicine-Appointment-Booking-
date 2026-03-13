@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -17,6 +18,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -58,7 +60,7 @@ public class PatientEMRFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_patient_emr_ios, container, false);
+        View view = inflater.inflate(R.layout.fragment_patient_emr_2026, container, false);
 
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
@@ -75,22 +77,52 @@ public class PatientEMRFragment extends Fragment {
 
         initializeViews(view);
         setupRecyclerView();
+        setupToolbar(view);
         loadDynamicData();
 
         return view;
     }
 
+    private void setupToolbar(View view) {
+        if (getActivity() != null) {
+            com.google.android.material.appbar.MaterialToolbar toolbar = view.findViewById(R.id.app_bar);
+            if (toolbar != null) {
+                toolbar.setNavigationOnClickListener(v -> {
+                    // Go back to previous fragment
+                    if (getActivity() != null) {
+                        getActivity().getOnBackPressedDispatcher().onBackPressed();
+                    }
+                });
+            }
+        }
+    }
+
     private void initializeViews(View view) {
         recyclerMedicalHistory = view.findViewById(R.id.recycler_medical_history);
         textPatientName = view.findViewById(R.id.text_patient_name);
-        textPatientDob = view.findViewById(R.id.text_patient_dob);
-        textPatientGender = view.findViewById(R.id.text_patient_gender);
-        textPatientMrn = view.findViewById(R.id.text_patient_mrn);
-        textPrimaryCare = view.findViewById(R.id.text_primary_care);
+        textPatientDob = view.findViewById(R.id.text_age_gender);
+        textPatientGender = view.findViewById(R.id.text_age_gender);
+        textPatientMrn = view.findViewById(R.id.text_patient_id);
+        textPrimaryCare = view.findViewById(R.id.text_blood_type);
         textBloodType = view.findViewById(R.id.text_blood_type);
+        
+        // New 2026 layout views
+        View editButton = view.findViewById(R.id.btn_edit_patient_info);
+        if (editButton != null) {
+            editButton.setOnClickListener(v -> showEditPatientInfo());
+        }
+        
+        // Setup RecyclerView
+        if (recyclerMedicalHistory != null) {
+            recyclerMedicalHistory.setLayoutManager(new LinearLayoutManager(getContext()));
+            recyclerMedicalHistory.setNestedScrollingEnabled(false);
+        }
     }
 
     private void setupRecyclerView() {
+        if (recyclerMedicalHistory == null || getContext() == null) {
+            return;
+        }
         recyclerMedicalHistory.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerMedicalHistory.setNestedScrollingEnabled(false);
         historyAdapter = new MedicalHistoryAdapter(historyItems);
@@ -98,7 +130,7 @@ public class PatientEMRFragment extends Fragment {
     }
 
     private void loadDynamicData() {
-        if (currentUserId == null || targetPatientId == null || targetPatientId.trim().isEmpty()) {
+        if (getContext() == null || currentUserId == null || targetPatientId == null || targetPatientId.trim().isEmpty()) {
             return;
         }
 
@@ -123,6 +155,7 @@ public class PatientEMRFragment extends Fragment {
                                     patient.setUserId(patientSnapshot.getId());
                                 }
                                 populateUserInfo(patient);
+                                populateMedicalInfo(patient);
                                 loadHistory(patient);
                             });
                 });
@@ -139,20 +172,90 @@ public class PatientEMRFragment extends Fragment {
         if (textPatientName != null) {
             textPatientName.setText(resolvedPatientName);
         }
-        if (textPatientDob != null) {
-            textPatientDob.setText(formatProfileValue(user.getDateOfBirth(), "Not provided"));
-        }
-        if (textPatientGender != null) {
-            textPatientGender.setText(formatProfileValue(user.getGender(), "Not provided"));
-        }
         if (textPatientMrn != null) {
-            textPatientMrn.setText("Patient ID: " + safe(resolvedPatientId, "Unavailable"));
+            // Show short ID: P-12345 instead of full ID
+            String shortId = "P-" + resolvedPatientId.substring(0, Math.min(5, resolvedPatientId.length()));
+            textPatientMrn.setText(shortId);
         }
-        if (textPrimaryCare != null) {
-            textPrimaryCare.setText(formatProfileValue(user.getPrimaryCareProvider(), "Loading..."));
+        
+        // Update age/gender combined field (new 2026 layout)
+        if (textPatientDob != null) {
+            String dob = formatProfileValue(user.getDateOfBirth(), "");
+            String gender = formatProfileValue(user.getGender(), "");
+            String ageStr = calculateAge(dob);
+            String ageGenderText = ageStr + " / " + (gender.isEmpty() ? "N/A" : gender);
+            textPatientDob.setText(ageGenderText);
         }
+        
+        // Update blood type (new 2026 layout)
         if (textBloodType != null) {
-            textBloodType.setText(formatProfileValue(user.getBloodType(), "Not recorded"));
+            String bloodType = formatProfileValue(user.getBloodType(), "N/A");
+            textBloodType.setText(bloodType);
+        }
+    }
+
+    private void populateMedicalInfo(User user) {
+        // This method populates the new 2026 layout specific fields
+        View view = getView();
+        if (view == null) return;
+
+        // Height
+        TextView textHeight = view.findViewById(R.id.text_height);
+        if (textHeight != null) {
+            String height = user.getHeight();
+            textHeight.setText((height != null && !height.isEmpty()) ? height + " cm" : "N/A");
+        }
+
+        // Weight
+        TextView textWeight = view.findViewById(R.id.text_weight);
+        if (textWeight != null) {
+            String weight = user.getWeight();
+            textWeight.setText((weight != null && !weight.isEmpty()) ? weight + " kg" : "N/A");
+        }
+
+        // BMI (calculate from height and weight)
+        TextView textBmi = view.findViewById(R.id.text_bmi);
+        if (textBmi != null) {
+            String height = user.getHeight();
+            String weight = user.getWeight();
+            if (height != null && !height.isEmpty() && weight != null && !weight.isEmpty()) {
+                try {
+                    double heightM = Double.parseDouble(height) / 100.0;
+                    double weightKg = Double.parseDouble(weight);
+                    double bmi = weightKg / (heightM * heightM);
+                    textBmi.setText(String.format(Locale.getDefault(), "%.1f", bmi));
+                } catch (NumberFormatException e) {
+                    textBmi.setText("N/A");
+                }
+            } else {
+                textBmi.setText("N/A");
+            }
+        }
+
+        // Allergies
+        TextView textAllergies = view.findViewById(R.id.text_allergies);
+        if (textAllergies != null) {
+            String allergies = user.getAllergies();
+            textAllergies.setText((allergies != null && !allergies.isEmpty()) ? allergies : "None known");
+        }
+
+        // Medical Conditions
+        TextView textConditions = view.findViewById(R.id.text_conditions);
+        if (textConditions != null) {
+            String conditions = user.getMedicalConditions();
+            textConditions.setText((conditions != null && !conditions.isEmpty()) ? conditions : "None");
+        }
+
+        // Email
+        TextView textEmail = view.findViewById(R.id.text_email);
+        if (textEmail != null) {
+            textEmail.setText(formatProfileValue(user.getEmail(), "Not provided"));
+        }
+
+        // Phone
+        TextView textPhone = view.findViewById(R.id.text_phone);
+        if (textPhone != null) {
+            textPhone.setText(formatProfileValue(user.getPhoneNumber(), "Not provided"));
         }
     }
 
@@ -215,7 +318,7 @@ public class PatientEMRFragment extends Fragment {
                 .get()
                 .addOnSuccessListener(querySnapshot -> {
                     for (com.google.firebase.firestore.QueryDocumentSnapshot document : querySnapshot) {
-                        MedicalRecordsVault.MedicalRecord record = document.toObject(MedicalRecordsVault.MedicalRecord.class);
+                        MedicalRecordsVault record = document.toObject(MedicalRecordsVault.class);
                         String sourceType = record.getRecordType() != null ? record.getRecordType() : "record";
                         allHistoryItems.add(new MedicalHistoryItem(
                                 safe(record.getTitle(), "Medical Record"),
@@ -362,5 +465,64 @@ public class PatientEMRFragment extends Fragment {
 
     private String safe(String value, String fallback) {
         return value != null && !value.trim().isEmpty() ? value.trim() : fallback;
+    }
+
+    private String calculateAge(String dob) {
+        if (dob == null || dob.trim().isEmpty()) {
+            return "N/A";
+        }
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+            Date birthDate = sdf.parse(dob);
+            if (birthDate == null) {
+                return "N/A";
+            }
+            Calendar today = Calendar.getInstance();
+            Calendar birth = Calendar.getInstance();
+            birth.setTime(birthDate);
+            
+            int age = today.get(Calendar.YEAR) - birth.get(Calendar.YEAR);
+            if (today.get(Calendar.DAY_OF_YEAR) < birth.get(Calendar.DAY_OF_YEAR)) {
+                age--;
+            }
+            return String.valueOf(age);
+        } catch (Exception e) {
+            return "N/A";
+        }
+    }
+
+    private void showEditPatientInfo() {
+        // Only doctors can edit
+        if (!"doctor".equalsIgnoreCase(currentUserRole)) {
+            Toast.makeText(getContext(), "Only doctors can edit patient information", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // Load current patient data and show edit dialog
+        db.collection("users")
+                .document(targetPatientId)
+                .get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    User patient = documentSnapshot.toObject(User.class);
+                    if (patient == null) {
+                        Toast.makeText(getContext(), "Patient not found", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+
+                    EditPatientInfoDialog editDialog = new EditPatientInfoDialog(getContext(), targetPatientId);
+                    editDialog.setCurrentData(
+                            formatProfileValue(patient.getDateOfBirth(), ""),
+                            formatProfileValue(patient.getGender(), ""),
+                            formatProfileValue(patient.getBloodType(), ""),
+                            formatProfileValue(patient.getHeight(), ""),
+                            formatProfileValue(patient.getWeight(), ""),
+                            formatProfileValue(patient.getAllergies(), "None"),
+                            formatProfileValue(patient.getMedicalConditions(), "None")
+                    );
+                    editDialog.show();
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(getContext(), "Error loading patient data: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                });
     }
 }

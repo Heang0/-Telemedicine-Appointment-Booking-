@@ -22,6 +22,8 @@ public class User {
     private String availabilityStartTime;
     private String availabilityEndTime;
     private int availabilitySlotMinutes;
+    private String height; // in cm
+    private String weight; // in kg
 
     // Empty constructor required for Firestore
     public User() {}
@@ -132,6 +134,22 @@ public class User {
 
     public void setAvailabilitySlotMinutes(int availabilitySlotMinutes) {
         this.availabilitySlotMinutes = availabilitySlotMinutes;
+    }
+
+    public String getHeight() {
+        return height;
+    }
+
+    public void setHeight(String height) {
+        this.height = height;
+    }
+
+    public String getWeight() {
+        return weight;
+    }
+
+    public void setWeight(String weight) {
+        this.weight = weight;
     }
 
     public String getPhoneNumber() {

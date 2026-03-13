@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Telemedicine</string>
-    
+
+    <!-- Google Sign-In Web Client ID (Replace with your actual ID from Firebase) -->
+    <!-- This will be automatically replaced when you download google-services.json from Firebase -->
+    <string name="default_web_client_id">YOUR_WEB_CLIENT_ID.apps.googleusercontent.com</string>
+
     <!-- Activity titles -->
     <string name="title_symptom_form">Symptom Form</string>
     <string name="title_medical_records_vault">Medical Records Vault</string>

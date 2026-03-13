@@ -23,27 +23,29 @@ service cloud.firestore {
 
     function isConversationParticipant(conversationId) {
       return isSignedIn() &&
-        (
-          (
-            "participants" in get(/databases/$(database)/documents/conversations/$(conversationId)).data &&
-            request.auth.uid in get(/databases/$(database)/documents/conversations/$(conversationId)).data.participants
-          ) ||
-          request.auth.uid == get(/databases/$(database)/documents/conversations/$(conversationId)).data.participant1 ||
-          request.auth.uid == get(/databases/$(database)/documents/conversations/$(conversationId)).data.participant2
-        );
+        request.auth.uid in get(/databases/$(database)/documents/conversations/$(conversationId)).data.participants;
     }
 
+    // Users collection - FIXED: Allow doctors to update patient info
     match /users/{userId} {
       allow read: if isSignedIn();
       allow create: if isSignedIn() && request.auth.uid == userId;
-      allow update, delete: if isSignedIn() && (request.auth.uid == userId || isAdmin());
+      
+      // FIXED: Allow update if it's your own doc OR you're a doctor OR you're an admin
+      allow update: if isSignedIn() && (
+        request.auth.uid == userId || 
+        isDoctor() || 
+        isAdmin()
+      );
+      
+      allow delete: if isSignedIn() && (request.auth.uid == userId || isAdmin());
 
       match /appointments/{appointmentRefId} {
         allow read, write: if isSignedIn();
       }
 
       match /medical_records/{recordId} {
-        allow read, write: if isSignedIn() && (request.auth.uid == userId || isAdmin());
+        allow read, write: if isSignedIn() && (request.auth.uid == userId || isDoctor() || isAdmin());
       }
     }
 
@@ -52,14 +54,16 @@ service cloud.firestore {
       allow create: if isSignedIn() && (
         request.auth.uid == request.resource.data.patientId ||
         request.auth.uid == request.resource.data.doctorId ||
-        isAdmin()
+        isAdmin() ||
+        isDoctor()
       );
       allow update: if isSignedIn() && (
         request.auth.uid == resource.data.patientId ||
         request.auth.uid == resource.data.doctorId ||
-        isAdmin()
+        isAdmin() ||
+        isDoctor()
       );
-      allow delete: if isSignedIn() && (request.auth.uid == resource.data.patientId || isAdmin());
+      allow delete: if isSignedIn() && (request.auth.uid == resource.data.patientId || isAdmin() || isDoctor());
     }
 
     match /prescriptions/{prescriptionId} {
@@ -72,7 +76,8 @@ service cloud.firestore {
 
       allow create: if isSignedIn() && (
         request.auth.uid == request.resource.data.doctorId ||
-        isAdmin()
+        isAdmin() ||
+        isDoctor()
       );
 
       allow update: if isSignedIn() && (
@@ -81,44 +86,27 @@ service cloud.firestore {
           request.resource.data.doctorId == resource.data.doctorId &&
           request.resource.data.patientId == resource.data.patientId &&
           request.resource.data.patientIds == resource.data.patientIds) ||
-        isAdmin()
+        isAdmin() ||
+        isDoctor()
       );
 
       allow delete: if isSignedIn() && (
         request.auth.uid == resource.data.doctorId ||
-        isAdmin()
+        isAdmin() ||
+        isDoctor()
       );
     }
 
     match /conversations/{conversationId} {
-      allow read: if isSignedIn() && (
-        ("participants" in resource.data && request.auth.uid in resource.data.participants) ||
-        request.auth.uid == resource.data.participant1 ||
-        request.auth.uid == resource.data.participant2
-      );
+      allow read: if isSignedIn() && request.auth.uid in resource.data.participants;
 
       allow create: if isSignedIn() &&
-        request.auth.uid in request.resource.data.participants &&
-        request.resource.data.participants.size() == 2;
+        request.auth.uid in request.resource.data.participants;
 
       allow update: if isSignedIn() &&
-        request.auth.uid in request.resource.data.participants &&
-        request.resource.data.participants.size() == 2 &&
-        (
-          (
-            "participants" in resource.data &&
-            request.auth.uid in resource.data.participants &&
-            request.resource.data.participants.hasAll(resource.data.participants) &&
-            resource.data.participants.hasAll(request.resource.data.participants)
-          ) ||
-          (
-            !("participants" in resource.data) &&
-            (
-              request.auth.uid == resource.data.participant1 ||
-              request.auth.uid == resource.data.participant2
-            )
-          )
-        );
+        request.auth.uid in resource.data.participants &&
+        request.resource.data.participants.hasAll(resource.data.participants) &&
+        resource.data.participants.hasAll(request.resource.data.participants);
 
       allow delete: if isAdmin();
 
@@ -127,14 +115,7 @@ service cloud.firestore {
 
         allow create: if isConversationParticipant(conversationId) &&
           request.auth.uid == request.resource.data.senderId &&
-          (
-            (
-              "participants" in get(/databases/$(database)/documents/conversations/$(conversationId)).data &&
-              request.resource.data.receiverId in get(/databases/$(database)/documents/conversations/$(conversationId)).data.participants
-            ) ||
-            request.resource.data.receiverId == get(/databases/$(database)/documents/conversations/$(conversationId)).data.participant1 ||
-            request.resource.data.receiverId == get(/databases/$(database)/documents/conversations/$(conversationId)).data.participant2
-          );
+          request.resource.data.receiverId in get(/databases/$(database)/documents/conversations/$(conversationId)).data.participants;
 
         allow update: if isConversationParticipant(conversationId) &&
           request.auth.uid == resource.data.receiverId;
@@ -156,6 +137,7 @@ service cloud.firestore {
       allow write: if isAdmin();
     }
 
+    // Default deny for any unmatched documents
     match /{document=**} {
       allow read, write: if false;
     }

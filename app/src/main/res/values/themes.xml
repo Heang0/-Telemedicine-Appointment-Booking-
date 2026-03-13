@@ -1,35 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Modern iOS-style Application Theme -->
+    <!-- Modern Telemedicine Application Theme -->
     <style name="Theme.Telemedicine" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Primary brand color -->
-        <item name="colorPrimary">@color/ios_blue</item>
-        <item name="colorPrimaryVariant">@color/ios_blue_dark</item>
-        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorPrimary">@color/primary</item>
+        <item name="colorPrimaryVariant">@color/primary_dark</item>
+        <item name="colorOnPrimary">@color/on_primary</item>
 
         <!-- Secondary brand color -->
-        <item name="colorSecondary">@color/ios_blue</item>
-        <item name="colorSecondaryVariant">@color/ios_blue_dark</item>
-        <item name="colorOnSecondary">@color/white</item>
+        <item name="colorSecondary">@color/secondary</item>
+        <item name="colorSecondaryVariant">@color/secondary_dark</item>
+        <item name="colorOnSecondary">@color/on_secondary</item>
 
         <!-- Surface colors -->
-        <item name="colorSurface">@color/white</item>
-        <item name="colorOnSurface">@color/ios_text_primary</item>
+        <item name="colorSurface">@color/surface</item>
+        <item name="colorOnSurface">@color/text_primary</item>
 
         <!-- Background -->
-        <item name="android:colorBackground">@color/ios_background</item>
+        <item name="android:colorBackground">@color/background</item>
 
         <!-- Status bar -->
-        <item name="android:statusBarColor" tools:targetApi="l">@color/ios_background</item>
+        <item name="android:statusBarColor" tools:targetApi="l">@color/background</item>
         <item name="android:windowLightStatusBar" tools:targetApi="m">true</item>
 
         <!-- Bottom Navigation -->
         <item name="bottomNavigationStyle">@style/Widget.Telemedicine.BottomNavigation</item>
     </style>
 
-    <!-- Modern iOS-style Bottom Navigation -->
+    <!-- Modern Bottom Navigation -->
     <style name="Widget.Telemedicine.BottomNavigation" parent="Widget.Material3.BottomNavigationView">
-        <item name="android:background">@color/ios_card_background</item>
+        <item name="android:background">@color/surface</item>
         <item name="itemIconTint">@color/bottom_nav_icon_color</item>
         <item name="itemTextColor">@color/bottom_nav_text_color</item>
         <item name="itemRippleColor">@android:color/transparent</item>
@@ -38,60 +38,60 @@
         <item name="itemTextAppearanceInactive">@style/TextAppearance.Material3.LabelSmall</item>
     </style>
 
-    <!-- iOS-style Card -->
+    <!-- Modern Card Style -->
     <style name="Widget.Telemedicine.Card" parent="Widget.Material3.CardView.Filled">
-        <item name="cardBackgroundColor">@color/white</item>
+        <item name="cardBackgroundColor">@color/surface</item>
         <item name="cardCornerRadius">16dp</item>
         <item name="cardElevation">0dp</item>
-        <item name="strokeColor">@color/ios_divider</item>
+        <item name="strokeColor">@color/divider</item>
         <item name="strokeWidth">1dp</item>
     </style>
 
-    <!-- iOS-style Button (Filled) -->
+    <!-- Modern Filled Button -->
     <style name="Widget.Telemedicine.Button.Filled" parent="Widget.Material3.Button">
-        <item name="android:textColor">@color/white</item>
-        <item name="backgroundTint">@color/ios_blue</item>
+        <item name="android:textColor">@color/on_primary</item>
+        <item name="backgroundTint">@color/primary</item>
         <item name="cornerRadius">12dp</item>
         <item name="android:textAllCaps">false</item>
         <item name="android:letterSpacing">0.02</item>
         <item name="android:fontFamily">sans-serif-medium</item>
     </style>
 
-    <!-- iOS-style Button (Outlined) -->
+    <!-- Modern Outlined Button -->
     <style name="Widget.Telemedicine.Button.Outlined" parent="Widget.Material3.Button.OutlinedButton">
-        <item name="strokeColor">@color/ios_blue</item>
+        <item name="strokeColor">@color/primary</item>
         <item name="strokeWidth">1.5dp</item>
-        <item name="android:textColor">@color/ios_blue</item>
+        <item name="android:textColor">@color/primary</item>
         <item name="cornerRadius">12dp</item>
         <item name="android:textAllCaps">false</item>
         <item name="android:letterSpacing">0.02</item>
     </style>
 
-    <!-- iOS-style TextInputLayout -->
+    <!-- Modern TextInputLayout -->
     <style name="Widget.Telemedicine.TextInputLayout" parent="Widget.Material3.TextInputLayout.OutlinedBox">
-        <item name="boxStrokeColor">@color/ios_blue</item>
+        <item name="boxStrokeColor">@color/primary</item>
         <item name="boxStrokeWidth">1.5dp</item>
         <item name="boxStrokeWidthFocused">2dp</item>
         <item name="boxCornerRadiusTopStart">12dp</item>
         <item name="boxCornerRadiusTopEnd">12dp</item>
         <item name="boxCornerRadiusBottomStart">12dp</item>
         <item name="boxCornerRadiusBottomEnd">12dp</item>
-        <item name="hintTextColor">@color/ios_text_secondary</item>
+        <item name="hintTextColor">@color/text_secondary</item>
     </style>
 
-    <!-- iOS-style Chip -->
+    <!-- Modern Chip -->
     <style name="Widget.Telemedicine.Chip" parent="Widget.Material3.Chip.Filter">
-        <item name="chipBackgroundColor">@color/ios_chip_background</item>
-        <item name="chipStrokeColor">@color/ios_divider</item>
+        <item name="chipBackgroundColor">@color/surface_variant</item>
+        <item name="chipStrokeColor">@color/divider</item>
         <item name="chipStrokeWidth">1dp</item>
         <item name="chipCornerRadius">8dp</item>
-        <item name="android:textColor">@color/ios_text_primary</item>
+        <item name="android:textColor">@color/text_primary</item>
     </style>
 
-    <!-- iOS-style FAB -->
+    <!-- Modern FAB -->
     <style name="Widget.Telemedicine.FAB" parent="Widget.Material3.FloatingActionButton.Primary">
-        <item name="backgroundTint">@color/ios_blue</item>
-        <item name="tint">@color/white</item>
+        <item name="backgroundTint">@color/primary</item>
+        <item name="tint">@color/on_primary</item>
         <item name="fabSize">normal</item>
         <item name="elevation">0dp</item>
     </style>

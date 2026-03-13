@@ -159,6 +159,9 @@ public class ScheduleAppointmentActivity extends AppCompatActivity {
 
         // Setup time picker
         textSelectedTime.setOnClickListener(v -> showTimePicker());
+        
+        // Setup schedule button
+        btnSchedule.setOnClickListener(v -> scheduleAppointment());
     }
 
     private void showDatePicker() {

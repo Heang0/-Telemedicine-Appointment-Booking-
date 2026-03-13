@@ -50,9 +50,12 @@ dependencies {
     implementation("com.journeyapps:zxing-android-embedded:4.3.0")
 
     // Firebase dependencies
-    implementation(platform("com.google.firebase:firebase-bom:32.2.0"))
+    implementation(platform("com.google.firebase:firebase-bom:33.7.0"))
     implementation(libs.firebase.auth)
     implementation(libs.firebase.firestore)
+    
+    // Google Sign-In
+    implementation("com.google.android.gms:play-services-auth:21.2.0")
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)

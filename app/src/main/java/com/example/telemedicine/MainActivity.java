@@ -1,20 +1,18 @@
 package com.example.telemedicine;
 
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Gravity;
+import android.view.View;
 import android.widget.FrameLayout;
-import android.widget.LinearLayout;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
-
-import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -24,6 +22,12 @@ public class MainActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private com.google.firebase.firestore.ListenerRegistration userRoleListener;
     public static boolean isThemeChange = false;
+    private String currentRole = "patient";
+    private int dockStartId = View.NO_ID;
+    private int dockSecondId = View.NO_ID;
+    private int dockCenterId = View.NO_ID;
+    private int dockFourthId = View.NO_ID;
+    private int dockEndId = View.NO_ID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -159,176 +163,237 @@ public class MainActivity extends AppCompatActivity {
 
     private void setupDashboard(String role) {
         try {
-            com.google.android.material.bottomnavigation.BottomNavigationView bottomNav = findViewById(R.id.bottom_navigation);
-            if (bottomNav == null) {
+            currentRole = role == null ? "patient" : role;
+            FrameLayout container = findViewById(R.id.fragment_container);
+            if (container == null) {
                 return;
             }
 
-            bottomNav.setItemIconTintList(getResources().getColorStateList(R.color.bottom_nav_icon_color_ios, getTheme()));
-            bottomNav.setItemBackgroundResource(R.drawable.bg_bottom_nav_item_ios);
-            bottomNav.setItemTextColor(getResources().getColorStateList(R.color.bottom_nav_text_color_ios, getTheme()));
-            bottomNav.setLabelVisibilityMode(com.google.android.material.bottomnavigation.LabelVisibilityMode.LABEL_VISIBILITY_SELECTED);
-
-            // Set menu based on role
-            if (UserRole.DOCTOR.getRoleName().equalsIgnoreCase(role)) {
-                bottomNav.inflateMenu(R.menu.doctor_bottom_nav_menu);
-                setupDoctorDashboard(bottomNav);
-            } else if (UserRole.ADMIN.getRoleName().equalsIgnoreCase(role)) {
-                bottomNav.inflateMenu(R.menu.admin_bottom_nav_menu);
-                setupAdminDashboard(bottomNav);
+            if (UserRole.DOCTOR.getRoleName().equalsIgnoreCase(currentRole)) {
+                setupDoctorDashboard();
+            } else if (UserRole.ADMIN.getRoleName().equalsIgnoreCase(currentRole)) {
+                setupAdminDashboard();
             } else {
-                bottomNav.inflateMenu(R.menu.bottom_nav_menu);
-                setupPatientDashboard(bottomNav);
+                setupPatientDashboard();
             }
         } catch (Exception e) {
             Log.e("MainActivity", "Error in setupDashboard", e);
         }
     }
 
-    private void setupPatientDashboard(com.google.android.material.bottomnavigation.BottomNavigationView bottomNav) {
+    private void setupPatientDashboard() {
         try {
-            FrameLayout container = findViewById(R.id.fragment_container);
-            if (container == null) {
-                return;
-            }
-
-            // Apply iOS-style appearance
-            bottomNav.setItemIconTintList(getResources().getColorStateList(R.color.bottom_nav_icon_color_ios, getTheme()));
-            bottomNav.setItemTextColor(getResources().getColorStateList(R.color.bottom_nav_text_color_ios, getTheme()));
-            bottomNav.setLabelVisibilityMode(com.google.android.material.bottomnavigation.LabelVisibilityMode.LABEL_VISIBILITY_SELECTED);
-
-            // Set up navigation listener FIRST
-            bottomNav.setOnItemSelectedListener(item -> {
-                Fragment selectedFragment = null;
-                int itemId = item.getItemId();
-                if (itemId == R.id.nav_patient) {
-                    selectedFragment = new PatientDashboardFragment();
-                } else if (itemId == R.id.nav_appointments) {
-                    selectedFragment = new AppointmentsFragment();
-                } else if (itemId == R.id.nav_prescriptions) {
-                    selectedFragment = new PatientPrescriptionsFragment();
-                } else if (itemId == R.id.nav_messages) {
-                    selectedFragment = new SecureMessagingHubFragment();
-                } else if (itemId == R.id.nav_settings) {
-                    selectedFragment = new ProfileFragment();
-                }
-
-                if (selectedFragment != null) {
-                    getSupportFragmentManager().beginTransaction()
-                            .replace(R.id.fragment_container, selectedFragment)
-                            .commit();
-                    return true;
-                }
-                return false;
-            });
-
-            // Load default fragment
-            getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.fragment_container, new PatientDashboardFragment())
-                    .commit();
-
-            // Set selected item AFTER listener is set up
-            bottomNav.setSelectedItemId(R.id.nav_patient);
+            configureDock(
+                    new DockItem(R.id.nav_patient, R.drawable.ic_home_ios, "Home"),
+                    new DockItem(R.id.nav_appointments, R.drawable.ic_calendar_ios, "Visits"),
+                    new DockItem(R.id.nav_messages, R.drawable.ic_chat_ios, null),
+                    new DockItem(R.id.nav_prescriptions, R.drawable.ic_prescription_ios, "Meds"),
+                    new DockItem(R.id.nav_settings, R.drawable.ic_profile_ios, "Profile"));
+            ensureDefaultFragment(new PatientDashboardFragment(), R.id.nav_patient);
         } catch (Exception e) {
             Log.e("MainActivity", "Error in setupPatientDashboard", e);
         }
     }
 
-    private void setupDoctorDashboard(com.google.android.material.bottomnavigation.BottomNavigationView bottomNav) {
+    private void setupDoctorDashboard() {
         try {
-            FrameLayout container = findViewById(R.id.fragment_container);
-            if (container == null) {
-                return;
-            }
-
-            // Apply iOS-style appearance
-            bottomNav.setItemIconTintList(getResources().getColorStateList(R.color.bottom_nav_icon_color_ios, getTheme()));
-            bottomNav.setItemTextColor(getResources().getColorStateList(R.color.bottom_nav_text_color_ios, getTheme()));
-            bottomNav.setLabelVisibilityMode(com.google.android.material.bottomnavigation.LabelVisibilityMode.LABEL_VISIBILITY_SELECTED);
-
-            // Set up navigation listener FIRST
-            bottomNav.setOnItemSelectedListener(item -> {
-                Fragment selectedFragment = null;
-                int itemId = item.getItemId();
-                if (itemId == R.id.nav_appointments) {
-                    selectedFragment = new DoctorDashboardFragment();
-                } else if (itemId == R.id.nav_patients) {
-                    selectedFragment = new DoctorPatientsFragment();
-                } else if (itemId == R.id.nav_prescriptions) {
-                    selectedFragment = new PrescriptionManagerFragment();
-                } else if (itemId == R.id.nav_messages) {
-                    selectedFragment = new SecureMessagingHubFragment();
-                } else if (itemId == R.id.nav_settings) {
-                    selectedFragment = new ProfileFragment();
-                }
-
-                if (selectedFragment != null) {
-                    getSupportFragmentManager().beginTransaction()
-                            .replace(R.id.fragment_container, selectedFragment)
-                            .commit();
-                    return true;
-                }
-                return false;
-            });
-
-            // Load default fragment
-            getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.fragment_container, new DoctorDashboardFragment())
-                    .commit();
-
-            // Set selected item AFTER listener is set up
-            bottomNav.setSelectedItemId(R.id.nav_appointments);
+            configureDock(
+                    new DockItem(R.id.nav_appointments, R.drawable.ic_home_ios, "Home"),
+                    new DockItem(R.id.nav_patients, R.drawable.ic_people_ios, "Patients"),
+                    new DockItem(R.id.nav_messages, R.drawable.ic_chat_ios, null),
+                    new DockItem(R.id.nav_prescriptions, R.drawable.ic_prescription_ios, "Rx"),
+                    new DockItem(R.id.nav_settings, R.drawable.ic_profile_ios, "Profile"));
+            ensureDefaultFragment(new DoctorDashboardFragment(), R.id.nav_appointments);
         } catch (Exception e) {
             Log.e("MainActivity", "Error in setupDoctorDashboard", e);
         }
     }
 
-    private void setupAdminDashboard(com.google.android.material.bottomnavigation.BottomNavigationView bottomNav) {
+    private void setupAdminDashboard() {
         try {
-            FrameLayout container = findViewById(R.id.fragment_container);
-            if (container == null) {
-                return;
-            }
-
-            // Apply iOS-style appearance
-            bottomNav.setItemIconTintList(getResources().getColorStateList(R.color.bottom_nav_icon_color_ios, getTheme()));
-            bottomNav.setItemTextColor(getResources().getColorStateList(R.color.bottom_nav_text_color_ios, getTheme()));
-            bottomNav.setLabelVisibilityMode(com.google.android.material.bottomnavigation.LabelVisibilityMode.LABEL_VISIBILITY_SELECTED);
-
-            // Set up navigation listener FIRST
-            bottomNav.setOnItemSelectedListener(item -> {
-                Fragment selectedFragment = null;
-                int itemId = item.getItemId();
-                if (itemId == R.id.nav_admin_home) {
-                    selectedFragment = new AdminDashboardFragment();
-                } else if (itemId == R.id.nav_admin_users) {
-                    selectedFragment = new AllUsersFragment();
-                } else if (itemId == R.id.nav_admin_audit) {
-                    selectedFragment = new AdminDashboardFragment();
-                } else if (itemId == R.id.nav_admin_analytics) {
-                    selectedFragment = new AdminDashboardFragment();
-                } else if (itemId == R.id.nav_admin_profile) {
-                    selectedFragment = new ProfileFragment();
-                }
-
-                if (selectedFragment != null) {
-                    getSupportFragmentManager().beginTransaction()
-                            .replace(R.id.fragment_container, selectedFragment)
-                            .commit();
-                    return true;
-                }
-                return false;
-            });
-
-            // Load default fragment
-            getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.fragment_container, new AdminDashboardFragment())
-                    .commit();
-
-            // Set selected item AFTER listener is set up
-            bottomNav.setSelectedItemId(R.id.nav_admin_home);
+            configureDock(
+                    new DockItem(R.id.nav_admin_home, R.drawable.ic_home_ios, "Home"),
+                    new DockItem(R.id.nav_admin_users, R.drawable.ic_people_ios, "Users"),
+                    new DockItem(R.id.nav_admin_audit, R.drawable.ic_chat_ios, null),
+                    new DockItem(R.id.nav_admin_analytics, R.drawable.ic_calendar_ios, "Stats"),
+                    new DockItem(R.id.nav_admin_profile, R.drawable.ic_profile_ios, "Profile"));
+            ensureDefaultFragment(new AdminDashboardFragment(), R.id.nav_admin_home);
         } catch (Exception e) {
             Log.e("MainActivity", "Error in setupAdminDashboard", e);
+        }
+    }
+
+    private void configureDock(DockItem start, DockItem second, DockItem center, DockItem fourth, DockItem end) {
+        bindDockItem(findViewById(R.id.nav_item_start), findViewById(R.id.nav_icon_start), findViewById(R.id.nav_label_start), start);
+        bindDockItem(findViewById(R.id.nav_item_second), findViewById(R.id.nav_icon_second), findViewById(R.id.nav_label_second), second);
+        bindDockItem(findViewById(R.id.nav_item_fourth), findViewById(R.id.nav_icon_fourth), findViewById(R.id.nav_label_fourth), fourth);
+        bindDockItem(findViewById(R.id.nav_item_end), findViewById(R.id.nav_icon_end), findViewById(R.id.nav_label_end), end);
+
+        View centerAction = findViewById(R.id.nav_center_action);
+        ImageView centerIcon = findViewById(R.id.nav_center_icon);
+        dockStartId = start.navId;
+        dockSecondId = second.navId;
+        dockCenterId = center.navId;
+        dockFourthId = fourth.navId;
+        dockEndId = end.navId;
+
+        if (centerIcon != null) {
+            centerIcon.setImageResource(center.iconResId);
+            centerIcon.setImageTintList(ColorStateList.valueOf(getColor(android.R.color.white)));
+        }
+        if (centerAction != null) {
+            centerAction.setOnClickListener(v -> selectDockItem(center.navId));
+        }
+    }
+
+    private void bindDockItem(View itemView, ImageView iconView, TextView labelView, DockItem item) {
+        if (itemView == null || iconView == null || labelView == null) {
+            return;
+        }
+        iconView.setImageResource(item.iconResId);
+        labelView.setText(item.label);
+        itemView.setOnClickListener(v -> selectDockItem(item.navId));
+    }
+
+    private void ensureDefaultFragment(Fragment defaultFragment, int defaultNavId) {
+        Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
+        if (currentFragment == null) {
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.fragment_container, defaultFragment)
+                    .commit();
+            updateDockSelection(defaultNavId);
+        } else {
+            syncDockSelectionForFragment(currentFragment, defaultNavId);
+        }
+    }
+
+    private void selectDockItem(int navId) {
+        Fragment selectedFragment = createFragmentForNav(navId);
+        if (selectedFragment == null) {
+            return;
+        }
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.fragment_container, selectedFragment)
+                .commit();
+        updateDockSelection(navId);
+    }
+
+    private Fragment createFragmentForNav(int navId) {
+        if (UserRole.DOCTOR.getRoleName().equalsIgnoreCase(currentRole)) {
+            if (navId == R.id.nav_appointments) {
+                return new DoctorDashboardFragment();
+            }
+            if (navId == R.id.nav_patients) {
+                return new DoctorPatientsFragment();
+            }
+            if (navId == R.id.nav_messages) {
+                return new SecureMessagingHubFragment();
+            }
+            if (navId == R.id.nav_prescriptions) {
+                return new PrescriptionManagerFragment();
+            }
+            if (navId == R.id.nav_settings) {
+                return new ProfileFragment();
+            }
+            return null;
+        }
+
+        if (UserRole.ADMIN.getRoleName().equalsIgnoreCase(currentRole)) {
+            if (navId == R.id.nav_admin_home || navId == R.id.nav_admin_audit || navId == R.id.nav_admin_analytics) {
+                return new AdminDashboardFragment();
+            }
+            if (navId == R.id.nav_admin_users) {
+                return new AllUsersFragment();
+            }
+            if (navId == R.id.nav_admin_profile) {
+                return new ProfileFragment();
+            }
+            return null;
+        }
+
+        if (navId == R.id.nav_patient) {
+            return new PatientDashboardFragment();
+        }
+        if (navId == R.id.nav_appointments) {
+            return new AppointmentsFragment();
+        }
+        if (navId == R.id.nav_messages) {
+            return new SecureMessagingHubFragment();
+        }
+        if (navId == R.id.nav_prescriptions) {
+            return new PatientPrescriptionsFragment();
+        }
+        if (navId == R.id.nav_settings) {
+            return new ProfileFragment();
+        }
+        return null;
+    }
+
+    private void syncDockSelectionForFragment(Fragment fragment, int fallbackNavId) {
+        int selectedNavId = fallbackNavId;
+
+        if (fragment instanceof SecureMessagingHubFragment) {
+            selectedNavId = dockCenterId;
+        } else if (fragment instanceof ProfileFragment) {
+            selectedNavId = dockEndId;
+        } else if (UserRole.DOCTOR.getRoleName().equalsIgnoreCase(currentRole)) {
+            if (fragment instanceof DoctorPatientsFragment) {
+                selectedNavId = dockSecondId;
+            } else if (fragment instanceof PrescriptionManagerFragment) {
+                selectedNavId = dockFourthId;
+            } else if (fragment instanceof DoctorDashboardFragment) {
+                selectedNavId = dockStartId;
+            }
+        } else if (UserRole.ADMIN.getRoleName().equalsIgnoreCase(currentRole)) {
+            if (fragment instanceof AllUsersFragment) {
+                selectedNavId = dockSecondId;
+            } else if (fragment instanceof AdminDashboardFragment) {
+                selectedNavId = dockStartId;
+            }
+        } else {
+            if (fragment instanceof AppointmentsFragment) {
+                selectedNavId = dockSecondId;
+            } else if (fragment instanceof PatientPrescriptionsFragment) {
+                selectedNavId = dockFourthId;
+            } else if (fragment instanceof PatientDashboardFragment) {
+                selectedNavId = dockStartId;
+            }
+        }
+
+        updateDockSelection(selectedNavId);
+    }
+
+    private void updateDockSelection(int selectedNavId) {
+        applyDockSelection(findViewById(R.id.nav_icon_start), findViewById(R.id.nav_label_start), selectedNavId == dockStartId);
+        applyDockSelection(findViewById(R.id.nav_icon_second), findViewById(R.id.nav_label_second), selectedNavId == dockSecondId);
+        applyDockSelection(findViewById(R.id.nav_icon_fourth), findViewById(R.id.nav_label_fourth), selectedNavId == dockFourthId);
+        applyDockSelection(findViewById(R.id.nav_icon_end), findViewById(R.id.nav_label_end), selectedNavId == dockEndId);
+        View centerAction = findViewById(R.id.nav_center_action);
+        if (centerAction != null) {
+            centerAction.setAlpha(selectedNavId == dockCenterId ? 1f : 0.98f);
+        }
+    }
+
+    private void applyDockSelection(ImageView iconView, TextView labelView, boolean selected) {
+        if (iconView == null || labelView == null) {
+            return;
+        }
+        int colorRes = selected ? R.color.bottom_dock_active : R.color.bottom_dock_inactive;
+        ColorStateList tint = ColorStateList.valueOf(getColor(colorRes));
+        iconView.setImageTintList(tint);
+        labelView.setTextColor(getColor(colorRes));
+        labelView.setAlpha(selected ? 1f : 0.82f);
+    }
+
+    private static final class DockItem {
+        private final int navId;
+        private final int iconResId;
+        private final String label;
+
+        private DockItem(int navId, int iconResId, String label) {
+            this.navId = navId;
+            this.iconResId = iconResId;
+            this.label = label;
         }
     }
 

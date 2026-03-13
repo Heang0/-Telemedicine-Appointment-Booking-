@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- iOS-Style Doctor Bottom Navigation Menu -->
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/nav_appointments"
@@ -7,7 +6,7 @@
         android:title="Appointments" />
     <item
         android:id="@+id/nav_patients"
-        android:icon="@drawable/ic_profile_ios"
+        android:icon="@drawable/ic_people_ios"
         android:title="Patients" />
     <item
         android:id="@+id/nav_prescriptions"

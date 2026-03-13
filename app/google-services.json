@@ -12,7 +12,20 @@
           "package_name": "com.example.telemedicine"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "352131487710-pi903fpk5f1u85b31e960jadhddubsgn.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.telemedicine",
+            "certificate_hash": "f4a065cc1f765874a483c5cc0f71680856863a7e"
+          }
+        },
+        {
+          "client_id": "352131487710-kijqhdrqkfkhrkdoa65aii4j0gjji58q.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyBGcJxNRWm23b6OkmEfgAWvfqeKXBlUGzw"
@@ -20,7 +33,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "352131487710-kijqhdrqkfkhrkdoa65aii4j0gjji58q.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }

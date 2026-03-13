@@ -1,121 +1,89 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Material Design Blue Colors -->
-    <color name="blue_50">#E3F2FD</color>
-    <color name="blue_100">#BBDEFB</color>
-    <color name="blue_200">#90CAF9</color>
-    <color name="blue_300">#64B5F6</color>
-    <color name="blue_400">#42A5F5</color>
-    <color name="blue_500">#2196F3</color>
-    <color name="blue_600">#1E88E5</color>
-    <color name="blue_700">#1976D2</color>
-    <color name="blue_800">#1565C0</color>
-    <color name="blue_900">#0D47A1</color>
+    <!-- Modern Telemedicine Color Palette -->
+    <!-- Primary Brand Colors - Modern Blue -->
+    <color name="primary">#2563EB</color>
+    <color name="primary_dark">#1D4ED8</color>
+    <color name="primary_light">#3B82F6</color>
+    <color name="primary_container">#DBEAFE</color>
+    <color name="on_primary">#FFFFFF</color>
     
-    <!-- Clean/Custom Colors -->
-    <color name="clean_blue_primary">#2196F3</color>
-    <color name="clean_blue_dark">#1565C0</color>
-    <color name="clean_neutral_50">#F5F5F5</color>
-    <color name="clean_neutral_100">#F5F5F5</color>
-    <color name="clean_neutral_200">#EEEEEE</color>
-    <color name="clean_neutral_300">#E0E0E0</color>
-    <color name="clean_neutral_400">#BDBDBD</color>
-    <color name="clean_neutral_500">#9E9E9E</color>
-    <color name="clean_neutral_600">#757575</color>
-    <color name="clean_neutral_700">#616161</color>
-    <color name="clean_neutral_800">#424242</color>
-    <color name="clean_neutral_900">#212121</color>
+    <!-- 2026 Modern Gradient Colors -->
+    <color name="gradient_blue_start">#3B82F6</color>
+    <color name="gradient_blue_middle">#2563EB</color>
+    <color name="gradient_blue_end">#1D4ED8</color>
+    <color name="gradient_teal_start">#14B8A6</color>
+    <color name="gradient_teal_end">#0D9488</color>
+    <color name="gradient_purple_start">#8B5CF6</color>
+    <color name="gradient_purple_end">#7C3AED</color>
+    <color name="gradient_sunset_start">#F59E0B</color>
+    <color name="gradient_sunset_end">#EF4444</color>
     
-    <!-- AI Neutral Colors -->
-    <color name="ai_neutral_50">#F5F5F5</color>
-    <color name="ai_neutral_100">#F5F5F5</color>
-    <color name="ai_neutral_200">#EEEEEE</color>
-    <color name="ai_neutral_300">#E0E0E0</color>
-    <color name="ai_neutral_400">#BDBDBD</color>
-    <color name="ai_neutral_500">#9E9E9E</color>
-    <color name="ai_neutral_600">#757575</color>
-    <color name="ai_neutral_700">#616161</color>
-    <color name="ai_neutral_800">#424242</color>
-    <color name="ai_neutral_900">#212121</color>
+    <!-- Glassmorphism Colors -->
+    <color name="glass_white_10">#1AFFFFFF</color>
+    <color name="glass_white_20">#33FFFFFF</color>
+    <color name="glass_white_30">#4DFFFFFF</color>
+    <color name="glass_blue_10">#1A3B82F6</color>
+    <color name="glass_blue_20">#333B82F6</color>
     
-    <!-- Glass Effects -->
-    <color name="glass_background">#FFFFFF80</color>
-    <color name="glass_border">#CCCCCC80</color>
+    <!-- Secondary Accent Colors -->
+    <color name="secondary">#0EA5E9</color>
+    <color name="secondary_dark">#0284C7</color>
+    <color name="secondary_light">#38BDF8</color>
+    <color name="secondary_container">#E0F2FE</color>
+    <color name="on_secondary">#FFFFFF</color>
+
+    <!-- Background Colors - Clean & Modern -->
+    <color name="background">#FAFAFA</color>
+    <color name="surface">#FFFFFF</color>
+    <color name="surface_variant">#F5F5F5</color>
+    <color name="surface_container">#F8FAFC</color>
     
-    <!-- Card Background -->
-    <color name="card_background_light">#FFFFFF</color>
+    <!-- Text Colors - Refined Hierarchy -->
+    <color name="text_primary">#1E293B</color>
+    <color name="text_secondary">#64748B</color>
+    <color name="text_tertiary">#94A3B8</color>
+    <color name="text_on_surface">#1E293B</color>
     
-    <!-- AI Purple -->
-    <color name="ai_purple_700">#7B1FA2</color>
-    
-    <!-- Text Colors -->
-    <color name="text_on_surface">#212121</color>
-    <color name="text_on_background">#212121</color>
-    <color name="text_disabled">#BDBDBD</color>
-    <color name="text_tertiary">#757575</color> <!-- Added from error -->
-    
-    <!-- AI Blue Primary -->
-    <color name="ai_blue_primary">#2196F3</color>
-    
-    <!-- Green Colors -->
-    <color name="green_50">#E8F5E9</color>
-    <color name="green_100">#C8E6C9</color>
-    <color name="green_200">#A5D6A7</color>
-    <color name="green_300">#81C784</color>
-    <color name="green_400">#66BB6A</color>
-    <color name="green_500">#4CAF50</color>
-    <color name="green_600">#43A047</color>
-    <color name="green_700">#388E3C</color>
-    <color name="green_800">#2E7D32</color>
-    <color name="green_900">#1B5E20</color>
-    
-    <!-- Purple Colors -->
-    <color name="purple_50">#F3E5F5</color>
-    <color name="purple_100">#E1BEE7</color>
-    <color name="purple_200">#CE93D8</color>
-    <color name="purple_300">#BA68C8</color>
-    <color name="purple_400">#AB47BC</color>
-    <color name="purple_500">#9C27B0</color>
-    <color name="purple_600">#8E23AA</color>
-    <color name="purple_700">#7B1FA2</color>
-    <color name="purple_800">#6A1FB1</color>
-    <color name="purple_900">#4A148C</color>
-    
-    <!-- Teal Colors (from error) -->
-    <color name="clean_teal">#009688</color> <!-- Material teal 500 -->
-    <color name="ai_teal_200">#B2DFDB</color> <!-- Material teal 200 -->
-    
+    <!-- Border & Divider Colors -->
+    <color name="divider">#E2E8F0</color>
+    <color name="border">#CBD5E1</color>
+    <color name="border_light">#E2E8F0</color>
+
+    <!-- Status Colors - Modern Palette -->
+    <color name="success">#10B981</color>
+    <color name="success_light">#D1FAE5</color>
+    <color name="error">#EF4444</color>
+    <color name="error_light">#FEE2E2</color>
+    <color name="warning">#F59E0B</color>
+    <color name="warning_light">#FEF3C7</color>
+    <color name="info">#3B82F6</color>
+    <color name="info_light">#DBEAFE</color>
+
+    <!-- Google Brand Colors -->
+    <color name="google_blue">#4285F4</color>
+    <color name="google_red">#EA4335</color>
+    <color name="google_yellow">#FBBC05</color>
+    <color name="google_green">#34A853</color>
+    <color name="google_button_background">#FFFFFF</color>
+    <color name="google_button_text">#3C4043</color>
+
     <!-- Gradient Colors -->
-    <color name="ai_gradient_start">#2196F3</color>
-    <color name="ai_gradient_end">#1565C0</color>
-    
-    <!-- Gray Colors -->
-    <color name="gray_50">#FAFAFA</color>
-    <color name="gray_100">#F5F5F5</color>
-    <color name="gray_200">#EEEEEE</color>
-    <color name="gray_300">#E0E0E0</color>
-    <color name="gray_400">#BDBDBD</color>
-    <color name="gray_500">#9E9E9E</color>
-    <color name="gray_600">#757575</color>
-    <color name="gray_700">#616161</color>
-    <color name="gray_800">#424242</color>
-    <color name="gray_900">#212121</color>
-    
-    <!-- Basic Colors -->
+    <color name="gradient_start">#0D9488</color>
+    <color name="gradient_middle">#14B8A6</color>
+    <color name="gradient_end">#0EA5E9</color>
+
+    <!-- Shadow Colors -->
+    <color name="shadow_light">#1A000000</color>
+    <color name="shadow_medium">#25000000</color>
+    <color name="shadow_dark">#40000000</color>
+
+    <!-- Legacy Color Support -->
     <color name="white">#FFFFFF</color>
     <color name="black">#000000</color>
+    <color name="transparent">#00000000</color>
 
-    <!-- Holo-style legacy colors (for compatibility) -->
-    <color name="holo_green_dark">#FF008000</color>
-    <color name="holo_red_dark">#FFCC0000</color>
-
-    <!-- Status Colors -->
-    <color name="success">#34C759</color>
-    <color name="error">#FF3B30</color>
-    <color name="warning">#FF9500</color>
-    <color name="info">#007AFF</color>
-
-    <!-- iOS-Style Modern Colors -->
+    <!-- Legacy iOS Colors (for backward compatibility) -->
     <color name="ios_blue">#007AFF</color>
     <color name="ios_blue_dark">#0056B3</color>
     <color name="ios_blue_light">#5AC8FA</color>
@@ -125,6 +93,7 @@
     <color name="ios_gray">#8E8E93</color>
     <color name="ios_gray_light">#C7C7CC</color>
     <color name="ios_gray_ultra_light">#F2F2F7</color>
+    <color name="ios_ultra_light_gray">#F2F2F7</color>
     <color name="ios_background">#F2F2F7</color>
     <color name="ios_card_background">#FFFFFF</color>
     <color name="ios_text_primary">#000000</color>
@@ -135,18 +104,119 @@
     <color name="ios_system_fill">#F2F2F7</color>
     <color name="ios_secondary_system_fill">#EFEFF4</color>
     <color name="ios_tertiary_system_fill">#E3E3E8</color>
-    
+
+    <!-- AI Neutral Colors (for backward compatibility) -->
+    <color name="ai_neutral_50">#FAFAFA</color>
+    <color name="ai_neutral_100">#F5F5F5</color>
+    <color name="ai_neutral_200">#EEEEEE</color>
+    <color name="ai_neutral_300">#E0E0E0</color>
+    <color name="ai_neutral_400">#BDBDBD</color>
+    <color name="ai_neutral_500">#9E9E9E</color>
+    <color name="ai_neutral_600">#757575</color>
+    <color name="ai_neutral_700">#616161</color>
+    <color name="ai_neutral_800">#424242</color>
+    <color name="ai_neutral_900">#212121</color>
+
+    <!-- Clean/Custom Colors (for backward compatibility) -->
+    <color name="clean_blue_primary">#2196F3</color>
+    <color name="clean_blue_dark">#1565C0</color>
+    <color name="clean_neutral_50">#FAFAFA</color>
+    <color name="clean_neutral_100">#F5F5F5</color>
+    <color name="clean_neutral_200">#EEEEEE</color>
+    <color name="clean_neutral_300">#E0E0E0</color>
+    <color name="clean_neutral_400">#BDBDBD</color>
+    <color name="clean_neutral_500">#9E9E9E</color>
+    <color name="clean_neutral_600">#757575</color>
+    <color name="clean_neutral_700">#616161</color>
+    <color name="clean_neutral_800">#424242</color>
+    <color name="clean_neutral_900">#212121</color>
+    <color name="clean_teal">#009688</color>
+
+    <!-- Glass Effects (for backward compatibility) -->
+    <color name="glass_background">#FFFFFF80</color>
+    <color name="glass_border">#CCCCCC80</color>
+
+    <!-- Card Background (for backward compatibility) -->
+    <color name="card_background_light">#FFFFFF</color>
+
+    <!-- Bottom Dock Colors (for backward compatibility) -->
+    <color name="bottom_dock_active">#5B2EFF</color>
+    <color name="bottom_dock_inactive">#3F4650</color>
+    <color name="bottom_dock_muted">#AAB1BC</color>
+    <color name="bottom_dock_surface">#FFFDFE</color>
+    <color name="bottom_dock_strip">#EEF0F4</color>
+
     <!-- iOS Chip Background Selector -->
     <color name="ios_chip_background">#F2F2F7</color>
-    
+
     <!-- iOS Shadow -->
     <color name="ios_shadow">#0000001A</color>
-    
+
     <!-- Additional iOS Colors -->
-    <color name="ios_ultra_light_gray">#F2F2F7</color>
     <color name="ios_system_blue">#007AFF</color>
     <color name="ios_system_green">#34C759</color>
     <color name="ios_system_orange">#FF9500</color>
     <color name="ios_system_red">#FF3B30</color>
     <color name="ios_system_purple">#BF5AF2</color>
+
+    <!-- Material Design Blue Colors (for backward compatibility) -->
+    <color name="blue_50">#E3F2FD</color>
+    <color name="blue_100">#BBDEFB</color>
+    <color name="blue_200">#90CAF9</color>
+    <color name="blue_300">#64B5F6</color>
+    <color name="blue_400">#42A5F5</color>
+    <color name="blue_500">#2196F3</color>
+    <color name="blue_600">#1E88E5</color>
+    <color name="blue_700">#1976D2</color>
+    <color name="blue_800">#1565C0</color>
+    <color name="blue_900">#0D47A1</color>
+
+    <!-- Green Colors (for backward compatibility) -->
+    <color name="green_50">#E8F5E9</color>
+    <color name="green_100">#C8E6C9</color>
+    <color name="green_200">#A5D6A7</color>
+    <color name="green_300">#81C784</color>
+    <color name="green_400">#66BB6A</color>
+    <color name="green_500">#4CAF50</color>
+    <color name="green_600">#43A047</color>
+    <color name="green_700">#388E3C</color>
+    <color name="green_800">#2E7D32</color>
+    <color name="green_900">#1B5E20</color>
+
+    <!-- Purple Colors (for backward compatibility) -->
+    <color name="purple_50">#F3E5F5</color>
+    <color name="purple_100">#E1BEE7</color>
+    <color name="purple_200">#CE93D8</color>
+    <color name="purple_300">#BA68C8</color>
+    <color name="purple_400">#AB47BC</color>
+    <color name="purple_500">#9C27B0</color>
+    <color name="purple_600">#8E23AA</color>
+    <color name="purple_700">#7B1FA2</color>
+    <color name="purple_800">#6A1FB1</color>
+    <color name="purple_900">#4A148C</color>
+
+    <!-- Gray Colors (for backward compatibility) -->
+    <color name="gray_50">#FAFAFA</color>
+    <color name="gray_100">#F5F5F5</color>
+    <color name="gray_200">#EEEEEE</color>
+    <color name="gray_300">#E0E0E0</color>
+    <color name="gray_400">#BDBDBD</color>
+    <color name="gray_500">#9E9E9E</color>
+    <color name="gray_600">#757575</color>
+    <color name="gray_700">#616161</color>
+    <color name="gray_800">#424242</color>
+    <color name="gray_900">#212121</color>
+
+    <!-- Holo-style legacy colors (for compatibility) -->
+    <color name="holo_green_dark">#FF008000</color>
+    <color name="holo_red_dark">#FFCC0000</color>
+
+    <!-- Text Colors (for backward compatibility) -->
+    <color name="text_on_background">#212121</color>
+    <color name="text_disabled">#BDBDBD</color>
+    <color name="ai_purple_700">#7B1FA2</color>
+    <color name="ai_blue_primary">#2196F3</color>
+    <color name="ai_gradient_start">#2196F3</color>
+    <color name="ai_gradient_end">#1565C0</color>
+    <color name="ai_teal_200">#B2DFDB</color>
 </resources>
